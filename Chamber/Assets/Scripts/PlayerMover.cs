@@ -12,8 +12,7 @@ public class PlayerMover : MonoBehaviour {
     public float momentumMultiplier = 10;
     float maxMomentum = 1;
     public float maxVelocity = 2;
-    Vector3 lastPosition = Vector3.zero;
-    Vector3 positionChange = Vector3.zero;
+    Vector3 lastInput = Vector3.zero;
     void Start() {
         rig = GetComponent<Rigidbody>();
     }
@@ -21,19 +20,19 @@ public class PlayerMover : MonoBehaviour {
     void Update() {
         vertical = Input.GetAxisRaw("Vertical");
         horizontal = Input.GetAxisRaw("Horizontal");
-        print(momentum);
+        //print(momentum);
     }
 
     private void FixedUpdate() {
         Vector3 inputVector = new Vector3(horizontal, 0, vertical);
-        //inputVector = transform.TransformDirection(inputVector);
+        inputVector = transform.TransformDirection(inputVector);
         if (inputVector.magnitude > 0 && momentum < maxMomentum) {
             momentum += Time.deltaTime * momentumMultiplier;
             if (momentum > maxMomentum) {
                 momentum = maxMomentum;
             }
         }
-        if (HasInput() && HasMomentum()) {
+        if (inputVector.magnitude == 0 && HasMomentum()) {
             momentum -= Time.deltaTime * momentumMultiplier;
             if (momentum < 0) {
                 momentum = 0;
@@ -41,14 +40,12 @@ public class PlayerMover : MonoBehaviour {
         }
         Vector3 velocity = inputVector * movementSpeed * momentum;
         //velocity = Vector3.ClampMagnitude(velocity, maxVelocity);
+        CheckInputDirectionHorizontal(inputVector, velocity);
+        CheckInputDirectionVertical(inputVector, velocity);
         if (HasMomentum()) {
-            lastPosition = rig.position;
-            rig.position += velocity * Time.deltaTime;
-            positionChange = rig.position - lastPosition;
+            rig.velocity = velocity;
         }
-        if (HasMomentum() && !HasInput()) {
-            rig.position += positionChange * movementSpeed * momentum;
-        }
+        lastInput = inputVector;
 
         //Vector3 inputVelocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         //inputVelocity = transform.TransformDirection(inputVelocity);
@@ -62,8 +59,39 @@ public class PlayerMover : MonoBehaviour {
         //rig.AddForce(velocityChange, ForceMode.VelocityChange);
     }
 
+    void CheckInputDirectionHorizontal(Vector3 vector, Vector3 velocity) {
+        if (vector.x > 0) {
+            if (lastInput.x < 0) {
+                rig.velocity = Vector3.zero;
+                return;
+            }
+        }
+        if (vector.x < 0) {
+            if (lastInput.x > 0) {
+                rig.velocity = Vector3.zero;
+                return;
+            }
+        }
+    }
+
+    void CheckInputDirectionVertical(Vector3 vector, Vector3 velocity) {
+        if (vector.z > 0) {
+            if (lastInput.z < 0) {
+                rig.velocity = Vector3.zero;
+                return;
+            }
+        }
+        if (vector.z < 0) {
+            if (lastInput.z > 0) {
+                rig.velocity = Vector3.zero;
+                return;
+            }
+        }
+    }
+
     bool HasInput() {
         if (Input.GetAxisRaw("Horizontal") > 0 || Input.GetAxisRaw("Vertical") > 0) {
+            print("input!");
             return true;
         } else return false;
     }
