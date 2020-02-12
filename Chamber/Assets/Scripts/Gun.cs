@@ -61,7 +61,7 @@ public class Gun : MonoBehaviour
     }
 
     private void Update() {
-        if(Input.GetButtonDown("Fire1")){
+        if(Input.GetButtonDown("Fire1")) {
             PullTrigger();
         }
         if(Input.GetKeyDown(KeyCode.R)) {
