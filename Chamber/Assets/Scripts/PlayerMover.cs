@@ -13,6 +13,7 @@ public class PlayerMover : MonoBehaviour {
     void Update() {
         float vertical = Input.GetAxisRaw("Vertical");
         float horizontal = Input.GetAxisRaw("Horizontal");
+        print("Horizontal: " + )
     }
 
     private void LateUpdate() {
