@@ -1,69 +1,115 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro; // for testing
+using UnityEngine.UI;
+
+
 
 public class Gun : MonoBehaviour
 {
-    int[] loadOut = new int[3];
-    int chamberIndex = 2;
-    int reloadIndex = 0;
-    bool isReloading;
-    TextMeshProUGUI[] chamberUI;
+    public enum AmmoType { Empty, Fire, Water, Air };
+
+    public AmmoType[] loadOut = new AmmoType[3];
+    public int chamberIndex = 0;
+    public bool isReloading;
+    public Transform crosshair;
+    public Image[] chamberUI;
 
     void PullTrigger() {
-        // Change chamberIndex
-        chamberIndex++;
-        if(chamberIndex > 2) {
-            chamberIndex = 0;
+
+        if(isReloading) {
+            StopReloading();
         }
+
         // Check ammo type and fire correct projectile
         Fire(loadOut[chamberIndex]);
 
         // Reset ammo slot
-        loadOut[chamberIndex] = 0; // Do we want an enum?
-        SetChamberUI();
+        SetChamberLoad(chamberIndex, AmmoType.Empty);
+
+        // Check if empty 
+        if(IsEmpty()) {
+            StartReloading();
+        } else
+            chamberIndex++;
     }
 
-    void Fire(int type) {
+    void Fire(AmmoType type) {
         // Todo: Raycast
+    }
+
+    void ResetUICylinder() {
+        chamberIndex = 0;
+        RotateUICylinder(true);
+    }
+
+    void RotateUICylinder(bool reset) {
+        if(reset) {
+            if(isReloading) {
+                crosshair.rotation = Quaternion.Euler(0, 0, 15);
+            } else {
+                crosshair.rotation = Quaternion.Euler(0, 0, 0);
+            }
+        } else {
+            crosshair.Rotate(0, 0, -120, Space.Self);
+        }    
+    }
+
+    void SetChamberLoad(int chamber, AmmoType ammo) {
+        // Set AmmoType to loadOut
+        loadOut[chamberIndex] = ammo;
+
+        // Set Crosshair slot color
+        if(ammo == AmmoType.Empty)
+            chamberUI[chamberIndex].color = new Color(.5f, .5f, .5f, .5f);
+        if(ammo == AmmoType.Fire)
+            chamberUI[chamberIndex].color = new Color(1, 0, 0, 1);
+        if(ammo == AmmoType.Water)
+            chamberUI[chamberIndex].color = new Color(0, 1, 0, 1);
+        if(ammo == AmmoType.Air)
+            chamberUI[chamberIndex].color = new Color(0, 0, 1, 1);
+
+        // Rotate cylinder
+        RotateUICylinder(false);
     }
 
     void StartReloading() {
         // Todo: Start reload animation
         isReloading = true;
+        ResetUICylinder();
 
         for(int i = 0; i < loadOut.Length; i++) {
-            loadOut[i] = 0;
-        }
-
-        SetChamberUI();
-    }
-
-    void SetChamberUI() {
-        for(int i = 0; i < 3; i++) {
-            chamberUI[i].text = "" + loadOut[(i + chamberIndex) % 3];
+            loadOut[i] = AmmoType.Empty;
         }
     }
 
     void StopReloading() {
-        reloadIndex = 0;
+        // Todo: Stop loading animation here
         isReloading = false;
+        ResetUICylinder();
     }
 
-    void LoadChamber(int ammo) {
-        loadOut[reloadIndex] = ammo;
-        reloadIndex++;
-        if(reloadIndex > 2) {
+    void LoadChamber(AmmoType ammo) {
+        SetChamberLoad(chamberIndex, ammo);
+        chamberIndex++;
+        if(chamberIndex > 2) {
             StopReloading();
         }
-        SetChamberUI();
     }
 
+    bool IsEmpty() {
+        bool empty = true;
+        foreach(var ammo in loadOut) {
+            if(ammo == AmmoType.Empty) {
+            } else { empty = false; }
+        }
+        return empty;
+    }
     private void Update() {
         if(Input.GetButtonDown("Fire1")) {
             PullTrigger();
         }
+
         if(Input.GetKeyDown(KeyCode.R)) {
             if(!isReloading)
                 StartReloading();
@@ -73,17 +119,17 @@ public class Gun : MonoBehaviour
 
         if(isReloading) {
             if(Input.GetKeyDown("1")) {
-                LoadChamber(1);
+                LoadChamber(AmmoType.Fire);
             }
             if(Input.GetKeyDown("2")) {
-                LoadChamber(2);
+                LoadChamber(AmmoType.Water);
             }
             if(Input.GetKeyDown("3")) {
-                LoadChamber(3);
+                LoadChamber(AmmoType.Air);
             }
         }
     }
     private void Start() {
-        chamberUI = FindObjectsOfType<TextMeshProUGUI>();
+        crosshair = GameObject.Find("Crosshair").transform;
     }
 }
