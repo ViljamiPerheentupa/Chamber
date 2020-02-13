@@ -9,43 +9,69 @@ public class PlayerMover : MonoBehaviour {
     float vertical;
     float horizontal;
     float momentum = 0;
-    public float momentumMultiplier = 10;
-    float maxMomentum = 1;
+    public float movementSpeedMultiplier = 2;
+    public float walkMomentum = 125;
+    public float walkMomentumMax = 100;
+    public float sprintMomentum = 175;
+    public float sprintMultiplier = 2;
+    public float momentumStop = 280;
+    float sprintMomentumMax;
     public float maxVelocity = 2;
     Vector3 lastInput = Vector3.zero;
+    bool sprinting = false;
+    bool isMoving = false;
     void Start() {
         rig = GetComponent<Rigidbody>();
+        sprintMomentumMax = walkMomentumMax * sprintMultiplier;
     }
 
     void Update() {
         vertical = Input.GetAxisRaw("Vertical");
         horizontal = Input.GetAxisRaw("Horizontal");
-        //print(momentum);
+        if (Input.GetButtonDown("Sprint") && !sprinting) {
+            sprinting = true;
+            return;
+        }
+        if (Input.GetButtonDown("Sprint") && sprinting) {
+            sprinting = false;
+            return;
+        }
+        if (momentum <= 0) {
+            sprinting = false;
+        }
+        if (vertical != 0 || horizontal != 0) {
+            isMoving = true;
+            lastInput = transform.TransformDirection(new Vector3(horizontal, 0, vertical));
+        } else isMoving = false;
+        print("Momentum: " + momentum + " Last input: " + lastInput.x + "X " + lastInput.z + "Z");
     }
 
     private void FixedUpdate() {
         Vector3 inputVector = new Vector3(horizontal, 0, vertical);
         inputVector = transform.TransformDirection(inputVector);
-        if (inputVector.magnitude > 0 && momentum < maxMomentum) {
-            momentum += Time.deltaTime * momentumMultiplier;
-            if (momentum > maxMomentum) {
-                momentum = maxMomentum;
-            }
+        if(isMoving && !sprinting) {
+            WalkMomentum(inputVector);
         }
-        if (inputVector.magnitude == 0 && HasMomentum()) {
-            momentum -= Time.deltaTime * momentumMultiplier;
-            if (momentum < 0) {
-                momentum = 0;
-            }
+        if (isMoving && sprinting) {
+            RunMomentum(inputVector);
         }
-        Vector3 velocity = inputVector * movementSpeed * momentum;
+        Vector3 velocity = inputVector * momentum * Time.deltaTime * movementSpeedMultiplier;
         //velocity = Vector3.ClampMagnitude(velocity, maxVelocity);
         CheckInputDirectionHorizontal(inputVector, velocity);
         CheckInputDirectionVertical(inputVector, velocity);
         if (HasMomentum()) {
             rig.velocity = velocity;
         }
-        lastInput = inputVector;
+        if (inputVector.magnitude == 0 && HasMomentum()) {
+            momentum -= Time.deltaTime * momentumStop;
+            if (momentum < 0) {
+                momentum = 0;
+            }
+        }
+        if (HasMomentum() && !isMoving) {
+            velocity = momentum * lastInput * Time.deltaTime * movementSpeedMultiplier;
+            rig.velocity = velocity;
+        }
 
         //Vector3 inputVelocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         //inputVelocity = transform.TransformDirection(inputVelocity);
@@ -57,6 +83,30 @@ public class PlayerMover : MonoBehaviour {
         //velocityChange.z = Mathf.Clamp(velocityChange.z, -maxVelocityChange, maxVelocityChange);
         //velocityChange.y = 0;
         //rig.AddForce(velocityChange, ForceMode.VelocityChange);
+    }
+
+    void WalkMomentum(Vector3 inputVector) {
+        if (inputVector.magnitude > 0 && momentum < walkMomentumMax) {
+            momentum += Time.deltaTime * walkMomentum;
+            if (momentum > walkMomentumMax) {
+                momentum = walkMomentumMax;
+            }
+        }
+        if (momentum > walkMomentumMax) {
+            momentum -= Time.deltaTime * walkMomentum;
+            if (momentum < 0) {
+                momentum = 0;
+            }
+        }
+    }
+
+    void RunMomentum(Vector3 inputVector) {
+        if (inputVector.magnitude > 0 && momentum < sprintMomentumMax) {
+            momentum += Time.deltaTime * sprintMomentum;
+            if (momentum > sprintMomentumMax) {
+                momentum = sprintMomentumMax;
+            }
+        }
     }
 
     void CheckInputDirectionHorizontal(Vector3 vector, Vector3 velocity) {
