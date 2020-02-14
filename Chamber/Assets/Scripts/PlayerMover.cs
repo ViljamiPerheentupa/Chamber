@@ -19,21 +19,39 @@ public class PlayerMover : MonoBehaviour {
     public float maxVelocity = 2;
     Vector3 lastInput = Vector3.zero;
     bool sprinting = false;
+    bool crouching = false;
     bool isMoving = false;
+    public Animator cameraAnim;
+    float normalFoV;
+    float maxFoV;
     void Start() {
         rig = GetComponent<Rigidbody>();
         sprintMomentumMax = walkMomentumMax * sprintMultiplier;
+        normalFoV = Camera.main.fieldOfView;
+        maxFoV = normalFoV + 15f;
     }
 
     void Update() {
         vertical = Input.GetAxisRaw("Vertical");
         horizontal = Input.GetAxisRaw("Horizontal");
         if (Input.GetButtonDown("Sprint") && !sprinting) {
+            cameraAnim.Play("CameraSprintStart");
             sprinting = true;
             return;
         }
         if (Input.GetButtonDown("Sprint") && sprinting) {
+            cameraAnim.Play("CameraSprintStop");
             sprinting = false;
+            return;
+        }
+        if (Input.GetButtonDown("Crouch") && !crouching) {
+            cameraAnim.Play("CameraCrouch");
+            crouching = true;
+            return;
+        }
+        if (Input.GetButtonDown("Crouch") && crouching) {
+            cameraAnim.Play("CameraCrouchEnd");
+            crouching = false;
             return;
         }
         if (momentum <= 0) {
@@ -43,7 +61,7 @@ public class PlayerMover : MonoBehaviour {
             isMoving = true;
             lastInput = transform.TransformDirection(new Vector3(horizontal, 0, vertical));
         } else isMoving = false;
-        print("Momentum: " + momentum + " Last input: " + lastInput.x + "X " + lastInput.z + "Z");
+        //print("Momentum: " + momentum + " Last input: " + lastInput.x + "X " + lastInput.z + "Z");
     }
 
     private void FixedUpdate() {
@@ -72,7 +90,12 @@ public class PlayerMover : MonoBehaviour {
             velocity = momentum * lastInput * Time.deltaTime * movementSpeedMultiplier;
             rig.velocity = velocity;
         }
-
+        if (momentum > walkMomentumMax && Camera.main.fieldOfView < maxFoV) {
+            Camera.main.fieldOfView = normalFoV + (1f * (momentum - walkMomentumMax) / 10);
+            if (Camera.main.fieldOfView > maxFoV) {
+                Camera.main.fieldOfView = maxFoV;
+            }
+        } else Camera.main.fieldOfView = normalFoV;
         //Vector3 inputVelocity = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         //inputVelocity = transform.TransformDirection(inputVelocity);
         //Vector3 targetVelocity = inputVelocity * movementSpeed;
