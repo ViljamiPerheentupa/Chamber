@@ -8,12 +8,17 @@ using UnityEngine.UI;
 public class Gun : MonoBehaviour
 {
     public enum AmmoType { Empty, Fire, Water, Air };
-
-    public AmmoType[] loadOut = new AmmoType[3];
+    public AmmoType[] loadout = new AmmoType[3];
     public int chamberIndex = 0;
     public bool isReloading;
+    public bool rotate;
+    Quaternion targetRot;
+    Quaternion originalRot;
     public Transform crosshair;
     public Image[] chamberUI;
+    public float rotateDuration = .12f;
+    float rotateTimer = 0;
+    public AnimationCurve rotateCurve;
 
     void PullTrigger() {
 
@@ -21,8 +26,13 @@ public class Gun : MonoBehaviour
             StopReloading();
         }
 
+        if(rotate) {
+            crosshair.rotation = targetRot;
+            rotate = false;
+        }
+
         // Check ammo type and fire correct projectile
-        Fire(loadOut[chamberIndex]);
+        Fire(loadout[chamberIndex]);
 
         // Reset ammo slot
         SetChamberLoad(chamberIndex, AmmoType.Empty);
@@ -44,20 +54,30 @@ public class Gun : MonoBehaviour
     }
 
     void RotateUICylinder(bool reset) {
+        originalRot = crosshair.rotation;
+        rotateTimer = 0;
         if(reset) {
             if(isReloading) {
-                crosshair.rotation = Quaternion.Euler(0, 0, 15);
+                print("reset to loadmode");
+                //crosshair.rotation = Quaternion.Euler(0, 0, 15);
+                targetRot = Quaternion.Euler(0, 0, 15);
+                rotate = true;
             } else {
-                crosshair.rotation = Quaternion.Euler(0, 0, 0);
+                print("reset to shootmode");
+                //crosshair.rotation = Quaternion.Euler(0, 0, 0);
+                targetRot = Quaternion.Euler(0, 0, 0);
+                rotate = true;
             }
         } else {
-            crosshair.Rotate(0, 0, -120, Space.Self);
-        }    
+            print("flip 120 degrees");
+            targetRot = Quaternion.Euler(0, 0, -120) * crosshair.rotation;
+            rotate = true;
+        }
     }
 
     void SetChamberLoad(int chamber, AmmoType ammo) {
         // Set AmmoType to loadOut
-        loadOut[chamberIndex] = ammo;
+        loadout[chamberIndex] = ammo;
 
         // Set Crosshair slot color
         if(ammo == AmmoType.Empty)
@@ -78,8 +98,8 @@ public class Gun : MonoBehaviour
         isReloading = true;
         ResetUICylinder();
 
-        for(int i = 0; i < loadOut.Length; i++) {
-            loadOut[i] = AmmoType.Empty;
+        for(int i = 0; i < loadout.Length; i++) {
+            loadout[i] = AmmoType.Empty;
         }
     }
 
@@ -99,7 +119,7 @@ public class Gun : MonoBehaviour
 
     bool IsEmpty() {
         bool empty = true;
-        foreach(var ammo in loadOut) {
+        foreach(var ammo in loadout) {
             if(ammo == AmmoType.Empty) {
             } else { empty = false; }
         }
@@ -126,6 +146,17 @@ public class Gun : MonoBehaviour
             }
             if(Input.GetKeyDown("3")) {
                 LoadChamber(AmmoType.Air);
+            }
+        }
+
+        if(rotate) {
+            rotateTimer += Time.deltaTime;
+            var t = rotateTimer / rotateDuration;
+            t = rotateCurve.Evaluate(t);
+            crosshair.rotation = Quaternion.SlerpUnclamped(originalRot, targetRot, t);
+            if(rotateTimer > rotateDuration) {
+                rotate = false;
+                crosshair.rotation = targetRot;
             }
         }
     }
