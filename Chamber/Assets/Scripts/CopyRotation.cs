@@ -9,6 +9,8 @@ public class CopyRotation : MonoBehaviour
 
     void FixedUpdate()
     {
-        rig.MoveRotation(Quaternion.Euler(0, target.transform.rotation.eulerAngles.y, 0));
+        if (!GetComponent<PlayerMover>().sliding) {
+            rig.MoveRotation(Quaternion.Euler(0, target.transform.rotation.eulerAngles.y, 0));
+        }
     }
 }
