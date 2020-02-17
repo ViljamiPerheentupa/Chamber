@@ -8,72 +8,84 @@ using UnityEngine.UI;
 public class Gun : MonoBehaviour
 {
     public enum AmmoType { Empty, Fire, Water, Air };
-    public AmmoType[] loadout = new AmmoType[3];
-    public int chamberIndex = 0;
-    public bool isReloading;
-    public bool rotate;
-    public bool reloadComplete;
+    AmmoType[] loadout = new AmmoType[3];
+    Animator anim;
+    public Color[] colors;
+
+    int chamberIndex = 0;
+    bool isReloading;
+    bool animationBuffer;
+    bool rotate;
+    bool reloadComplete;
+
     Quaternion targetRot;
     Quaternion originalRot;
+    Quaternion bufferRot;
+
     public Transform crosshair;
     public Image[] chamberUI;
+
     public float reloadDuration = .12f;
     public float shootingDuration = .12f;
     float rotateTimer = 0;
+
     public AnimationCurve reloadCurve;
     public AnimationCurve shootingCurve;
 
     void PullTrigger() {
 
-        // Check if empty 
-        if(IsEmpty()) {
-            StartReloading();
-        } else {
-
-            if(isReloading) {
+        // if reloading, stop
+        if(isReloading) {
+            if(IsEmpty()) {
+                // Play empty shot sound
+                print("Click");
+                return;
+            } else {
                 StopReloading();
             }
-            if(rotate) {
-                crosshair.rotation = targetRot;
-                rotate = false;
-            }
+        }
 
-            // Check ammo type and fire correct projectile
-            Fire(loadout[chamberIndex]);
+        // If rotating, complete instantly
+        if(rotate) {
+            crosshair.rotation = targetRot;
+            rotate = false;
+        }
 
-            // Reset ammo slot
-            SetChamberLoad(chamberIndex, AmmoType.Empty);
-            chamberIndex++;
+        // Check ammo type and fire correct projectile
+        Fire(loadout[chamberIndex]);
+
+        // Reset ammo slot
+        SetChamberLoad(chamberIndex, AmmoType.Empty);
+        chamberIndex++;
+
+        // Check if empty 
+        if(IsEmpty()) {
+            StartReloadingAnimation();
         }
     }
 
     void Fire(AmmoType type) {
+        print("Bäng");
         // Todo: Raycast, choose corresponding sound effect 
     }
 
-    void ResetUICylinder() {
-        chamberIndex = 0;
-        RotateUICylinder(true);
-    }
+    void SetUICylinderTargetRotation(bool reset) {
 
-    void RotateUICylinder(bool reset) {
         originalRot = crosshair.rotation;
         rotateTimer = 0;
         if(reset) {
             if(isReloading) { // Resets cylinder to reload mode
                 print("Ready to load");
                 targetRot = Quaternion.Euler(0, 0, 15);
-                rotate = true;
             } else { // Resets cylinder to shoot mode
                 print("Ready to shoot");
                 targetRot = Quaternion.Euler(0, 0, 0);
-                rotate = true;
             }
         } else {
-            // Rotates cylinder after loadout or shooting
+            // Rotates cylinder 120degrees after loadout or shooting
             targetRot = Quaternion.Euler(0, 0, -120) * crosshair.rotation;
-            rotate = true;
         }
+        rotate = true;
     }
 
     void SetChamberLoad(int chamber, AmmoType ammo) {
@@ -82,29 +94,33 @@ public class Gun : MonoBehaviour
 
         // Set Crosshair slot color
         if(ammo == AmmoType.Empty)
-            chamberUI[chamber].color = new Color(.5f, .5f, .5f, .5f);
+            chamberUI[chamber].color = colors[0];
         if(ammo == AmmoType.Fire)
-            chamberUI[chamber].color = new Color(1, 0, 0, 1);
+            chamberUI[chamber].color = colors[1];
         if(ammo == AmmoType.Water)
-            chamberUI[chamber].color = new Color(0, 1, 0, 1);
+            chamberUI[chamber].color = colors[2];
         if(ammo == AmmoType.Air)
-            chamberUI[chamber].color = new Color(0, 0, 1, 1);
+            chamberUI[chamber].color = colors[3];
 
         // Rotate cylinder
-        RotateUICylinder(false);
+        SetUICylinderTargetRotation(false);
     }
 
-    void StartReloading() {
-        // Todo: Start reload animation
+    void StartReloadingAnimation() {
+        anim.Play("Reload");
+    }
 
+    public void StartReloading() {
+        
+        print("Started reloading");
         for(int i = 0; i < loadout.Length; i++) {
-            print(i);
             SetChamberLoad(i, AmmoType.Empty);
             //loadout[i] = AmmoType.Empty;
         }
 
         isReloading = true;
-        ResetUICylinder();
+        chamberIndex = 0;
+        SetUICylinderTargetRotation(true);
     }
 
     void StopReloading() {
@@ -112,10 +128,12 @@ public class Gun : MonoBehaviour
         isReloading = false;
         print("Stopped reloading");
         reloadComplete = true;
-        ResetUICylinder();
+        chamberIndex = 0;
+        SetUICylinderTargetRotation(true);
     }
 
     void LoadChamber(AmmoType ammo) {
+        // Todo: Bullet loading animation here
         SetChamberLoad(chamberIndex, ammo);
         chamberIndex++;
         if(chamberIndex > 2) {
@@ -132,11 +150,34 @@ public class Gun : MonoBehaviour
         return empty;
     }
 
+    void Rotate() {
+        rotateTimer += Time.deltaTime;
+        float origT;
+        float t;
+        if(isReloading || reloadComplete) {
+            origT = rotateTimer / reloadDuration;
+            t = reloadCurve.Evaluate(origT);
+
+        } else {
+            origT = rotateTimer / shootingDuration;
+            t = shootingCurve.Evaluate(origT);
+        }
+
+        crosshair.rotation = Quaternion.SlerpUnclamped(originalRot, targetRot, t);
+        if(origT >= 1) {
+            rotate = false;
+            crosshair.rotation = targetRot;
+            reloadComplete = false;
+        }
+    }
+
     private void Update() {
+        // Firing input
         if(Input.GetButtonDown("Fire1")) {
             PullTrigger();
         }
 
+        // Reload input
         if(Input.GetKeyDown(KeyCode.R)) {
             if(!isReloading)
                 StartReloading();
@@ -156,27 +197,14 @@ public class Gun : MonoBehaviour
             }
         }
 
+        // UICylinder rotation
         if(rotate) {
-            rotateTimer += Time.deltaTime;
-            float t; 
-            if(isReloading || reloadComplete) {
-                t = rotateTimer / reloadDuration;
-                t = reloadCurve.Evaluate(t);
-                
-            } else {
-                t = rotateTimer / shootingDuration;
-                t = shootingCurve.Evaluate(t);
-            }
-  
-            crosshair.rotation = Quaternion.SlerpUnclamped(originalRot, targetRot, t);
-            if(t >= 1) {
-                rotate = false;
-                crosshair.rotation = targetRot;
-                reloadComplete = false;
-            }
+            Rotate();
         }
     }
     private void Start() {
         crosshair = GameObject.Find("Crosshair").transform;
+        anim = GetComponent<Animator>();
+        StartReloading();
     }
 }
