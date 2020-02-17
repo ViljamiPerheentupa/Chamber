@@ -10,6 +10,7 @@ public class Gun : MonoBehaviour
     public enum AmmoType { Empty, Fire, Water, Air };
     AmmoType[] loadout = new AmmoType[3];
     Animator anim;
+    public Color[] colors;
 
     int chamberIndex = 0;
     bool isReloading;
@@ -93,13 +94,13 @@ public class Gun : MonoBehaviour
 
         // Set Crosshair slot color
         if(ammo == AmmoType.Empty)
-            chamberUI[chamber].color = new Color(.5f, .5f, .5f, .5f);
+            chamberUI[chamber].color = colors[0];
         if(ammo == AmmoType.Fire)
-            chamberUI[chamber].color = new Color(1, 0, 0, 1);
+            chamberUI[chamber].color = colors[1];
         if(ammo == AmmoType.Water)
-            chamberUI[chamber].color = new Color(0, 1, 0, 1);
+            chamberUI[chamber].color = colors[2];
         if(ammo == AmmoType.Air)
-            chamberUI[chamber].color = new Color(0, 0, 1, 1);
+            chamberUI[chamber].color = colors[3];
 
         // Rotate cylinder
         SetUICylinderTargetRotation(false);
