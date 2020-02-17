@@ -57,7 +57,9 @@ public class PlayerMover : MonoBehaviour {
     bool losingMomentum = false;
     float normalFoV;
     float maxFoV;
+    float targetFoV;
     float fovMomentumDeadzone;
+    public float fovChangeSpeed = 5;
 
     PlayerState currentState = PlayerState.Normal;
     PlayerState lastInputState = PlayerState.Empty;
@@ -78,10 +80,11 @@ public class PlayerMover : MonoBehaviour {
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         normalFoV = Camera.main.fieldOfView;
-        maxFoV = normalFoV + 15f;
+        maxFoV = normalFoV + 25f;
         fovMomentumDeadzone = normal.momentumMax;
         groundCheck = transform.Find("GroundSensor");
         lastPosition = rig.position;
+        targetFoV = normalFoV;
     }
 
     void Update() {
@@ -198,15 +201,18 @@ public class PlayerMover : MonoBehaviour {
 
 
         if (momentum > fovMomentumDeadzone && Camera.main.fieldOfView < maxFoV) {
-            Camera.main.fieldOfView = normalFoV + (1f * (momentum - fovMomentumDeadzone) / 10);
-            if (Camera.main.fieldOfView > maxFoV) {
-                Camera.main.fieldOfView = maxFoV;
+            targetFoV = normalFoV + (1f * (momentum - fovMomentumDeadzone) / 10);
+            if (targetFoV > maxFoV) {
+                targetFoV = maxFoV;
             }
         }
         if (momentum <= fovMomentumDeadzone) {
-            if (Camera.main.fieldOfView > normalFoV) {
-                Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, normalFoV, Time.deltaTime * 2);
-            } else Camera.main.fieldOfView = normalFoV;
+            if (targetFoV > normalFoV) {
+                targetFoV = Mathf.Lerp(targetFoV, normalFoV, Time.deltaTime * 2);
+            } else targetFoV = normalFoV;
+        }
+        if (Camera.main.fieldOfView != targetFoV) {
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, targetFoV, Time.fixedDeltaTime * fovChangeSpeed);
         }
 
 
@@ -362,7 +368,7 @@ public class PlayerMover : MonoBehaviour {
                 if (jumped) {
                     jumped = false;
                 }
-                canJump = true;
+                //canJump = true;
                 stateLocked = false;
                 rig.velocity = new Vector3(velocity.x, 0, velocity.z);
                 wasAirborne = false;
@@ -404,6 +410,7 @@ public class PlayerMover : MonoBehaviour {
     void HitGround() {
         if (Input.GetButton("Crouch") && canSlide) {
             sliding = true;
+            canJump = true;
             canSlide = false;
             crouching = false;
             sprinting = false;
@@ -416,14 +423,15 @@ public class PlayerMover : MonoBehaviour {
         }
         if (!sliding && (lastInputState != PlayerState.Crouch || currentState != PlayerState.Slide)) {
             groundMomentumLossTimer += Time.fixedDeltaTime;
-            if (groundMomentumLossTimer < groundMomentumTime) {
-                momentum -= momentum * groundMomentumLoss * Time.fixedDeltaTime * (1 / groundMomentumTime);
-            } else {
-                losingMomentum = false;
+            if (groundMomentumLossTimer >= groundMomentumTime) {
+                momentum -= momentum * groundMomentumLoss;
                 groundMomentumLossTimer = 0;
+                canJump = true;
+                losingMomentum = false;
             }
         } else {
             losingMomentum = false;
+            canJump = true;
             lastInputState = PlayerState.Crouch;
         }
     }

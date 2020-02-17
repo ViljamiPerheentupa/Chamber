@@ -10085,8 +10085,8 @@ MonoBehaviour:
   slideDuration: 0.8
   slideCooldown: 1
   jumpHeight: 3.5
-  groundMomentumLoss: 0.75
-  groundMomentumTime: 0.5
+  groundMomentumLoss: 0.6
+  groundMomentumTime: 0.12
   sprinting: 0
   sliding: 0
   crouching: 0
