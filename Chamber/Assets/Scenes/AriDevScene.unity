@@ -341,7 +341,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1304372276
 GameObject:
@@ -429,6 +429,7 @@ GameObject:
   - component: {fileID: 1387418214}
   - component: {fileID: 1387418213}
   - component: {fileID: 1387418217}
+  - component: {fileID: 1387418218}
   m_Layer: 5
   m_Name: Gunvas
   m_TagString: Untagged
@@ -509,7 +510,7 @@ RectTransform:
   m_Children:
   - {fileID: 1408267443}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -528,11 +529,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bc020f001b57be40a174e1861958790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadout: 000000000000000000000000
-  chamberIndex: 0
-  isReloading: 0
-  rotate: 0
-  reloadComplete: 0
   crosshair: {fileID: 0}
   chamberUI:
   - {fileID: 1472004181}
@@ -595,31 +591,13 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.58341503
-      value: 0.003352926
+      time: 0.44137096
+      value: -0.0011026403
       inSlope: 0.021850072
       outSlope: 0.021850072
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.15017176
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.7168439
-      value: 1.0458354
-      inSlope: 3.857283
-      outSlope: 3.857283
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.042138312
-      outWeight: 0.10054864
-    - serializedVersion: 3
-      time: 0.9842634
-      value: 1.1150833
-      inSlope: -2.5931916
-      outSlope: -2.5931916
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
@@ -633,6 +611,25 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!95 &1387418218
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387418212}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 67077c0f3bda017418015126f6c751c9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1408267442
 GameObject:
   m_ObjectHideFlags: 0
@@ -744,73 +741,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1472004179}
   m_CullTransparentMesh: 0
---- !u!1 &1825623933
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1825623935}
-  - component: {fileID: 1825623934}
-  m_Layer: 0
-  m_Name: Gun
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1825623934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1825623933}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bc020f001b57be40a174e1861958790, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  loadout: 000000000000000000000000
-  chamberIndex: 0
-  isReloading: 0
-  rotate: 0
-  reloadComplete: 0
-  crosshair: {fileID: 0}
-  chamberUI:
-  - {fileID: 1472004181}
-  - {fileID: 1304372278}
-  - {fileID: 679001282}
-  reloadDuration: 0.12
-  shootingDuration: 0.12
-  reloadCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  shootingCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!4 &1825623935
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1825623933}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1996990663
 GameObject:
   m_ObjectHideFlags: 0
