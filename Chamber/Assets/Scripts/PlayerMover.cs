@@ -145,7 +145,7 @@ public class PlayerMover : MonoBehaviour {
         if (!stateLocked || (isAirborne && lastInputState == PlayerState.Crouch) ) {
             CheckState();
         }
-        print(currentState + ", Momentum: " + momentum + " Last Input State: " + lastInputState);
+        //print(currentState + ", Momentum: " + momentum + " Last Input State: " + lastInputState);
     }
 
     private void FixedUpdate() {
