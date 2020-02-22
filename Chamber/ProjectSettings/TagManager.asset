@@ -6,6 +6,7 @@ TagManager:
   tags:
   - ChamberUI
   - PlayerObject
+  - Enemy
   layers:
   - Default
   - TransparentFX

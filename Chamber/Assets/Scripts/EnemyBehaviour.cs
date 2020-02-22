@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyBehaviour : MonoBehaviour
 { 
     public enum Enemystate { Idle, Alert, Hunt, Shoot, Hide, Sneak, Stunned };
 
@@ -26,7 +26,9 @@ public class EnemyAI : MonoBehaviour
 
     float timer;
     float alertTime = 5f;
-    float huntTime = 2.5f; 
+    float huntTime = 2.5f;
+    float stunTime = 5f;
+    float hideTime = 10f;
 
     UnityAction[] actions;
 
@@ -100,6 +102,14 @@ public class EnemyAI : MonoBehaviour
     void Hide() {
         if(previousES != Enemystate.Hide) {
             print("Hiding");
+            timer = Time.time + hideTime;
+            // Scan for possible places to hide
+            var pos = transform.position;
+            target = pos + transform.forward * -5f;
+            agent.destination = target;
+        }
+        if(Time.time > timer) {
+            es = Enemystate.Alert;
         }
     }
     void Sneak() {
@@ -109,7 +119,8 @@ public class EnemyAI : MonoBehaviour
     }
     void Stunned() {
         if(previousES != Enemystate.Stunned) {
-            timer = Time.time + .5f;
+            timer = Time.time + stunTime;
+            agent.destination = transform.position;
             print("Stunned");
         }
         if(Time.time > timer) {
@@ -135,8 +146,28 @@ public class EnemyAI : MonoBehaviour
             !Physics.Raycast(tPos, delta, len, layerMask);
     }
 
-    bool TookHit() {
-        return false;
+    #endregion
+
+    #region ShotReactions
+
+    public void GotStunned() {
+        es = Enemystate.Stunned;
+        print("Got stunned");
+    }
+
+    public void GotDamage() {
+        print("Took Damage");
+        es = Enemystate.Hide;
+    }
+
+    public void GotBlasted() {
+        print("Got blasted");
+        es = Enemystate.Alert;
+    }
+
+    public void LaughAtEmptyGun() {
+        es = Enemystate.Hunt;
+        print("Ha, Ha, Ha... you Amateur! You are dead now!");
     }
 
     #endregion
