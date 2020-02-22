@@ -12,7 +12,7 @@ public class EnemyAI : MonoBehaviour
     Enemystate memES;
     Enemystate previousES;
 
-    float[] detectionDistances = new float[] { 25f, 35f, 35f, 35f, 35f, 3543/7, 0 };
+    float[] detectionDistances = new float[] { 25f, 35f, 35f, 35f, 35f, 35f, 0 };
 
     GameObject player;
     Vector3 target;
@@ -126,7 +126,6 @@ public class EnemyAI : MonoBehaviour
     }
 
     bool PlayerSeen() {
-        // angle of transform forward to player and raycast
         var pPos = player.transform.position;
         var tPos = transform.position;
         var delta = pPos - tPos;
