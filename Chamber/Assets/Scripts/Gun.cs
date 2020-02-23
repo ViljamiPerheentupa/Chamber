@@ -7,9 +7,10 @@ using UnityEngine.UI;
 
 public class Gun : MonoBehaviour
 {
-    public enum AmmoType { Empty, Fire, Water, Air };
+    public enum AmmoType { Empty, Piercing, eShock, AirBlast };
     AmmoType[] loadout = new AmmoType[3];
     Animator anim;
+    Camera cam;    
     public Color[] colors;
 
     int chamberIndex = 0;
@@ -39,6 +40,7 @@ public class Gun : MonoBehaviour
             if(IsEmpty()) {
                 // Play empty shot sound
                 print("Click");
+                Fire(loadout[chamberIndex]);
                 return;
             } else {
                 StopReloading();
@@ -66,6 +68,24 @@ public class Gun : MonoBehaviour
 
     void Fire(AmmoType type) {
         print("Bäng");
+        RaycastHit hit;
+        if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit)){
+            print(hit.transform.gameObject);
+            if(hit.transform.gameObject.tag == "Enemy") {
+                var eb = hit.transform.GetComponent<EnemyBehaviour>();
+                if(eb != null) {
+                    if(type == AmmoType.eShock)
+                        eb.GotStunned();
+                    else if(type == AmmoType.AirBlast)
+                        eb.GotBlasted();
+                    else if(type == AmmoType.Piercing)
+                        eb.GotDamage();
+                    else
+                        eb.LaughAtEmptyGun();
+
+                }
+            }
+        }
         // Todo: Raycast, choose corresponding sound effect 
     }
 
@@ -95,11 +115,11 @@ public class Gun : MonoBehaviour
         // Set Crosshair slot color
         if(ammo == AmmoType.Empty)
             chamberUI[chamber].color = colors[0];
-        if(ammo == AmmoType.Fire)
+        if(ammo == AmmoType.Piercing)
             chamberUI[chamber].color = colors[1];
-        if(ammo == AmmoType.Water)
+        if(ammo == AmmoType.eShock)
             chamberUI[chamber].color = colors[2];
-        if(ammo == AmmoType.Air)
+        if(ammo == AmmoType.AirBlast)
             chamberUI[chamber].color = colors[3];
 
         // Rotate cylinder
@@ -187,13 +207,13 @@ public class Gun : MonoBehaviour
 
         if(isReloading) {
             if(Input.GetKeyDown("1")) {
-                LoadChamber(AmmoType.Fire);
+                LoadChamber(AmmoType.Piercing);
             }
             if(Input.GetKeyDown("2")) {
-                LoadChamber(AmmoType.Water);
+                LoadChamber(AmmoType.eShock);
             }
             if(Input.GetKeyDown("3")) {
-                LoadChamber(AmmoType.Air);
+                LoadChamber(AmmoType.AirBlast);
             }
         }
 
@@ -203,6 +223,7 @@ public class Gun : MonoBehaviour
         }
     }
     private void Start() {
+        cam = Camera.main;
         crosshair = GameObject.Find("Crosshair").transform;
         anim = GetComponent<Animator>();
         StartReloading();
