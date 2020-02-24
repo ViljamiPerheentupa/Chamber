@@ -33,6 +33,7 @@ public class Gun : MonoBehaviour
     public AnimationCurve reloadCurve;
     public AnimationCurve shootingCurve;
 
+    public LayerMask layerMask;
     void PullTrigger() {
 
         // if reloading, stop
@@ -69,7 +70,7 @@ public class Gun : MonoBehaviour
     void Fire(AmmoType type) {
         print("Bäng");
         RaycastHit hit;
-        if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit)){
+        if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity,  layerMask)){
             print(hit.transform.gameObject);
             if(hit.transform.gameObject.tag == "Enemy") {
                 var eb = hit.transform.GetComponent<EnemyBehaviour>();
@@ -82,7 +83,6 @@ public class Gun : MonoBehaviour
                         eb.GotDamage();
                     else
                         eb.LaughAtEmptyGun();
-
                 }
             }
         }
@@ -225,6 +225,7 @@ public class Gun : MonoBehaviour
     private void Start() {
         cam = Camera.main;
         crosshair = GameObject.Find("Crosshair").transform;
+        layerMask = LayerMask.GetMask(new string[] { "Environment", "Enemy" });
         anim = GetComponent<Animator>();
         StartReloading();
     }
