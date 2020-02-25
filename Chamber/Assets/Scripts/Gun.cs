@@ -72,6 +72,12 @@ public class Gun : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity,  layerMask)){
             print(hit.transform.gameObject);
+            if(type == AmmoType.Piercing) {
+                if(hit.transform.gameObject.tag == "Hitspot") {
+                    hit.transform.GetComponent<EnemyHitspot>().HitspotHit();
+                    print("Hit");
+                }
+            }
             if(hit.transform.gameObject.tag == "Enemy") {
                 var eb = hit.transform.GetComponent<EnemyBehaviour>();
                 if(eb != null) {
