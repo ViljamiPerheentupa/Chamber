@@ -32,12 +32,22 @@ public class EnemyBehaviour : MonoBehaviour
 
     UnityAction[] actions;
 
+    int hidingSpotCount = 8;
+    float hidingSpotOffset = 25f;
+    Vector3[] hidingPointOffsets;
+
     void Start() {
         es = Enemystate.Idle;
         player = GameObject.Find("PlayerBody");
         agent = GetComponent<NavMeshAgent>();
         actions = new UnityAction[] { Idle, Alert, Hunt, Shoot, Hide, Sneak, Stunned };
         layerMask = LayerMask.GetMask(new string[] { "Environment" });
+        hidingPointOffsets = new Vector3[hidingSpotCount];
+        hidingPointOffsets[0] = Quaternion.Euler(0, (360f/hidingSpotCount)/2, 0) * new Vector3(0, 1f, hidingSpotOffset);
+        Quaternion rotAmount = Quaternion.Euler(0, 360f / hidingSpotCount, 0);
+        for(int i = 1; i < hidingSpotCount; i++) {
+            hidingPointOffsets[i] = rotAmount * hidingPointOffsets[i - 1];
+        }
     }
 
     #region Actions
@@ -103,11 +113,24 @@ public class EnemyBehaviour : MonoBehaviour
         if(previousES != Enemystate.Hide) {
             print("Hiding");
             timer = Time.time + hideTime;
+
             // Scan for possible places to hide
-            var pos = transform.position;
-            target = pos + transform.forward * -5f;
-            agent.destination = target;
+            for(int i = 0; i < hidingPointOffsets.Length; i++) {
+                // Is not inside wall
+                var p = transform.position + hidingPointOffsets[i];
+               
+                Collider[] hitColliders = Physics.OverlapSphere(p, 0.1f, layerMask);
+                if(hitColliders.Length == 0) {
+                    // Player does not see the point
+                    if(Physics.Raycast(p, player.transform.position, Mathf.Infinity, layerMask)) {
+                        target = p;
+                        agent.destination = target;
+                        return;
+                    }
+                }
+            }
         }
+
         if(Time.time > timer) {
             es = Enemystate.Alert;
         }
@@ -167,7 +190,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void LaughAtEmptyGun() {
         es = Enemystate.Hunt;
-        print("Ha, Ha, Ha... you Amateur! You are dead now!");
+        print("Ha, Ha, Ha... You Amateur! You are dead now!");
     }
 
     #endregion
@@ -176,5 +199,13 @@ public class EnemyBehaviour : MonoBehaviour
         memES = es;
         actions[(int)es]();
         previousES = memES;
+    }
+    private void OnDrawGizmos() {
+        if(hidingPointOffsets != null) {
+            for(int i = 0; i < hidingPointOffsets.Length; i++) {
+                var pos = transform.position + hidingPointOffsets[i];
+                Gizmos.DrawSphere(pos, 0.1f);
+            }
+        }
     }
 }
