@@ -85,6 +85,9 @@ public class Gun : MonoBehaviour
                         eb.LaughAtEmptyGun();
                 }
             }
+            if(hit.transform.gameObject.layer == LayerMask.NameToLayer("Interactable") && hit.transform.gameObject.tag == "Shockable") {
+
+            }
         }
         // Todo: Raycast, choose corresponding sound effect 
     }
