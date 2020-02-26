@@ -8,6 +8,7 @@ TagManager:
   - PlayerObject
   - Enemy
   - Hitspot
+  - Interactable
   layers:
   - Default
   - TransparentFX

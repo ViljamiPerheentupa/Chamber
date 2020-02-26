@@ -29,6 +29,10 @@ public class Gun : MonoBehaviour
     public float reloadDuration = .12f;
     public float shootingDuration = .12f;
     float rotateTimer = 0;
+    public float airblastRadius = 5f;
+    public float airblastForceOthers = 500;
+    public float airblastUpwardForce = 0.2f;
+    public float airblastForcePlayer = 10;
 
     public AnimationCurve reloadCurve;
     public AnimationCurve shootingCurve;
@@ -68,17 +72,31 @@ public class Gun : MonoBehaviour
     }
 
     void Fire(AmmoType type) {
-        print("Bäng");
+        //print("Bäng");
         RaycastHit hit;
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity,  layerMask)){
             print(hit.transform.gameObject);
-            if(type == AmmoType.Piercing) {
-                if(hit.transform.gameObject.tag == "Hitspot") {
-                    hit.transform.GetComponent<EnemyHitspot>().HitspotHit();
-                    print("Hit");
+            if (type == AmmoType.AirBlast) {
+                var objectsHit = Physics.OverlapSphere(hit.point, airblastRadius, layerMask);
+                foreach (Collider col in objectsHit) {
+                    var rb = col.GetComponent<Rigidbody>();
+                    if (rb != null) {
+                        rb.AddExplosionForce(airblastForceOthers, hit.point, airblastRadius);
+                    }
+                }
+                var player = GameObject.FindGameObjectWithTag("PlayerObject").GetComponent<Rigidbody>();
+                var distance = Vector3.Distance(hit.point, player.transform.position);
+                if (distance < airblastRadius) {
+                    player.GetComponent<PlayerMover>().airblastin = true;
+                    player.GetComponent<PlayerMover>().lastInputState = PlayerState.Airborne;
+                    player.velocity = new Vector3(player.velocity.x, 0, player.velocity.z);
+                    player.AddForce((player.position - hit.point) * airblastForcePlayer * (airblastRadius / distance), ForceMode.VelocityChange);
                 }
             }
-            if(hit.transform.gameObject.tag == "Enemy") {
+            if (hit.transform.gameObject.tag == "Hitspot" && type == AmmoType.Piercing) {
+                hit.transform.GetComponent<EnemyHitspot>().HitspotHit();
+            }
+            if (hit.transform.gameObject.tag == "Enemy") {
                 var eb = hit.transform.GetComponent<EnemyBehaviour>();
                 if(eb != null) {
                     if(type == AmmoType.eShock)
@@ -91,8 +109,11 @@ public class Gun : MonoBehaviour
                         eb.LaughAtEmptyGun();
                 }
             }
-            if(hit.transform.gameObject.layer == LayerMask.NameToLayer("Interactable") && hit.transform.gameObject.tag == "Shockable") {
-
+            if(hit.transform.gameObject.tag == "Interactable") {
+                var ih = hit.transform.GetComponent<Trigger>();
+                if (ih != null) {
+                    ih.ShootTrigger(type);
+                }
             }
         }
         // Todo: Raycast, choose corresponding sound effect 
@@ -125,11 +146,11 @@ public class Gun : MonoBehaviour
         if(ammo == AmmoType.Empty)
             chamberUI[chamber].color = colors[0];
         if(ammo == AmmoType.Piercing)
-            chamberUI[chamber].color = colors[1];
+            chamberUI[chamber].color = colors[3];
         if(ammo == AmmoType.eShock)
             chamberUI[chamber].color = colors[2];
         if(ammo == AmmoType.AirBlast)
-            chamberUI[chamber].color = colors[3];
+            chamberUI[chamber].color = colors[1];
 
         // Rotate cylinder
         SetUICylinderTargetRotation(false);

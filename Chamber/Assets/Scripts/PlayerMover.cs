@@ -55,6 +55,8 @@ public class PlayerMover : MonoBehaviour {
     bool isAirborne = false;
     bool isMoving = false;
     bool losingMomentum = false;
+    bool saveMomentumOnce = true;
+    float savedMomentum;
     float normalFoV;
     float maxFoV;
     float targetFoV;
@@ -62,7 +64,7 @@ public class PlayerMover : MonoBehaviour {
     public float fovChangeSpeed = 5;
 
     PlayerState currentState = PlayerState.Normal;
-    PlayerState lastInputState = PlayerState.Empty;
+    public PlayerState lastInputState = PlayerState.Empty;
     public bool stateLocked = false;
 
     Animator anim;
@@ -76,6 +78,7 @@ public class PlayerMover : MonoBehaviour {
     bool wasAirborne = false;
     bool goingUp = false;
     Vector3 lastPosition;
+    public bool airblastin = false;
     void Start() {
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -162,6 +165,9 @@ public class PlayerMover : MonoBehaviour {
 
         if (isAirborne) {
             wasAirborne = true;
+            if(vertical == 0 && horizontal == 0) {
+                lastInput = Vector3.zero;
+            }
             AirborneCheck();
         }
 
@@ -181,22 +187,22 @@ public class PlayerMover : MonoBehaviour {
         Vector3 velocity = inputVector * momentum * Time.fixedDeltaTime * movementSpeedMultiplier;
         CheckInputDirectionHorizontal(inputVector, velocity);
         CheckInputDirectionVertical(inputVector, velocity);
-        if (HasMomentum() && isMoving && !sliding && !isAirborne) {
+        if (HasMomentum() && isMoving && !sliding && !isAirborne && !airblastin) {
             rig.velocity = velocity;
         }
-        if (sliding && !isAirborne) {
+        if (sliding && !isAirborne && !airblastin) {
             velocity = momentum * lastInput * Time.fixedDeltaTime * movementSpeedMultiplier;
             rig.velocity = velocity;
         }
-        if (HasMomentum() && !isMoving && !isAirborne) {
+        if (HasMomentum() && !isMoving && !isAirborne && !airblastin) {
             velocity = momentum * lastInput * Time.fixedDeltaTime * movementSpeedMultiplier;
             rig.velocity = velocity;
         }
-        if (!HasMomentum() && !isMoving && !isAirborne) {
+        if (!HasMomentum() && !isMoving && !isAirborne && !airblastin) {
             rig.velocity = Vector3.zero;
         }
         if (isAirborne) {
-            rig.velocity = new Vector3(rig.velocity.x + (inputVector.x * inAirControl), rig.velocity.y, rig.velocity.z);
+            rig.AddForce(inputVector * inAirControl, ForceMode.VelocityChange);
         }
 
 
@@ -323,7 +329,7 @@ public class PlayerMover : MonoBehaviour {
                 Camera.main.gameObject.GetComponent<CopyPosition>().crouching = true;
                 anim.Play("BodyCrouch");
             }
-            if (momentum >= slideMomentumRequirement && canSlide) {
+            if (momentum >= slideMomentumRequirement && canSlide && !isAirborne) {
                 currentState = PlayerState.Slide;
                 canSlide = false;
                 sprinting = false;
@@ -362,6 +368,7 @@ public class PlayerMover : MonoBehaviour {
     void CheckGround(Vector3 velocity) {
         if (Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundCheckMask) && checkGround) {
             isAirborne = false;
+            airblastin = false;
             rig.useGravity = false;
             if (wasAirborne) {
                 //print("Hit ground");
@@ -408,13 +415,20 @@ public class PlayerMover : MonoBehaviour {
     }
 
     void HitGround() {
-        if (Input.GetButton("Crouch") && canSlide) {
+        if (saveMomentumOnce && !sliding) {
+            savedMomentum = momentum;
+            momentum -= momentum * groundMomentumLoss;
+            saveMomentumOnce = false;
+        }
+        if (Input.GetButton("Crouch")) {
+            momentum = savedMomentum;
             sliding = true;
             canJump = true;
             canSlide = false;
             crouching = false;
             sprinting = false;
             currentState = PlayerState.Slide;
+            saveMomentumOnce = true;
             losingMomentum = false;
             return;
         }
@@ -424,15 +438,16 @@ public class PlayerMover : MonoBehaviour {
         if (!sliding && (lastInputState != PlayerState.Crouch || currentState != PlayerState.Slide)) {
             groundMomentumLossTimer += Time.fixedDeltaTime;
             if (groundMomentumLossTimer >= groundMomentumTime) {
-                momentum -= momentum * groundMomentumLoss;
                 groundMomentumLossTimer = 0;
                 canJump = true;
                 losingMomentum = false;
+                saveMomentumOnce = true;
             }
-        } else {
-            losingMomentum = false;
-            canJump = true;
-            lastInputState = PlayerState.Crouch;
+        //} else {
+        //    losingMomentum = false;
+        //    canJump = true;
+        //    lastInputState = PlayerState.Crouch;
+        //    saveMomentumOnce = true;
         }
     }
 
