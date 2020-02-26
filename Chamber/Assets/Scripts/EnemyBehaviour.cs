@@ -32,8 +32,10 @@ public class EnemyBehaviour : MonoBehaviour
 
     UnityAction[] actions;
 
-    int hidingSpotCount = 8;
-    float hidingSpotOffset = 25f;
+    int hidingSpotsPerCircle = 8;
+    int hidingSpotCircles = 4;
+    float hidingSpotOffsetFactor = 5f;
+
     Vector3[] hidingPointOffsets;
 
     void Start() {
@@ -42,11 +44,17 @@ public class EnemyBehaviour : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         actions = new UnityAction[] { Idle, Alert, Hunt, Shoot, Hide, Sneak, Stunned };
         layerMask = LayerMask.GetMask(new string[] { "Environment" });
-        hidingPointOffsets = new Vector3[hidingSpotCount];
-        hidingPointOffsets[0] = Quaternion.Euler(0, (360f/hidingSpotCount)/2, 0) * new Vector3(0, 1f, hidingSpotOffset);
-        Quaternion rotAmount = Quaternion.Euler(0, 360f / hidingSpotCount, 0);
-        for(int i = 1; i < hidingSpotCount; i++) {
-            hidingPointOffsets[i] = rotAmount * hidingPointOffsets[i - 1];
+        hidingPointOffsets = new Vector3[hidingSpotsPerCircle * hidingSpotCircles];
+        //hidingPointOffsets[0] = Quaternion.Euler(0, (360f/hidingSpotsPerCircle)/2, 0) * new Vector3(0, 0, hidingSpotOffsetFactor);
+        Vector3 spotPrototype = Quaternion.Euler(0, (360f / hidingSpotsPerCircle) / 2, 0) * new Vector3(0, 0, hidingSpotOffsetFactor);
+        //Quaternion rotAmount = Quaternion.Euler(0, 360f / hidingSpotsPerCircle, 0);
+        for(int i = 0; i < hidingPointOffsets.Length; i++) {
+            for(int j = 0; j < hidingSpotCircles; j++) {
+                for(int k = 0; k < hidingSpotsPerCircle; k++) {
+                    Quaternion rotAmount = Quaternion.Euler(0, (360f / hidingSpotsPerCircle) * (1+k), 0);
+                    hidingPointOffsets[k + j * hidingSpotsPerCircle] = rotAmount * new Vector3(0,0, hidingSpotOffsetFactor * (1+j));
+                }
+            }
         }
     }
 
@@ -125,6 +133,8 @@ public class EnemyBehaviour : MonoBehaviour
                     if(Physics.Raycast(p, player.transform.position, Mathf.Infinity, layerMask)) {
                         target = p;
                         agent.destination = target;
+                        // Todo: is there a path to point
+
                         return;
                     }
                 }
@@ -204,7 +214,7 @@ public class EnemyBehaviour : MonoBehaviour
         if(hidingPointOffsets != null) {
             for(int i = 0; i < hidingPointOffsets.Length; i++) {
                 var pos = transform.position + hidingPointOffsets[i];
-                Gizmos.DrawSphere(pos, 0.1f);
+                Gizmos.DrawSphere(pos, 0.25f);
             }
         }
     }
