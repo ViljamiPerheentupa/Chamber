@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1cb7e9e120078f43bce4f0b1be547a7, type: 3}
   m_Name: AmbientOcclusion
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1
@@ -49,6 +49,34 @@ MonoBehaviour:
   quality:
     overrideState: 1
     value: 2
+--- !u!114 &-2358527655472319851
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d65e486e4de6e5448a8fbb43dc8756a0, type: 3}
+  m_Name: Grain
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  colored:
+    overrideState: 1
+    value: 1
+  intensity:
+    overrideState: 1
+    value: 0.372
+  size:
+    overrideState: 1
+    value: 0.84
+  lumContrib:
+    overrideState: 1
+    value: 0.871
 --- !u!114 &-444025133608712609
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -108,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a34fa72bd4185749832024e9c8010bf, type: 3}
   m_Name: ScreenSpaceReflections
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1
@@ -151,6 +179,8 @@ MonoBehaviour:
   - {fileID: -59443865157690528}
   - {fileID: 8848130001995007866}
   - {fileID: -444025133608712609}
+  - {fileID: -2358527655472319851}
+  - {fileID: 4849302623508048336}
 --- !u!114 &4628435254766200414
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1462,6 +1492,32 @@ MonoBehaviour:
       - 0.5
       - 0.5
       - 0.5
+--- !u!114 &4849302623508048336
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6050e2d5de785ce4d931e4dbdbf2d755, type: 3}
+  m_Name: ChromaticAberration
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  spectralLut:
+    overrideState: 1
+    value: {fileID: 0}
+    defaultState: 1
+  intensity:
+    overrideState: 1
+    value: 0.168
+  fastMode:
+    overrideState: 1
+    value: 0
 --- !u!114 &8848130001995007866
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1489,13 +1545,13 @@ MonoBehaviour:
     value: {x: 0.5, y: 0.5}
   intensity:
     overrideState: 1
-    value: 0.432
+    value: 0.595
   smoothness:
     overrideState: 1
-    value: 1
+    value: 0.527
   roundness:
     overrideState: 1
-    value: 0.568
+    value: 0.708
   rounded:
     overrideState: 0
     value: 0
