@@ -3353,7 +3353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fea2a91b92f6234695d2c28e557faa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToRealLetter: 3.5
+  timeToRealLetter: 2
   timeToSwitch: 0.06
 --- !u!114 &226367270
 MonoBehaviour:
@@ -13861,7 +13861,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fea2a91b92f6234695d2c28e557faa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToRealLetter: 4
+  timeToRealLetter: 2
   timeToSwitch: 0.06
 --- !u!114 &785797760
 MonoBehaviour:
@@ -17236,7 +17236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fea2a91b92f6234695d2c28e557faa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToRealLetter: 3
+  timeToRealLetter: 2
   timeToSwitch: 0.06
 --- !u!114 &906881261
 MonoBehaviour:
@@ -30602,7 +30602,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fea2a91b92f6234695d2c28e557faa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToRealLetter: 5
+  timeToRealLetter: 2
   timeToSwitch: 0.06
 --- !u!114 &1514698937
 MonoBehaviour:
@@ -48177,7 +48177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fea2a91b92f6234695d2c28e557faa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToRealLetter: 2.5
+  timeToRealLetter: 2
   timeToSwitch: 0.06
 --- !u!114 &2096892825
 MonoBehaviour:
@@ -48348,7 +48348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fea2a91b92f6234695d2c28e557faa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToRealLetter: 4.5
+  timeToRealLetter: 2
   timeToSwitch: 0.06
 --- !u!114 &2097935501
 MonoBehaviour:
