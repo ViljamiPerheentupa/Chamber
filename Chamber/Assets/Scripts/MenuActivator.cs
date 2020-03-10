@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuActivator : MonoBehaviour
 {
@@ -10,5 +11,9 @@ public class MenuActivator : MonoBehaviour
             button.SetActive(true);
             button.GetComponent<MenuButtonEnabler>().FadeIn();
         }
+    }
+
+    public void StartGame() {
+        SceneManager.LoadScene("TutorialScene");
     }
 }
