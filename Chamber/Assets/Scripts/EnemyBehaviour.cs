@@ -7,6 +7,9 @@ using UnityEngine.Events;
 public class EnemyBehaviour : MonoBehaviour
 { 
     public enum Enemystate { Idle, Alert, Hunt, Shoot, Hide, Sneak, Stunned };
+    public enum EnemyType { Explodey, Shooty };
+
+    public EnemyType et;
 
     public Enemystate es;
     Enemystate memES;
@@ -37,6 +40,17 @@ public class EnemyBehaviour : MonoBehaviour
     float hidingSpotOffsetFactor = 5f;
 
     Vector3[] hidingPointOffsets;
+
+    public float explodeDistance = 2;
+    public Color changeColor;
+    public float colorChangeSpeed = 1.5f;
+    public float explodeTime = 1.5f;
+    float explodeTimer = 0;
+    public LayerMask explodeMask;
+    public int explodeDamage = 40;
+    public float explosionForce = 500;
+    public float explosionRadius = 5;
+    public float playerExplosionForce = 1.5f;
 
     void Start() {
         es = Enemystate.Idle;
@@ -92,21 +106,57 @@ public class EnemyBehaviour : MonoBehaviour
         }
     }
     void Hunt() {
-        if(previousES != Enemystate.Hunt) {
-            timer = Time.time + huntTime; ;
-            print("Hunting");
+        if (et == EnemyType.Explodey) {
+            if (Vector3.Distance(player.transform.position, transform.position) < explodeDistance) {
+                agent.destination = transform.position;
+                Explode();
+                return;
+            }
+            if (previousES != Enemystate.Hunt) {
+                timer = Time.time + huntTime; ;
+                print("Hunting");
+            }
+            if (PlayerSeen()) {
+                target = player.transform.position;
+                agent.destination = target;
+                return;
+            } else if (PlayerHeard()) {
+                es = Enemystate.Alert;
+                return;
+            }
+            if (Time.time > timer) {
+                es = Enemystate.Alert;
+            }
         }
-        if(PlayerSeen()) {
-            target = player.transform.position;
-            agent.destination = target;
-            return;
-        } else if(PlayerHeard()) {
-            es = Enemystate.Alert;
-            return;
+    }
+
+    void Explode() {
+        ChangeColor();
+        explodeTimer += Time.deltaTime;
+        if (explodeTimer >= explodeTime) {
+            if (Vector3.Distance(player.transform.position, transform.position) < explosionRadius) {
+                var distance = Vector3.Distance(player.transform.position, transform.position);
+                player.GetComponent<IPlayerDamage>().TakeDamage(explodeDamage);
+                var pr = player.GetComponent<Rigidbody>();
+                player.GetComponent<PlayerMover>().airblastin = true;
+                player.GetComponent<PlayerMover>().lastInputState = PlayerState.Airborne;
+                pr.velocity = new Vector3(pr.velocity.x, 0, pr.velocity.z);
+                pr.AddForce((pr.position - transform.position) * playerExplosionForce * (explosionRadius / distance), ForceMode.VelocityChange);
+            }
+            var colliders = Physics.OverlapSphere(transform.position, explosionRadius, explodeMask);
+            foreach (Collider ec in colliders){
+                var ecRig = ec.GetComponent<Rigidbody>();
+                if (ecRig != null) {
+                    ecRig.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1);
+                }
+            }
+            Destroy(gameObject);
         }
-        if(Time.time > timer) {
-            es = Enemystate.Alert;
-        }
+    }
+
+    void ChangeColor() {
+        var mat = GetComponent<MeshRenderer>().material;
+        mat.color = new Color(Mathf.Lerp(mat.color.r, changeColor.r, colorChangeSpeed * Time.deltaTime), Mathf.Lerp(mat.color.g, changeColor.g, colorChangeSpeed * Time.deltaTime), Mathf.Lerp(mat.color.b, changeColor.b, colorChangeSpeed * Time.deltaTime));
     }
 
     void Shoot() {

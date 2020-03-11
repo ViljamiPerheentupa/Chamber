@@ -71,6 +71,12 @@ public class PlayerMover : MonoBehaviour {
 
     Transform groundCheck;
     public float groundCheckRadius = 0.2f;
+    public float ledgeCheck = 0.35f;
+    public float playerRadius = 0.25f;
+    public float stepCheck = 0.2f;
+    bool inputInWall = false;
+    float lastHorizontal;
+    float lastVertical;
     public LayerMask groundCheckMask;
     bool isInGround = false;
     bool checkGround = true;
@@ -79,6 +85,11 @@ public class PlayerMover : MonoBehaviour {
     bool goingUp = false;
     Vector3 lastPosition;
     public bool airblastin = false;
+
+    Vector3 targetPosition;
+    RaycastHit stepCheckHit;
+    bool hadTargetPosition = false;
+    bool onSlope = false;
     void Start() {
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -99,12 +110,18 @@ public class PlayerMover : MonoBehaviour {
             isMoving = true;
             lastInput = transform.TransformDirection(new Vector3(horizontal, 0, vertical));
         } else isMoving = false;
-        if (Input.GetButtonDown("Sprint") && !sprinting && isMoving) {
+        if (vertical != lastVertical && vertical != 0) {
+            momentum /= 2;
+        }
+        if (horizontal != lastHorizontal && horizontal != 0 && vertical == 0) {
+            momentum /= 2;
+        }
+        if (Input.GetButton("Sprint") && !sprinting && isMoving) {
             lastInputState = PlayerState.Sprint;
             sprinting = true;
             return;
         }
-        if (Input.GetButtonDown("Sprint") && sprinting) {
+        if (Input.GetButtonUp("Sprint") && sprinting) {
             lastInputState = PlayerState.Normal;
             return;
         }
@@ -148,83 +165,135 @@ public class PlayerMover : MonoBehaviour {
         if (!stateLocked || (isAirborne && lastInputState == PlayerState.Crouch) ) {
             CheckState();
         }
+        //if (inputInWall && (horizontal != lastHorizontal || vertical != lastVertical)) {
+        //    inputInWall = false;
+        //}
         //print(currentState + ", Momentum: " + momentum + " Last Input State: " + lastInputState);
     }
 
+    bool HasTargetPosition() {
+        return targetPosition != Vector3.zero;
+    }
+
     private void FixedUpdate() {
-        if (Physics.Raycast(groundCheck.position + Vector3.down * groundCheckRadius, Vector3.up, 0.01f, groundCheckMask)) {
-            Debug.DrawRay(groundCheck.position + Vector3.down * groundCheckRadius, Vector3.up * 0.01f, Color.red);
-            isInGround = true;
-            rig.position += Vector3.up * 0.01f;
-            print("Stuck in geometry!");
+        if (HasTargetPosition()) {
+            print("NEW TARGET POSITION!");
+            rig.position = targetPosition;
+            targetPosition = Vector3.zero;
+            return;
         } else {
-            isInGround = false;
-            Debug.DrawRay(groundCheck.position + Vector3.down * groundCheckRadius, Vector3.up * 0.01f, Color.green);
-        }
-
-
-        if (isAirborne) {
-            wasAirborne = true;
-            if(vertical == 0 && horizontal == 0) {
-                lastInput = Vector3.zero;
+            if (vertical != 0 || horizontal != 0) {
+                lastVertical = vertical;
+                lastHorizontal = horizontal;
             }
-            AirborneCheck();
-        }
 
 
-        if (losingMomentum) {
-            HitGround();
-        } else Momentum();
-        Vector3 inputVector = new Vector3(horizontal, 0, vertical);
-        inputVector = transform.TransformDirection(inputVector);
-
-        if (jumped && canJump) {
-            rig.AddForce(new Vector3(0, Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y), 0), ForceMode.VelocityChange);
-            canJump = false;
-        }
-
-
-        Vector3 velocity = inputVector * momentum * Time.fixedDeltaTime * movementSpeedMultiplier;
-        CheckInputDirectionHorizontal(inputVector, velocity);
-        CheckInputDirectionVertical(inputVector, velocity);
-        if (HasMomentum() && isMoving && !sliding && !isAirborne && !airblastin) {
-            rig.velocity = velocity;
-        }
-        if (sliding && !isAirborne && !airblastin) {
-            velocity = momentum * lastInput * Time.fixedDeltaTime * movementSpeedMultiplier;
-            rig.velocity = velocity;
-        }
-        if (HasMomentum() && !isMoving && !isAirborne && !airblastin) {
-            velocity = momentum * lastInput * Time.fixedDeltaTime * movementSpeedMultiplier;
-            rig.velocity = velocity;
-        }
-        if (!HasMomentum() && !isMoving && !isAirborne && !airblastin) {
-            rig.velocity = Vector3.zero;
-        }
-        if (isAirborne) {
-            rig.AddForce(inputVector * inAirControl, ForceMode.VelocityChange);
-        }
-
-
-        if (momentum > fovMomentumDeadzone && Camera.main.fieldOfView < maxFoV) {
-            targetFoV = normalFoV + (1f * (momentum - fovMomentumDeadzone) / 10);
-            if (targetFoV > maxFoV) {
-                targetFoV = maxFoV;
+            Vector3 groundLevel = groundCheck.position + Vector3.down * groundCheckRadius;
+            if (Physics.Raycast(groundLevel, Vector3.up, 0.01f, groundCheckMask)) {
+                Debug.DrawRay(groundLevel, Vector3.up * 0.5f, Color.red);
+                isInGround = true;
+                rig.position += Vector3.up * 0.01f;
+                print("Stuck in geometry!");
+            } else {
+                isInGround = false;
+                Debug.DrawRay(groundLevel, Vector3.up * 0.5f, Color.green);
             }
-        }
-        if (momentum <= fovMomentumDeadzone) {
-            if (targetFoV > normalFoV) {
-                targetFoV = Mathf.Lerp(targetFoV, normalFoV, Time.deltaTime * 2);
-            } else targetFoV = normalFoV;
-        }
-        if (Camera.main.fieldOfView != targetFoV) {
-            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, targetFoV, Time.fixedDeltaTime * fovChangeSpeed);
-        }
 
 
-        CheckGround(velocity);
-        if (currentState == PlayerState.Airborne) {
-            isAirborne = true;
+            if (isAirborne) {
+                wasAirborne = true;
+                if (vertical == 0 && horizontal == 0) {
+                    lastInput = Vector3.zero;
+                }
+                AirborneCheck();
+            }
+
+
+            if (losingMomentum) {
+                HitGround();
+            } else Momentum();
+            Vector3 inputVector = new Vector3(horizontal, 0, vertical);
+            inputVector = transform.TransformDirection(inputVector);
+
+
+            if (jumped && canJump) {
+                rig.AddForce(new Vector3(0, Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y), 0), ForceMode.VelocityChange);
+                canJump = false;
+            }
+
+
+            Vector3 velocity = inputVector * momentum * Time.fixedDeltaTime * movementSpeedMultiplier;
+            CheckInputDirectionHorizontal(inputVector, velocity);
+            CheckInputDirectionVertical(inputVector, velocity);
+
+            Vector3 lastInputs = new Vector3(lastHorizontal, 0, lastVertical);
+            lastInputs = transform.TransformDirection(lastInputs);
+            Debug.DrawRay(groundLevel, lastInputs * playerRadius, Color.blue);
+            if (Physics.Raycast(groundLevel, lastInputs, lastInputs.magnitude * playerRadius, groundCheckMask) && !inputInWall && !isAirborne && !onSlope) {
+                if (Physics.Raycast(groundLevel + (Vector3.up * stepCheck), lastInputs, lastInputs.magnitude * playerRadius, groundCheckMask) && !inputInWall) {
+                    inputInWall = true;
+                    rig.velocity = Vector3.zero;
+                    onSlope = false;
+                } else {
+                    //Physics.Raycast(groundCheck.position/* + (inputVector * playerRadius)*/ + (Vector3.up * stepCheck) + (velocity * Time.fixedDeltaTime), Vector3.down, out stepCheckHit, Mathf.Infinity, groundCheckMask);
+                    //targetPosition = stepCheckHit.point + (rig.position - (groundCheck.position) + (Vector3.up * groundCheckRadius));
+                    onSlope = true;
+                }
+            }
+            if (onSlope) {
+                
+                if (Physics.Raycast(groundLevel, lastInputs, lastInputs.magnitude * playerRadius, groundCheckMask)) {
+                    if (Physics.Raycast(groundLevel + (Vector3.up * stepCheck), lastInputs, lastInputs.magnitude * playerRadius, groundCheckMask)) {
+                        onSlope = false;
+                    }
+                } else onSlope = false;
+            }
+
+
+            if (!Physics.Raycast(groundCheck.position + inputVector * playerRadius, velocity, velocity.magnitude * Time.fixedDeltaTime, groundCheckMask) && inputVector != Vector3.zero) {
+                inputInWall = false;
+            }
+
+
+            if (HasMomentum() && isMoving && !sliding && !isAirborne && !airblastin && !inputInWall) {
+                rig.velocity = velocity;
+            }
+            if (sliding && !isAirborne && !airblastin) {
+                velocity = momentum * lastInput * Time.fixedDeltaTime * movementSpeedMultiplier;
+                rig.velocity = velocity;
+            }
+            if (HasMomentum() && !isMoving && !isAirborne && !airblastin && !inputInWall) {
+                velocity = momentum * lastInput * Time.fixedDeltaTime * movementSpeedMultiplier;
+                rig.velocity = velocity;
+            }
+            if (!HasMomentum() && !isMoving && !isAirborne && !airblastin) {
+                rig.velocity = Vector3.zero;
+            }
+            if (isAirborne) {
+                rig.AddForce(inputVector * inAirControl, ForceMode.VelocityChange);
+            }
+
+
+            if (momentum > fovMomentumDeadzone && Camera.main.fieldOfView < maxFoV) {
+                targetFoV = normalFoV + (1f * (momentum - fovMomentumDeadzone) / 10);
+                if (targetFoV > maxFoV) {
+                    targetFoV = maxFoV;
+                }
+            }
+            if (momentum <= fovMomentumDeadzone) {
+                if (targetFoV > normalFoV) {
+                    targetFoV = Mathf.Lerp(targetFoV, normalFoV, Time.deltaTime * 2);
+                } else targetFoV = normalFoV;
+            }
+            if (Camera.main.fieldOfView != targetFoV) {
+                Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, targetFoV, Time.fixedDeltaTime * fovChangeSpeed);
+            }
+
+
+            CheckGround(velocity);
+            if (currentState == PlayerState.Airborne) {
+                isAirborne = true;
+            }
         }
     }
 
@@ -287,7 +356,7 @@ public class PlayerMover : MonoBehaviour {
             }
             return;
         }
-        if (!isMoving && momentum > 0 && !isAirborne && !sliding) {
+        if ((!isMoving && momentum > 0 && !isAirborne && !sliding) || inputInWall) {
             momentum -= momentumDecayStopped * Time.fixedDeltaTime;
             if (momentum < 0) {
                 momentum = 0;
@@ -350,6 +419,10 @@ public class PlayerMover : MonoBehaviour {
             currentState = PlayerState.Airborne;
             isAirborne = true;
             if (jumped) {
+                if (Camera.main.gameObject.GetComponent<CopyPosition>().crouching) {
+                    Camera.main.gameObject.GetComponent<CopyPosition>().crouching = false;
+                    anim.Play("BodyStandUp");
+                }
                 crouching = false;
                 sliding = false;
             }
@@ -363,91 +436,100 @@ public class PlayerMover : MonoBehaviour {
             goingUp = true;
         } else goingUp = false;
         lastPosition = rig.position;
+        if (Physics.Raycast(groundCheck.position, rig.velocity * Time.fixedDeltaTime, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
+            if (!Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck), rig.velocity * Time.fixedDeltaTime, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
+                print("Detecting ledge");
+            } else print("Detecting solid wall");
+        } else print("Detecting nothing");
     }
 
     void CheckGround(Vector3 velocity) {
-        if (Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundCheckMask) && checkGround) {
-            isAirborne = false;
-            airblastin = false;
-            rig.useGravity = false;
-            if (wasAirborne) {
-                //print("Hit ground");
-                if (jumped) {
-                    jumped = false;
+        if (!onSlope) {
+            if (Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundCheckMask) && checkGround) {
+                isAirborne = false;
+                airblastin = false;
+                rig.useGravity = false;
+                if (wasAirborne) {
+                    //print("Hit ground");
+                    if (jumped) {
+                        jumped = false;
+                    }
+                    //canJump = true;
+                    stateLocked = false;
+                    rig.velocity = new Vector3(velocity.x, 0, velocity.z);
+                    wasAirborne = false;
+                    losingMomentum = true;
+                    if (crouching && momentum >= slideMomentumRequirement && canSlide) {
+                        crouching = false;
+                        sliding = true;
+                        currentState = PlayerState.Slide;
+                        canSlide = false;
+                        sprinting = false;
+                        return;
+                    }
+                    if (lastInputState == PlayerState.Crouch) {
+                        return;
+                    }
+                    if (lastInputState == PlayerState.Empty && !crouching && (!sprinting || lastInputState != PlayerState.Sprint)) {
+                        lastInputState = PlayerState.Normal;
+                    }
+                    if (sprinting || lastInputState == PlayerState.Sprint) {
+                        lastInputState = PlayerState.Sprint;
+                    }
+                    if (lastInputState == PlayerState.Empty && crouching) {
+                        lastInputState = PlayerState.Crouch;
+                    }
                 }
-                //canJump = true;
-                stateLocked = false;
-                rig.velocity = new Vector3(velocity.x, 0, velocity.z);
-                wasAirborne = false;
-                losingMomentum = true;
-                if (crouching && momentum >= slideMomentumRequirement && canSlide) {
-                    crouching = false;
-                    sliding = true;
-                    currentState = PlayerState.Slide;
-                    canSlide = false;
-                    sprinting = false;
-                    return;
+                return;
+            } else {
+                if (!checkGround && !Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundCheckMask)) {
+                    checkGround = true;
                 }
-                if (lastInputState == PlayerState.Crouch) {
-                    return;
-                }
-                if (lastInputState == PlayerState.Empty && !crouching && (!sprinting || lastInputState != PlayerState.Sprint)) {
-                    lastInputState = PlayerState.Normal;
-                }
-                if (sprinting || lastInputState == PlayerState.Sprint) {
-                    lastInputState = PlayerState.Sprint;
-                }
-                if (lastInputState == PlayerState.Empty && crouching) {
-                    lastInputState = PlayerState.Crouch;
-                }
+                currentState = PlayerState.Airborne;
+                canJump = false;
+                rig.useGravity = true;
+                stateLocked = true;
+                return;
             }
-            return;
-        } else {
-            if (!checkGround && !Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundCheckMask)) {
-                checkGround = true;
-            }
-            currentState = PlayerState.Airborne;
-            canJump = false;
-            rig.useGravity = true;
-            stateLocked = true;
-            return;
         }
     }
 
     void HitGround() {
-        if (saveMomentumOnce && !sliding) {
-            savedMomentum = momentum;
-            momentum -= momentum * groundMomentumLoss;
-            saveMomentumOnce = false;
-        }
-        if (Input.GetButton("Crouch")) {
-            momentum = savedMomentum;
-            sliding = true;
-            canJump = true;
-            canSlide = false;
-            crouching = false;
-            sprinting = false;
-            currentState = PlayerState.Slide;
-            saveMomentumOnce = true;
-            losingMomentum = false;
-            return;
-        }
-        if (Input.GetButtonDown("Crouch") && !canSlide && crouching) {
-            lastInputState = PlayerState.Normal;
-        }
-        if (!sliding && (lastInputState != PlayerState.Crouch || currentState != PlayerState.Slide)) {
-            groundMomentumLossTimer += Time.fixedDeltaTime;
-            if (groundMomentumLossTimer >= groundMomentumTime) {
-                groundMomentumLossTimer = 0;
-                canJump = true;
-                losingMomentum = false;
-                saveMomentumOnce = true;
+        if (!onSlope) {
+            if (saveMomentumOnce && !sliding) {
+                savedMomentum = momentum;
+                momentum -= momentum * groundMomentumLoss;
+                saveMomentumOnce = false;
             }
-        //} else {
-        //    losingMomentum = false;
-        //    canJump = true;
-        //    lastInputState = PlayerState.Crouch;
-        //    saveMomentumOnce = true;
+            if (Input.GetButton("Crouch")) {
+                momentum = savedMomentum;
+                sliding = true;
+                canJump = true;
+                canSlide = false;
+                crouching = false;
+                sprinting = false;
+                currentState = PlayerState.Slide;
+                saveMomentumOnce = true;
+                losingMomentum = false;
+                return;
+            }
+            if (Input.GetButtonDown("Crouch") && !canSlide && crouching) {
+                lastInputState = PlayerState.Normal;
+            }
+            if (!sliding && (lastInputState != PlayerState.Crouch || currentState != PlayerState.Slide)) {
+                groundMomentumLossTimer += Time.fixedDeltaTime;
+                if (groundMomentumLossTimer >= groundMomentumTime) {
+                    groundMomentumLossTimer = 0;
+                    canJump = true;
+                    losingMomentum = false;
+                    saveMomentumOnce = true;
+                }
+                //} else {
+                //    losingMomentum = false;
+                //    canJump = true;
+                //    lastInputState = PlayerState.Crouch;
+                //    saveMomentumOnce = true;
+            }
         }
     }
 
