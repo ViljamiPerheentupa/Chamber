@@ -41,21 +41,26 @@ public class EnemyBehaviour : MonoBehaviour
 
     // Explosive stuff
     public bool explosive;
+    public bool isDumb;
+    public Transform dumbTarget;
     public float explodeDistance = 2f;
     public Color changeColor;
-    public float colorChangeSpeed = 1.5f;
     public float explodeTime = 1.5f;
-    float explodeTimer = 0;
     public LayerMask explodeMask;
     public int explodeDamage = 40;
     public float explosionForce = 500;
     public float explosionRadius = 5;
     public float playerExplosionForce = 1.5f;
 
+    Material mat;
+    Color originalColor;
+
     void Start() {
         es = Enemystate.Idling;
         player = GameObject.Find("PlayerBody");
         agent = GetComponent<NavMeshAgent>();
+        mat = GetComponent<MeshRenderer>().material;
+        originalColor = mat.color;
         actions = new UnityAction[] { Idling, Alerted, Hunting, Shooting, Exploding, Hiding, Sneaking, Stunned, Distracted };
         layerMask = LayerMask.GetMask(new string[] { "Environment" });
         hidingPointOffsets = new Vector3[hidingSpotsPerCircle * hidingSpotCircles];
@@ -76,11 +81,12 @@ public class EnemyBehaviour : MonoBehaviour
         }
 
         if(PlayerSeen()) {
-            es = Enemystate.Hunting;
+            SawPlayer();
             return;
         }
 
         if(PlayerHeard()) {
+            HeardPlayer();
             es = Enemystate.Alerted;
         }
     }
@@ -89,16 +95,14 @@ public class EnemyBehaviour : MonoBehaviour
         if(previousES != Enemystate.Alerted) {
             timer = Time.time + alertTime;
             print("Alerted");
-            var pos = transform.position;
-            GoTo((Vector3.Normalize(player.transform.position - pos) * distanceToMoveWhenAlerted) + transform.position);
         }
 
         if(PlayerSeen()) {
-            if(explosive)
-                es = Enemystate.Exploding;
-            else
-                es = Enemystate.Hunting;
-            return;
+            SawPlayer();
+        }
+
+        if(PlayerHeard()) {
+            HeardPlayer();
         }
 
         if(Time.time > timer) {
@@ -114,9 +118,6 @@ public class EnemyBehaviour : MonoBehaviour
 
         if(PlayerSeen()) {
             GoTo(player.transform.position);
-            return;
-        } else if(PlayerHeard()) {
-            es = Enemystate.Alerted;
             return;
         }
 
@@ -140,10 +141,22 @@ public class EnemyBehaviour : MonoBehaviour
             // Explode
             print("Exploding");
         } else {
-            GoTo(player.transform.position);
-            if(Vector3.Distance(transform.position, player.transform.position) < explodeDistance) {
-                Explode();
+            if(explosive) {
+                if(isDumb)
+                    GoTo(dumbTarget.position);
+                else
+                    GoTo(player.transform.position);
+                if(Vector3.Distance(transform.position, agent.destination) < explodeDistance) {
+                    GoTo(transform.position);
+                    print("Exploding soon" + Time.time);
+                    Invoke("Explode", explodeTime);
+                    timer = 0f;
+                    explosive = false;
+                }
+            } else {
+                ChangeColor();
             }
+
         }
     }
 
@@ -189,6 +202,7 @@ public class EnemyBehaviour : MonoBehaviour
             es = Enemystate.Alerted;
         }
     }
+
     void Distracted() {
         if(previousES != Enemystate.Distracted) {
             timer = Time.time + distractionTime;
@@ -203,6 +217,18 @@ public class EnemyBehaviour : MonoBehaviour
 
     #region Actions
 
+    void SawPlayer() {
+        if(explosive)
+            es = Enemystate.Exploding;
+        else
+            es = Enemystate.Hunting;
+    }
+
+    void HeardPlayer() {
+        var pos = transform.position;
+        GoTo((Vector3.Normalize(player.transform.position - pos) * distanceToMoveWhenAlerted) + transform.position);
+    }
+
     void GoTo(Vector3 target) {
         agent.destination = target;
     }
@@ -212,33 +238,31 @@ public class EnemyBehaviour : MonoBehaviour
     }
 
     void Explode() {
-        ChangeColor();
-        explodeTimer += Time.deltaTime;
-        if(explodeTimer >= explodeTime) {
-            print("Go BOOM!");
-            if(Vector3.Distance(player.transform.position, transform.position) < explosionRadius) {
-                var distance = Vector3.Distance(player.transform.position, transform.position);
-                player.GetComponent<IPlayerDamage>().TakeDamage(explodeDamage);
-                var pr = player.GetComponent<Rigidbody>();
-                player.GetComponent<PlayerMover>().airblastin = true;
-                player.GetComponent<PlayerMover>().lastInputState = PlayerState.Airborne;
-                pr.velocity = new Vector3(pr.velocity.x, 0, pr.velocity.z);
-                pr.AddForce((pr.position - transform.position) * playerExplosionForce * (explosionRadius / distance), ForceMode.VelocityChange);
-            }
-            var colliders = Physics.OverlapSphere(transform.position, explosionRadius, explodeMask);
-            foreach(Collider ec in colliders) {
-                var ecRig = ec.GetComponent<Rigidbody>();
-                if(ecRig != null) {
-                    ecRig.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1);
-                }
-            }
-            Destroy(gameObject);
-        }
+        print("Go BOOM!" + Time.time);
+        //if(Vector3.Distance(player.transform.position, transform.position) < explosionRadius) {
+        //    var distance = Vector3.Distance(player.transform.position, transform.position);
+        //    player.GetComponent<IPlayerDamage>().TakeDamage(explodeDamage);
+        //    var pr = player.GetComponent<Rigidbody>();
+        //    player.GetComponent<PlayerMover>().airblastin = true;
+        //    player.GetComponent<PlayerMover>().lastInputState = PlayerState.Airborne;
+        //    pr.velocity = new Vector3(pr.velocity.x, 0, pr.velocity.z);
+        //    pr.AddForce((pr.position - transform.position) * playerExplosionForce * (explosionRadius / distance), ForceMode.VelocityChange);
+        //}
+        //var colliders = Physics.OverlapSphere(transform.position, explosionRadius, explodeMask);
+        //foreach(Collider ec in colliders) {
+        //    var ecRig = ec.GetComponent<Rigidbody>();
+        //    if(ecRig != null) {
+        //        ecRig.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1);
+        //    }
+        //}
+        Destroy(gameObject);
     }
 
     void ChangeColor() {
-        var mat = GetComponent<MeshRenderer>().material;
-        mat.color = new Color(Mathf.Lerp(mat.color.r, changeColor.r, colorChangeSpeed * Time.deltaTime), Mathf.Lerp(mat.color.g, changeColor.g, colorChangeSpeed * Time.deltaTime), Mathf.Lerp(mat.color.b, changeColor.b, colorChangeSpeed * Time.deltaTime));
+        timer += Time.deltaTime;
+        var t = timer / explodeTime;
+        mat.color = Color.Lerp(originalColor, changeColor, t);
+        //mat.color = new Color(Mathf.Lerp(mat.color.r, changeColor.r, colorChangeSpeed * Time.deltaTime), Mathf.Lerp(mat.color.g, changeColor.g, colorChangeSpeed * Time.deltaTime), Mathf.Lerp(mat.color.b, changeColor.b, colorChangeSpeed * Time.deltaTime));
     }
     #endregion
 
