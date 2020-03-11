@@ -5,43 +5,43 @@ using UnityEngine.AI;
 using UnityEngine.Events;
 
 public class EnemyBehaviour : MonoBehaviour
-{ 
-    public enum Enemystate { Idle, Alert, Hunt, Shoot, Hide, Sneak, Stunned };
-    public enum EnemyType { Explodey, Shooty };
-
-    public EnemyType et;
+{
+    public enum Enemystate { Idling, Alerted, Hunting, Shooting, Exploding, Hiding, Sneaking, Stunned, Distracted };
 
     public Enemystate es;
     Enemystate memES;
     Enemystate previousES;
 
-    float[] detectionDistances = new float[] { 25f, 35f, 35f, 35f, 35f, 35f, 0 };
+    float[] detectionDistances = new float[] { 25f, 35f, 35f, 35f, 35f, 35f, 35f, 0f, 0f };
 
     GameObject player;
-    Vector3 target;
     NavMeshAgent agent;
     LayerMask layerMask;
 
+    // Sensing distances
     float viewAngle = 90f;
-    float alertDistance = .5f;
+    float distanceToMoveWhenAlerted = .5f;
+    float proximityDistance = 1.5f;
 
-    float targetProximityDistance = .5f;
-
+    // Times
     float timer;
     float alertTime = 5f;
     float huntTime = 2.5f;
     float stunTime = 5f;
     float hideTime = 10f;
+    float distractionTime = 10f;
 
     UnityAction[] actions;
 
-    int hidingSpotsPerCircle = 8;
+    // AI Hiding search grid
+    Vector3[] hidingPointOffsets;
     int hidingSpotCircles = 4;
+    int hidingSpotsPerCircle = 8;
     float hidingSpotOffsetFactor = 5f;
 
-    Vector3[] hidingPointOffsets;
-
-    public float explodeDistance = 2;
+    // Explosive stuff
+    public bool explosive;
+    public float explodeDistance = 2f;
     public Color changeColor;
     public float colorChangeSpeed = 1.5f;
     public float explodeTime = 1.5f;
@@ -53,88 +53,170 @@ public class EnemyBehaviour : MonoBehaviour
     public float playerExplosionForce = 1.5f;
 
     void Start() {
-        es = Enemystate.Idle;
+        es = Enemystate.Idling;
         player = GameObject.Find("PlayerBody");
         agent = GetComponent<NavMeshAgent>();
-        actions = new UnityAction[] { Idle, Alert, Hunt, Shoot, Hide, Sneak, Stunned };
+        actions = new UnityAction[] { Idling, Alerted, Hunting, Shooting, Exploding, Hiding, Sneaking, Stunned, Distracted };
         layerMask = LayerMask.GetMask(new string[] { "Environment" });
         hidingPointOffsets = new Vector3[hidingSpotsPerCircle * hidingSpotCircles];
-        //hidingPointOffsets[0] = Quaternion.Euler(0, (360f/hidingSpotsPerCircle)/2, 0) * new Vector3(0, 0, hidingSpotOffsetFactor);
-        Vector3 spotPrototype = Quaternion.Euler(0, (360f / hidingSpotsPerCircle) / 2, 0) * new Vector3(0, 0, hidingSpotOffsetFactor);
-        //Quaternion rotAmount = Quaternion.Euler(0, 360f / hidingSpotsPerCircle, 0);
         for(int i = 0; i < hidingPointOffsets.Length; i++) {
             for(int j = 0; j < hidingSpotCircles; j++) {
                 for(int k = 0; k < hidingSpotsPerCircle; k++) {
-                    Quaternion rotAmount = Quaternion.Euler(0, (360f / hidingSpotsPerCircle) * (1+k), 0);
-                    hidingPointOffsets[k + j * hidingSpotsPerCircle] = rotAmount * new Vector3(0,0, hidingSpotOffsetFactor * (1+j));
+                    Quaternion rotAmount = Quaternion.Euler(0, (360f / hidingSpotsPerCircle) * (1 + k), 0);
+                    hidingPointOffsets[k + j * hidingSpotsPerCircle] = rotAmount * new Vector3(0, 0, hidingSpotOffsetFactor * (1 + j));
                 }
             }
         }
     }
 
-    #region Actions
-    void Idle() {
-        if(previousES != Enemystate.Idle) {
+    #region Enemy states
+    void Idling() {
+        if(previousES != Enemystate.Idling) {
             print("Idling");
         }
 
         if(PlayerSeen()) {
-            es = Enemystate.Hunt;
+            es = Enemystate.Hunting;
             return;
         }
 
         if(PlayerHeard()) {
-            es = Enemystate.Alert;
+            es = Enemystate.Alerted;
         }
     }
-    void Alert() {
-        if(previousES != Enemystate.Alert) {
+
+    void Alerted() {
+        if(previousES != Enemystate.Alerted) {
             timer = Time.time + alertTime;
             print("Alerted");
             var pos = transform.position;
-            target = (Vector3.Normalize(player.transform.position - pos) * alertDistance) + transform.position;
-            agent.destination = target;
+            GoTo((Vector3.Normalize(player.transform.position - pos) * distanceToMoveWhenAlerted) + transform.position);
         }
 
         if(PlayerSeen()) {
-            es = Enemystate.Hunt;
+            if(explosive)
+                es = Enemystate.Exploding;
+            else
+                es = Enemystate.Hunting;
             return;
         }
 
         if(Time.time > timer) {
-            es = Enemystate.Idle;
+            es = Enemystate.Idling;
         }
     }
-    void Hunt() {
-        if (et == EnemyType.Explodey) {
-            if (Vector3.Distance(player.transform.position, transform.position) < explodeDistance) {
-                agent.destination = transform.position;
+
+    void Hunting() {
+        if(previousES != Enemystate.Hunting) {
+            timer = Time.time + huntTime; ;
+            print("Hunting");
+        }
+
+        if(PlayerSeen()) {
+            GoTo(player.transform.position);
+            return;
+        } else if(PlayerHeard()) {
+            es = Enemystate.Alerted;
+            return;
+        }
+
+        if(Time.time > timer) {
+            es = Enemystate.Alerted;
+        }
+
+    }
+
+    void Shooting() {
+        if(previousES != Enemystate.Shooting) {
+            // Shoot
+            print("Shooting");
+        } else {
+            es = Enemystate.Alerted;
+        }
+    }
+
+    void Exploding() {
+        if(previousES != Enemystate.Exploding) {
+            // Explode
+            print("Exploding");
+        } else {
+            GoTo(player.transform.position);
+            if(Vector3.Distance(transform.position, player.transform.position) < explodeDistance) {
                 Explode();
-                return;
-            }
-            if (previousES != Enemystate.Hunt) {
-                timer = Time.time + huntTime; ;
-                print("Hunting");
-            }
-            if (PlayerSeen()) {
-                target = player.transform.position;
-                agent.destination = target;
-                return;
-            } else if (PlayerHeard()) {
-                es = Enemystate.Alert;
-                return;
-            }
-            if (Time.time > timer) {
-                es = Enemystate.Alert;
             }
         }
+    }
+
+    void Hiding() {
+        if(previousES != Enemystate.Hiding) {
+            print("Hiding");
+            timer = Time.time + hideTime;
+
+            // Scan for possible places to hide
+            for(int i = 0; i < hidingPointOffsets.Length; i++) {
+                // Is not inside wall
+                var p = transform.position + hidingPointOffsets[i];
+                Collider[] hitColliders = Physics.OverlapSphere(p, 0.1f, layerMask);
+                if(hitColliders.Length == 0) {
+                    // Player does not see the point
+                    var pPos = player.transform.position;
+                    if(Physics.Raycast(p, pPos, Vector3.Distance(p, pPos), layerMask)) {
+                        GoTo(p);
+                        return;
+                    }
+                }
+            }
+        }
+
+        if(Time.time > timer) {
+            es = Enemystate.Alerted;
+        }
+    }
+
+    void Sneaking() {
+        if(previousES != Enemystate.Sneaking) {
+            print("Sneaking");
+        }
+    }
+
+    void Stunned() {
+        if(previousES != Enemystate.Stunned) {
+            timer = Time.time + stunTime;
+            agent.destination = transform.position;
+            print("Stunned");
+        }
+        if(Time.time > timer) {
+            es = Enemystate.Alerted;
+        }
+    }
+    void Distracted() {
+        if(previousES != Enemystate.Distracted) {
+            timer = Time.time + distractionTime;
+            print("Distracted");
+        }
+        if(Time.time > timer) {
+            es = Enemystate.Alerted;
+        }
+    }
+
+    #endregion
+
+    #region Actions
+
+    void GoTo(Vector3 target) {
+        agent.destination = target;
+    }
+
+    void Shoot() {
+        // Shooting goes here
     }
 
     void Explode() {
         ChangeColor();
         explodeTimer += Time.deltaTime;
-        if (explodeTimer >= explodeTime) {
-            if (Vector3.Distance(player.transform.position, transform.position) < explosionRadius) {
+        if(explodeTimer >= explodeTime) {
+            print("Go BOOM!");
+            if(Vector3.Distance(player.transform.position, transform.position) < explosionRadius) {
                 var distance = Vector3.Distance(player.transform.position, transform.position);
                 player.GetComponent<IPlayerDamage>().TakeDamage(explodeDamage);
                 var pr = player.GetComponent<Rigidbody>();
@@ -144,9 +226,9 @@ public class EnemyBehaviour : MonoBehaviour
                 pr.AddForce((pr.position - transform.position) * playerExplosionForce * (explosionRadius / distance), ForceMode.VelocityChange);
             }
             var colliders = Physics.OverlapSphere(transform.position, explosionRadius, explodeMask);
-            foreach (Collider ec in colliders){
+            foreach(Collider ec in colliders) {
                 var ecRig = ec.GetComponent<Rigidbody>();
-                if (ecRig != null) {
+                if(ecRig != null) {
                     ecRig.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1);
                 }
             }
@@ -158,57 +240,12 @@ public class EnemyBehaviour : MonoBehaviour
         var mat = GetComponent<MeshRenderer>().material;
         mat.color = new Color(Mathf.Lerp(mat.color.r, changeColor.r, colorChangeSpeed * Time.deltaTime), Mathf.Lerp(mat.color.g, changeColor.g, colorChangeSpeed * Time.deltaTime), Mathf.Lerp(mat.color.b, changeColor.b, colorChangeSpeed * Time.deltaTime));
     }
+    #endregion
 
-    void Shoot() {
-        if(previousES != Enemystate.Shoot) {
-            // Shoot
-            print("Shooting");
-        } else {
-            es = Enemystate.Alert;
-        }
-    }
-    void Hide() {
-        if(previousES != Enemystate.Hide) {
-            print("Hiding");
-            timer = Time.time + hideTime;
-
-            // Scan for possible places to hide
-            for(int i = 0; i < hidingPointOffsets.Length; i++) {
-                // Is not inside wall
-                var p = transform.position + hidingPointOffsets[i];
-               
-                Collider[] hitColliders = Physics.OverlapSphere(p, 0.1f, layerMask);
-                if(hitColliders.Length == 0) {
-                    // Player does not see the point
-                    if(Physics.Raycast(p, player.transform.position, Mathf.Infinity, layerMask)) {
-                        target = p;
-                        agent.destination = target;
-                        // Todo: is there a path to point
-
-                        return;
-                    }
-                }
-            }
-        }
-
-        if(Time.time > timer) {
-            es = Enemystate.Alert;
-        }
-    }
-    void Sneak() {
-        if(previousES != Enemystate.Sneak) {
-            print("Sneaking");
-        }
-    }
-    void Stunned() {
-        if(previousES != Enemystate.Stunned) {
-            timer = Time.time + stunTime;
-            agent.destination = transform.position;
-            print("Stunned");
-        }
-        if(Time.time > timer) {
-            es = Enemystate.Alert;
-        }
+    #region Public Methods
+    public void Distract(Vector3 t) {
+        es = Enemystate.Distracted;
+        GoTo(t);
     }
     #endregion
 
@@ -224,9 +261,13 @@ public class EnemyBehaviour : MonoBehaviour
         var tPos = transform.position;
         var delta = pPos - tPos;
         var len = delta.magnitude;
-        return len < detectionDistances[(int)es] && 
+        return len < detectionDistances[(int)es] &&
             Vector3.Angle(transform.forward, delta) < viewAngle / 2 &&
             !Physics.Raycast(tPos, delta, len, layerMask);
+    }
+
+    bool Proximity() {
+        return Vector3.Distance(transform.position, agent.destination) < proximityDistance;
     }
 
     #endregion
@@ -240,16 +281,16 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void GotDamage() {
         print("Took Damage");
-        es = Enemystate.Hide;
+        es = Enemystate.Hiding;
     }
 
     public void GotBlasted() {
         print("Got blasted");
-        es = Enemystate.Alert;
+        es = Enemystate.Alerted;
     }
 
     public void LaughAtEmptyGun() {
-        es = Enemystate.Hunt;
+        es = Enemystate.Hunting;
         print("Ha, Ha, Ha... You Amateur! You are dead now!");
     }
 
@@ -259,6 +300,9 @@ public class EnemyBehaviour : MonoBehaviour
         memES = es;
         actions[(int)es]();
         previousES = memES;
+        if(Input.GetKeyDown(KeyCode.P)) {
+            Distract(new Vector3(10, 0, 5));
+        }
     }
     private void OnDrawGizmos() {
         if(hidingPointOffsets != null) {
