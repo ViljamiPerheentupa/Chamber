@@ -16174,12 +16174,17 @@ PrefabInstance:
     - target: {fileID: 6751343941537756961, guid: 6cb8bfe5a4418e841af0fa772981e34f,
         type: 3}
       propertyPath: airblastUpwardForce
-      value: 0
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 6751343941537756961, guid: 6cb8bfe5a4418e841af0fa772981e34f,
         type: 3}
       propertyPath: airblastForcePlayer
-      value: 1.5
+      value: 1.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 6751343941537756961, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: airblastForceOthers
+      value: 800
       objectReference: {fileID: 0}
     - target: {fileID: 6751343941651959601, guid: 6cb8bfe5a4418e841af0fa772981e34f,
         type: 3}
@@ -34146,7 +34151,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-191578
+  m_Name: pb_Mesh20542
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -34661,6 +34666,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2284887304975580982, guid: c1f08844b0fe7bf429e133f8c288d37b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2284887304975580983, guid: c1f08844b0fe7bf429e133f8c288d37b,
         type: 3}
@@ -51972,6 +51982,11 @@ PrefabInstance:
         type: 3}
       propertyPath: stepCheck
       value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2156105049861782330, guid: 7dc01fb2521952b4682c4c67420d401b,
+        type: 3}
+      propertyPath: jumpHeight
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2156105049861782331, guid: 7dc01fb2521952b4682c4c67420d401b,
         type: 3}
