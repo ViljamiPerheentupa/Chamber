@@ -436,11 +436,11 @@ public class PlayerMover : MonoBehaviour {
             goingUp = true;
         } else goingUp = false;
         lastPosition = rig.position;
-        if (Physics.Raycast(groundCheck.position, rig.velocity * Time.fixedDeltaTime, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
-            if (!Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck), rig.velocity * Time.fixedDeltaTime, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
+        if(Physics.Raycast(groundCheck.position, rig.velocity * Time.fixedDeltaTime, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
+            if(!Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck), rig.velocity * Time.fixedDeltaTime, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
                 print("Detecting ledge");
             } else print("Detecting solid wall");
-        } else print("Detecting nothing");
+        } //else print("Detecting nothing");
     }
 
     void CheckGround(Vector3 velocity) {

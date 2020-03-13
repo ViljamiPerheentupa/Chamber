@@ -238,23 +238,23 @@ public class EnemyBehaviour : MonoBehaviour
     }
 
     void Explode() {
-        print("Go BOOM!" + Time.time);
-        //if(Vector3.Distance(player.transform.position, transform.position) < explosionRadius) {
-        //    var distance = Vector3.Distance(player.transform.position, transform.position);
-        //    player.GetComponent<IPlayerDamage>().TakeDamage(explodeDamage);
-        //    var pr = player.GetComponent<Rigidbody>();
-        //    player.GetComponent<PlayerMover>().airblastin = true;
-        //    player.GetComponent<PlayerMover>().lastInputState = PlayerState.Airborne;
-        //    pr.velocity = new Vector3(pr.velocity.x, 0, pr.velocity.z);
-        //    pr.AddForce((pr.position - transform.position) * playerExplosionForce * (explosionRadius / distance), ForceMode.VelocityChange);
-        //}
-        //var colliders = Physics.OverlapSphere(transform.position, explosionRadius, explodeMask);
-        //foreach(Collider ec in colliders) {
-        //    var ecRig = ec.GetComponent<Rigidbody>();
-        //    if(ecRig != null) {
-        //        ecRig.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1);
-        //    }
-        //}
+        print("Go BOOM!");
+        if(Vector3.Distance(player.transform.position, transform.position) < explosionRadius) {
+            var distance = Vector3.Distance(player.transform.position, transform.position);
+            player.GetComponent<IPlayerDamage>().TakeDamage(explodeDamage);
+            var pr = player.GetComponent<Rigidbody>();
+            player.GetComponent<PlayerMover>().airblastin = true;
+            player.GetComponent<PlayerMover>().lastInputState = PlayerState.Airborne;
+            pr.velocity = new Vector3(pr.velocity.x, 0, pr.velocity.z);
+            pr.AddForce((pr.position - transform.position) * playerExplosionForce * (explosionRadius / distance), ForceMode.VelocityChange);
+        }
+        var colliders = Physics.OverlapSphere(transform.position, explosionRadius, explodeMask);
+        foreach(Collider ec in colliders) {
+            var ecRig = ec.GetComponent<Rigidbody>();
+            if(ecRig != null) {
+                ecRig.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1);
+            }
+        }
         Destroy(gameObject);
     }
 
@@ -324,7 +324,7 @@ public class EnemyBehaviour : MonoBehaviour
         memES = es;
         actions[(int)es]();
         previousES = memES;
-        if(Input.GetKeyDown(KeyCode.P)) {
+        if(Input.GetKeyDown(KeyCode.O)) {
             Distract(new Vector3(10, 0, 5));
         }
     }
