@@ -24,8 +24,8 @@ TagManager:
   - LightCull
   - Environment
   - Enemy
-  - 
-  - 
+  - PlayerPropField
+  - Props
   - 
   - 
   - 

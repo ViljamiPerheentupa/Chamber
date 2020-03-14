@@ -59424,26 +59424,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2156105049861782330, guid: 7dc01fb2521952b4682c4c67420d401b,
-        type: 3}
-      propertyPath: movementSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2156105049861782330, guid: 7dc01fb2521952b4682c4c67420d401b,
-        type: 3}
-      propertyPath: jumpHeight
-      value: 1.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 2156105049861782330, guid: 7dc01fb2521952b4682c4c67420d401b,
-        type: 3}
-      propertyPath: sprint.momentumIncrease
-      value: 150
-      objectReference: {fileID: 0}
-    - target: {fileID: 2156105049861782330, guid: 7dc01fb2521952b4682c4c67420d401b,
-        type: 3}
-      propertyPath: sprint.momentumMax
-      value: 150
-      objectReference: {fileID: 0}
     - target: {fileID: 2156105051083970082, guid: 7dc01fb2521952b4682c4c67420d401b,
         type: 3}
       propertyPath: m_Name
@@ -59503,6 +59483,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2958800223060949408, guid: 7dc01fb2521952b4682c4c67420d401b,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7dc01fb2521952b4682c4c67420d401b, type: 3}

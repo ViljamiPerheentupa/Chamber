@@ -93,7 +93,7 @@ public class LaserTest : MonoBehaviour
         if (shootTimer >= timeToShoot) {
             shootTimer = 0;
             if (Physics.Raycast(transform.position, transform.forward, Mathf.Infinity, playerMask)) {
-                GameObject.FindGameObjectWithTag("PlayerObject").GetComponent<IPlayerDamage>().TakeDamage(damage);
+                GameObject.FindGameObjectWithTag("PlayerObject").GetComponent<IPlayerDamage>().TakeDamage(damage, gameObject);
             }
             shooting = false;
             shootCD = true;

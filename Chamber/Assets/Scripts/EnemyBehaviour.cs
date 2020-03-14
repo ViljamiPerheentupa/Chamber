@@ -241,7 +241,7 @@ public class EnemyBehaviour : MonoBehaviour
         print("Go BOOM!");
         if(Vector3.Distance(player.transform.position, transform.position) < explosionRadius) {
             var distance = Vector3.Distance(player.transform.position, transform.position);
-            player.GetComponent<IPlayerDamage>().TakeDamage(explodeDamage);
+            player.GetComponent<IPlayerDamage>().TakeDamage(explodeDamage, gameObject);
             var pr = player.GetComponent<Rigidbody>();
             player.GetComponent<PlayerMover>().airblastin = true;
             player.GetComponent<PlayerMover>().lastInputState = PlayerState.Airborne;

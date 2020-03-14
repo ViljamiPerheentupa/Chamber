@@ -38,6 +38,9 @@ public class Gun : MonoBehaviour
     public AnimationCurve shootingCurve;
 
     public LayerMask layerMask;
+
+    public float fillDuration = 0.15f;
+    float fillTimer = 0;
     void PullTrigger() {
 
         // if reloading, stop
@@ -81,6 +84,7 @@ public class Gun : MonoBehaviour
                 foreach (Collider col in objectsHit) {
                     var rb = col.GetComponent<Rigidbody>();
                     if (rb != null) {
+                        print(col.name + " got BLASTED!");
                         rb.AddExplosionForce(airblastForceOthers, hit.point, airblastRadius);
                     }
                 }
@@ -236,14 +240,59 @@ public class Gun : MonoBehaviour
         }
 
         if(isReloading) {
-            if(Input.GetKeyDown("1")) {
+            if (Input.GetKey("1")) {
+                fillTimer += Time.deltaTime;
+                if (fillTimer >= fillDuration) {
+                    for (int i = 0; i < 3 - chamberIndex; i++) {
+                        SetChamberLoad(chamberIndex, AmmoType.Piercing);
+                        chamberIndex++;
+                        if (chamberIndex > 2) {
+                            fillTimer = 0;
+                            StopReloading();
+                            return;
+                        }
+                    }
+                }
+            }
+            if(Input.GetKeyUp("1")) {
                 LoadChamber(AmmoType.Piercing);
+                fillTimer = 0;
             }
-            if(Input.GetKeyDown("2")) {
+            if (Input.GetKey("2")) {
+                fillTimer += Time.deltaTime;
+                if (fillTimer >= fillDuration) {
+                    for (int i = 0; i < 3 - chamberIndex; i++) {
+                        SetChamberLoad(chamberIndex, AmmoType.eShock);
+                        chamberIndex++;
+                        if (chamberIndex > 2) {
+                            fillTimer = 0;
+                            StopReloading();
+                            return;
+                        }
+                    }
+                }
+            }
+            if (Input.GetKeyUp("2")) {
                 LoadChamber(AmmoType.eShock);
+                fillTimer = 0;
             }
-            if(Input.GetKeyDown("3")) {
+            if (Input.GetKey("3")) {
+                fillTimer += Time.deltaTime;
+                if (fillTimer >= fillDuration) {
+                    for (int i = 0; i < 3 - chamberIndex; i++) {
+                        SetChamberLoad(chamberIndex, AmmoType.AirBlast);
+                        chamberIndex++;
+                        if (chamberIndex > 2) {
+                            fillTimer = 0;
+                            StopReloading();
+                            return;
+                        }
+                    }
+                }
+            }
+            if (Input.GetKeyUp("3")) {
                 LoadChamber(AmmoType.AirBlast);
+                fillTimer = 0;
             }
         }
 
@@ -255,7 +304,7 @@ public class Gun : MonoBehaviour
     private void Start() {
         cam = Camera.main;
         crosshair = GameObject.Find("Crosshair").transform;
-        layerMask = LayerMask.GetMask(new string[] { "Environment", "Enemy" });
+        //layerMask = LayerMask.GetMask(new string[] { "Environment", "Enemy", "Props" });
         anim = GetComponent<Animator>();
         StartReloading();
     }

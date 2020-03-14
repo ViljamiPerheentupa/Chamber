@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2156105049861782311}
   - component: {fileID: 2156105049861782310}
   - component: {fileID: 704879882}
+  - component: {fileID: 7040584695313772734}
   m_Layer: 9
   m_Name: PlayerBody
   m_TagString: PlayerObject
@@ -35,6 +36,7 @@ Transform:
   m_Children:
   - {fileID: 2156105051333222619}
   - {fileID: 2156105051706777543}
+  - {fileID: 2958800223060949408}
   m_Father: {fileID: 2156105051083970083}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -49,8 +51,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.4, y: 1, z: 0.4}
-  m_Center: {x: 0, y: -0.25, z: 0}
+  m_Size: {x: 0.4, y: 1.25, z: 0.4}
+  m_Center: {x: 0, y: -0.375, z: 0}
 --- !u!54 &2156105049861782331
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -83,12 +85,12 @@ MonoBehaviour:
   movementSpeedMultiplier: 4
   normal:
     state: 0
-    momentumIncrease: 125
+    momentumIncrease: 175
     momentumMax: 100
   sprint:
     state: 1
-    momentumIncrease: 175
-    momentumMax: 175
+    momentumIncrease: 200
+    momentumMax: 150
   slide:
     state: 2
     momentumIncrease: 80
@@ -106,7 +108,7 @@ MonoBehaviour:
   slideMomentumRequirement: 140
   slideDuration: 0.8
   slideCooldown: 1
-  jumpHeight: 2
+  jumpHeight: 1.5
   groundMomentumLoss: 0.6
   groundMomentumTime: 0.08
   sprinting: 0
@@ -118,11 +120,61 @@ MonoBehaviour:
   lastInputState: 5
   stateLocked: 0
   groundCheckRadius: 0.1
+  ledgeCheck: 1
+  playerRadius: 0.3
+  stepCheck: 0.15
   groundCheckMask:
     serializedVersion: 2
     m_Bits: 4096
   inGroundCheckDistance: 0.01
   airblastin: 0
+  vaultCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.07268189
+      outSlope: 0.07268189
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.5815161
+      value: 0.17505452
+      inSlope: 1.04351
+      outSlope: 1.04351
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.13301338
+      outWeight: 0.36233217
+    - serializedVersion: 3
+      time: 0.8591166
+      value: 0.93591017
+      inSlope: 3.8402858
+      outSlope: 3.8402858
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.20147005
+    - serializedVersion: 3
+      time: 0.999998
+      value: 0.99999344
+      inSlope: -0.756521
+      outSlope: -0.756521
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.4436213
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  vaultDistance: 0.8
+  playerHeight: 2
+  vaultDuration: 0.2
+  toggleCrouch: 0
+  toggleSprint: 0
 --- !u!114 &2156105049861782311
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,6 +224,24 @@ MonoBehaviour:
   maxHealth: 100
   regenDelay: 3
   regenPerTick: 1
+  knockbackMagnitude: 1
+--- !u!114 &7040584695313772734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2156105049861782329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3900db694006ba141b3fab95f6183afa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 0
+  maxHealth: 100
+  regenDelay: 3
+  regenPerTick: 1
+  knockbackMagnitude: 1000
 --- !u!1 &2156105050155633349
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,7 +310,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 15927
+    m_Bits: 48695
   m_RenderingPath: 3
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -526,3 +596,48 @@ Transform:
   m_Father: {fileID: 2156105049861782309}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8999742347443852758
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2958800223060949408}
+  - component: {fileID: 3485300257293952294}
+  m_Layer: 14
+  m_Name: PropForceField
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2958800223060949408
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8999742347443852758}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2156105049861782309}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &3485300257293952294
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8999742347443852758}
+  m_Material: {fileID: 13400000, guid: d177d6e8ca1bffd4fa3d2d4d433bf860, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.6
+  m_Height: 2.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}

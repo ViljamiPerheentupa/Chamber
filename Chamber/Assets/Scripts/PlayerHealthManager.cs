@@ -13,6 +13,8 @@ public class PlayerHealthManager : MonoBehaviour, IPlayerDamage
     float healTimer = 0;
     float healTicker = 0.1f;
 
+    public float knockbackMagnitude = 1f;
+
     void Start()
     {
         health = maxHealth;
@@ -45,9 +47,14 @@ public class PlayerHealthManager : MonoBehaviour, IPlayerDamage
 
 
 
-    public void TakeDamage(int damage) {
+    public void TakeDamage(int damage, GameObject source) {
         health -= damage;
         print("TOOK DAMAGE! Damage Taken: " + damage + " Health Left: " + health);
+        Knockback(transform.position - source.transform.position);
         tookDamage = true;
+    }
+
+    void Knockback(Vector3 direction) {
+
     }
 }
