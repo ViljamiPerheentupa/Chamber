@@ -962,7 +962,8 @@ MonoBehaviour:
     m_RotationOrder: 4
   layerMask:
     serializedVersion: 2
-    m_Bits: 12801
+    m_Bits: 45057
+  fillDuration: 0.15
 --- !u!95 &6751343941537756962
 Animator:
   serializedVersion: 3
@@ -1164,6 +1165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb2239cb171645f4cb8c4b5c2be8138e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cp: {fileID: 0}
 --- !u!1 &8513131956016342109
 GameObject:
   m_ObjectHideFlags: 0
