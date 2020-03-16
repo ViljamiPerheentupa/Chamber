@@ -17152,6 +17152,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 101789612, guid: 6cb8bfe5a4418e841af0fa772981e34f, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1803657614330641914, guid: 6cb8bfe5a4418e841af0fa772981e34f,
         type: 3}
       propertyPath: m_IsActive
@@ -17171,11 +17175,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6751343941537756961, guid: 6cb8bfe5a4418e841af0fa772981e34f,
-        type: 3}
-      propertyPath: layerMask.m_Bits
-      value: 45057
       objectReference: {fileID: 0}
     - target: {fileID: 6751343941537756961, guid: 6cb8bfe5a4418e841af0fa772981e34f,
         type: 3}

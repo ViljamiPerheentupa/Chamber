@@ -964,6 +964,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 45057
   fillDuration: 0.15
+  holdToStartReload: 0
+  loadDuration: 0.4
+  inputSpamEnabled: 0
+  inputSpamLimit: 3
+  inputSpamDuration: 0.5
+  hasNormal: 1
+  hasAirburst: 1
+  hasShock: 1
 --- !u!95 &6751343941537756962
 Animator:
   serializedVersion: 3

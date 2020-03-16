@@ -41,6 +41,18 @@ public class Gun : MonoBehaviour
 
     public float fillDuration = 0.15f;
     float fillTimer = 0;
+    public bool holdToStartReload = true;
+    public float loadDuration = 0.2f;
+    float loadTimer = 0;
+    public bool inputSpamEnabled = true;
+    public int inputSpamLimit = 3;
+    int inputSpam = 0;
+    public float inputSpamDuration = 0.3f;
+    float inputSpamTimer = 0;
+
+    public bool hasNormal = false;
+    public bool hasAirburst = false;
+    public bool hasShock = false;
     void PullTrigger() {
 
         // if reloading, stop
@@ -165,8 +177,7 @@ public class Gun : MonoBehaviour
     }
 
     public void StartReloading() {
-        
-        print("Started reloading");
+        inputSpam = 0;
         for(int i = 0; i < loadout.Length; i++) {
             SetChamberLoad(i, AmmoType.Empty);
             //loadout[i] = AmmoType.Empty;
@@ -232,6 +243,29 @@ public class Gun : MonoBehaviour
         }
 
         // Reload input
+        if(holdToStartReload && !isReloading && (Input.GetKey("1") || Input.GetKey("2") || Input.GetKey("3"))){
+            loadTimer += Time.deltaTime;
+            if (loadTimer >= loadDuration) {
+                loadTimer = 0;
+                StartReloading();
+            }
+        }
+        if (inputSpamEnabled && !isReloading) {
+            if (Input.GetKeyDown("1") || Input.GetKeyDown("2") || Input.GetKeyDown("3")) {
+                inputSpam++;
+                inputSpamTimer = 0;
+            }
+            if (inputSpam > 0) {
+                inputSpamTimer += Time.deltaTime;
+                if (inputSpamTimer >= inputSpamDuration) {
+                    inputSpam = 0;
+                    inputSpamTimer = 0;
+                }
+            }
+            if (inputSpam >= inputSpamLimit) {
+                StartReloading();
+            }
+        }
         if(Input.GetKeyDown(KeyCode.R)) {
             if(!isReloading)
                 StartReloading();
@@ -240,59 +274,65 @@ public class Gun : MonoBehaviour
         }
 
         if(isReloading) {
-            if (Input.GetKey("1")) {
-                fillTimer += Time.deltaTime;
-                if (fillTimer >= fillDuration) {
-                    for (int i = 0; i < 3 - chamberIndex; i++) {
-                        SetChamberLoad(chamberIndex, AmmoType.Piercing);
-                        chamberIndex++;
-                        if (chamberIndex > 2) {
-                            fillTimer = 0;
-                            StopReloading();
-                            return;
+            if (hasNormal) {
+                if (Input.GetKey("1")) {
+                    fillTimer += Time.deltaTime;
+                    if (fillTimer >= fillDuration) {
+                        for (int i = 0; i < 3 - chamberIndex; i++) {
+                            SetChamberLoad(chamberIndex, AmmoType.Piercing);
+                            chamberIndex++;
+                            if (chamberIndex > 2) {
+                                fillTimer = 0;
+                                StopReloading();
+                                return;
+                            }
                         }
                     }
                 }
+                if (Input.GetKeyUp("1")) {
+                    LoadChamber(AmmoType.Piercing);
+                    fillTimer = 0;
+                }
             }
-            if(Input.GetKeyUp("1")) {
-                LoadChamber(AmmoType.Piercing);
-                fillTimer = 0;
-            }
-            if (Input.GetKey("2")) {
-                fillTimer += Time.deltaTime;
-                if (fillTimer >= fillDuration) {
-                    for (int i = 0; i < 3 - chamberIndex; i++) {
-                        SetChamberLoad(chamberIndex, AmmoType.eShock);
-                        chamberIndex++;
-                        if (chamberIndex > 2) {
-                            fillTimer = 0;
-                            StopReloading();
-                            return;
+            if (hasAirburst) {
+                if (Input.GetKey("3")) {
+                    fillTimer += Time.deltaTime;
+                    if (fillTimer >= fillDuration) {
+                        for (int i = 0; i < 3 - chamberIndex; i++) {
+                            SetChamberLoad(chamberIndex, AmmoType.eShock);
+                            chamberIndex++;
+                            if (chamberIndex > 2) {
+                                fillTimer = 0;
+                                StopReloading();
+                                return;
+                            }
                         }
                     }
                 }
+                if (Input.GetKeyUp("3")) {
+                    LoadChamber(AmmoType.eShock);
+                    fillTimer = 0;
+                }
             }
-            if (Input.GetKeyUp("2")) {
-                LoadChamber(AmmoType.eShock);
-                fillTimer = 0;
-            }
-            if (Input.GetKey("3")) {
-                fillTimer += Time.deltaTime;
-                if (fillTimer >= fillDuration) {
-                    for (int i = 0; i < 3 - chamberIndex; i++) {
-                        SetChamberLoad(chamberIndex, AmmoType.AirBlast);
-                        chamberIndex++;
-                        if (chamberIndex > 2) {
-                            fillTimer = 0;
-                            StopReloading();
-                            return;
+            if (hasShock) {
+                if (Input.GetKey("2")) {
+                    fillTimer += Time.deltaTime;
+                    if (fillTimer >= fillDuration) {
+                        for (int i = 0; i < 3 - chamberIndex; i++) {
+                            SetChamberLoad(chamberIndex, AmmoType.AirBlast);
+                            chamberIndex++;
+                            if (chamberIndex > 2) {
+                                fillTimer = 0;
+                                StopReloading();
+                                return;
+                            }
                         }
                     }
                 }
-            }
-            if (Input.GetKeyUp("3")) {
-                LoadChamber(AmmoType.AirBlast);
-                fillTimer = 0;
+                if (Input.GetKeyUp("2")) {
+                    LoadChamber(AmmoType.AirBlast);
+                    fillTimer = 0;
+                }
             }
         }
 
