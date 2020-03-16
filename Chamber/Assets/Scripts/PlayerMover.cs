@@ -100,12 +100,15 @@ public class PlayerMover : MonoBehaviour {
     public float playerHeight = 2f;
     float vaultTimer = 0;
     public float vaultDuration = 0.5f;
+    Animator vaultHandAnim;
 
     public bool toggleCrouch = false;
     public bool toggleSprint = false;
+    public bool holdToVault = false;
     void Start() {
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
+        vaultHandAnim = GameObject.Find("vaulthand").GetComponent<Animator>();
         normalFoV = Camera.main.fieldOfView;
         maxFoV = normalFoV + 25f;
         fovMomentumDeadzone = normal.momentumMax;
@@ -495,14 +498,29 @@ public class PlayerMover : MonoBehaviour {
             if (vaultDirection.magnitude < 0.1f) {
                 vaultDirection = lastInput;
             }
-            if (!Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck), (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
-                isVaulting = true;
-                Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck) + (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, Vector3.down, out vaultHit, Mathf.Infinity, groundCheckMask);
-                vaultTargetPosition = vaultHit.point + (Vector3.up * playerHeight);
-                print("Detecting ledge");
-            } else {
-                inputInWall = true;
-                print("Detecting solid wall");
+            if (holdToVault) {
+                if (!Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck), (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask) && Input.GetButton("Jump")) {
+                    isVaulting = true;
+                    vaultHandAnim.Play("VaultIdle");
+                    Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck) + (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, Vector3.down, out vaultHit, Mathf.Infinity, groundCheckMask);
+                    vaultTargetPosition = vaultHit.point + (Vector3.up * playerHeight);
+                    print("Detecting ledge");
+                } else {
+                    inputInWall = true;
+                    print("Detecting solid wall");
+                }
+            }
+            if (!holdToVault) {
+                if (!Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck), (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
+                    isVaulting = true;
+                    vaultHandAnim.Play("VaultIdle");
+                    Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck) + (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, Vector3.down, out vaultHit, Mathf.Infinity, groundCheckMask);
+                    vaultTargetPosition = vaultHit.point + (Vector3.up * playerHeight);
+                    print("Detecting ledge");
+                } else {
+                    inputInWall = true;
+                    print("Detecting solid wall");
+                }
             }
         } //else print("Detecting nothing");
     }
