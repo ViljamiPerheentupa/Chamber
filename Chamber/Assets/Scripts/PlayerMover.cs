@@ -593,7 +593,11 @@ public class PlayerMover : MonoBehaviour {
         if (!onSlope) {
             if (saveMomentumOnce && !sliding) {
                 savedMomentum = momentum;
-                momentum -= momentum * groundMomentumLoss;
+                if (momentum > 100) {
+                    if (momentum - momentum * groundMomentumLoss < 100) {
+                        momentum = 100;
+                    } else momentum -= momentum * groundMomentumLoss;
+                }
                 saveMomentumOnce = false;
             }
             if (Input.GetButton("Crouch") && momentum >= slideMomentumRequirement / 2) {

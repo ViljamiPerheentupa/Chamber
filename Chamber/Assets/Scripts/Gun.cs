@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using FMODUnity;
 
 
 
@@ -53,13 +54,21 @@ public class Gun : MonoBehaviour
     public bool hasNormal = false;
     public bool hasAirburst = false;
     public bool hasShock = false;
+    public float shootingCooldown = 0.3f;
+    bool shootCD = false;
+    float shootTimer = 0;
+
+    Animator gunAnim;
+
+    public string gunshotEventString = "event:/Gunshot";
+
+
     void PullTrigger() {
 
         // if reloading, stop
         if(isReloading) {
             if(IsEmpty()) {
                 // Play empty shot sound
-                print("Click");
                 Fire(loadout[chamberIndex]);
                 return;
             } else {
@@ -88,15 +97,39 @@ public class Gun : MonoBehaviour
 
     void Fire(AmmoType type) {
         //print("Bäng");
+        float parameter = 0;
+        if (type == AmmoType.Piercing) {
+            parameter = 0;
+        }
+        if (type == AmmoType.eShock) {
+            parameter = 1;
+        }
+        if (type == AmmoType.AirBlast) {
+            parameter = 2;
+        }
+
+        FMOD.Studio.EventInstance gunshotE = FMODUnity.RuntimeManager.CreateInstance(gunshotEventString);
+        FMOD.Studio.EventDescription gunshotD;
+        FMOD.Studio.PARAMETER_DESCRIPTION parameterD;
+        FMOD.Studio.PARAMETER_ID parameterID;
+        gunshotD = FMODUnity.RuntimeManager.GetEventDescription(gunshotEventString);
+        gunshotD.getParameterDescriptionByName("AmmoType", out parameterD);
+        parameterID = parameterD.id;
+        gunshotE.setParameterByID(parameterID, parameter);
+
+        if (type != AmmoType.Empty) {
+            //FMODUnity.RuntimeManager.PlayOneShot("event:/Gunshot", GameObject.FindGameObjectWithTag("PlayerObject").transform.position);
+            gunAnim.Play("Shoot");
+            gunshotE.start();
+            gunshotE.release();
+        }
         RaycastHit hit;
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity,  layerMask)){
-            print(hit.transform.gameObject);
             if (type == AmmoType.AirBlast) {
                 var objectsHit = Physics.OverlapSphere(hit.point, airblastRadius, layerMask);
                 foreach (Collider col in objectsHit) {
                     var rb = col.GetComponent<Rigidbody>();
                     if (rb != null) {
-                        print(col.name + " got BLASTED!");
                         rb.AddExplosionForce(airblastForceOthers, hit.point, airblastRadius);
                     }
                 }
@@ -132,8 +165,10 @@ public class Gun : MonoBehaviour
                 }
             }
         }
+        shootCD = true;
         // Todo: Raycast, choose corresponding sound effect 
     }
+
 
     void SetUICylinderTargetRotation(bool reset) {
 
@@ -141,10 +176,8 @@ public class Gun : MonoBehaviour
         rotateTimer = 0;
         if(reset) {
             if(isReloading) { // Resets cylinder to reload mode
-                print("Ready to load");
                 targetRot = Quaternion.Euler(0, 0, 15);
             } else { // Resets cylinder to shoot mode
-                print("Ready to shoot");
                 targetRot = Quaternion.Euler(0, 0, 0);
             }
         } else {
@@ -191,7 +224,6 @@ public class Gun : MonoBehaviour
     void StopReloading() {
         // Todo: Stop loading animation here
         isReloading = false;
-        print("Stopped reloading");
         reloadComplete = true;
         chamberIndex = 0;
         SetUICylinderTargetRotation(true);
@@ -237,8 +269,16 @@ public class Gun : MonoBehaviour
     }
 
     private void Update() {
+        if (shootCD) {
+            shootTimer += Time.deltaTime;
+            if (shootTimer >= shootingCooldown) {
+                shootCD = false;
+                shootTimer = 0;
+            }
+        }
+
         // Firing input
-        if(Input.GetButtonDown("Fire1")) {
+        if(Input.GetButtonDown("Fire1") && !shootCD) {
             PullTrigger();
         }
 
@@ -343,6 +383,7 @@ public class Gun : MonoBehaviour
     }
     private void Start() {
         cam = Camera.main;
+        gunAnim = GameObject.FindGameObjectWithTag("GunRender").GetComponent<Animator>();
         crosshair = GameObject.Find("Crosshair").transform;
         //layerMask = LayerMask.GetMask(new string[] { "Environment", "Enemy", "Props" });
         anim = GetComponent<Animator>();

@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Hitspot
   - Interactable
+  - GunRender
   layers:
   - Default
   - TransparentFX
