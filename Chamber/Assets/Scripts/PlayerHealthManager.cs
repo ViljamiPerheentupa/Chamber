@@ -49,7 +49,7 @@ public class PlayerHealthManager : MonoBehaviour, IPlayerDamage
 
     public void TakeDamage(int damage, GameObject source) {
         health -= damage;
-        print("TOOK DAMAGE! Damage Taken: " + damage + " Health Left: " + health);
+        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/PDamage");
         Knockback(transform.position - source.transform.position);
         tookDamage = true;
     }

@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SwitchSettingsMigration: 1
   HasSourceProject: 0
-  HasPlatforms: 1
+  HasPlatforms: 0
   sourceProjectPath: ../ChamberFMOD/ChamberFMOD.fspro
-  sourceBankPath: ..\ChamberFMOD\Build
+  sourceBankPath: ../ChamberFMOD/FMODBuild
   SourceBankPathUnformatted: 
   AutomaticEventLoading: 1
   BankLoadType: 0

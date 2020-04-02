@@ -9,3 +9,7 @@ public interface IRestorable {
     void Restore();
     void Lock();
 }
+
+public interface IUIMessage {
+    void UIMessage(string text, float duration);
+}
