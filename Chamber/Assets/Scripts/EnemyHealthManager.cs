@@ -18,6 +18,7 @@ public class EnemyHealthManager : MonoBehaviour
     {
         if (!IsAlive()) {
             print("Enemy got GOT");
+            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/EDeath", transform.position);
             Destroy(gameObject);
         }
     }

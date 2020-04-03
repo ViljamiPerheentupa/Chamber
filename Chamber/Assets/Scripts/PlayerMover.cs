@@ -105,16 +105,32 @@ public class PlayerMover : MonoBehaviour {
     public bool toggleCrouch = false;
     public bool toggleSprint = false;
     public bool holdToVault = false;
+
+    public float fsTargetAt100 = 0.4f;
+    float fsGap;
+    float fsGapStop = 1;
+    float fsMaxGap;
+    bool fsCd = false;
+    float fsCdTimer = 0;
+    bool sfxLandOnce = true;
+    float sfxLandCD = 0.3f;
+    float sfxLandTimer = 0;
+    FMOD.Studio.EventInstance Speedwind;
     void Start() {
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        vaultHandAnim = GameObject.Find("vaulthand").GetComponent<Animator>();
+        vaultHandAnim = GameObject.FindGameObjectWithTag("GunRender").GetComponent<Animator>();
         normalFoV = Camera.main.fieldOfView;
         maxFoV = normalFoV + 25f;
         fovMomentumDeadzone = normal.momentumMax;
         groundCheck = transform.Find("GroundSensor");
         lastPosition = rig.position;
         targetFoV = normalFoV;
+
+        Speedwind = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/Speedwind");
+        Speedwind.start();
+        fsGap = fsGapStop;
+        fsMaxGap = fsTargetAt100 / 2;
     }
 
     void Update() {
@@ -206,6 +222,17 @@ public class PlayerMover : MonoBehaviour {
         if (!stateLocked || (isAirborne && lastInputState == PlayerState.Crouch) ) {
             CheckState();
         }
+        if (!sfxLandOnce) {
+            sfxLandTimer += Time.deltaTime;
+            if (sfxLandTimer >= sfxLandCD) {
+                sfxLandTimer = 0;
+                sfxLandOnce = true;
+            }
+        }
+        if (momentum > normal.momentumMax) {
+            float parameter = 1;
+            Speedwind.setParameterByName("Speed", parameter);
+        } else Speedwind.setParameterByName("Speed", 0);
         //if (inputInWall && (horizontal != lastHorizontal || vertical != lastVertical)) {
         //    inputInWall = false;
         //}
@@ -221,7 +248,6 @@ public class PlayerMover : MonoBehaviour {
             Vault();
             rig.velocity = Vector3.zero;
             rig.useGravity = false;
-            print("Vaulting");
             return;
         } else {
             if (HasTargetPosition()) {
@@ -267,6 +293,7 @@ public class PlayerMover : MonoBehaviour {
 
 
                 if (jumped && canJump) {
+                    FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/PJump");
                     rig.AddForce(new Vector3(0, Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y), 0), ForceMode.VelocityChange);
                     canJump = false;
                 }
@@ -307,6 +334,16 @@ public class PlayerMover : MonoBehaviour {
 
                 if (HasMomentum() && isMoving && !sliding && !isAirborne && !airblastin && !inputInWall) {
                     rig.velocity = velocity;
+                    if (!fsCd) {
+                        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/PFootstep");
+                        fsCd = true;
+                    } else {
+                        fsCdTimer += Time.fixedDeltaTime;
+                        if (fsCdTimer >= fsTargetAt100) {
+                            fsCdTimer -= fsTargetAt100;
+                            fsCd = false;
+                        }
+                    }
                 }
                 if (sliding && !isAirborne && !airblastin) {
                     velocity = momentum * lastInput * Time.fixedDeltaTime * movementSpeedMultiplier;
@@ -491,7 +528,9 @@ public class PlayerMover : MonoBehaviour {
         if(Physics.Raycast(groundCheck.position + Vector3.down * groundCheckRadius, rig.velocity * Time.fixedDeltaTime, out airborneHit, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
             if (Physics.Raycast(groundCheck.position + Vector3.down * groundCheckRadius, new Vector3(-rig.velocity.x, rig.velocity.y, -rig.velocity.z) * Time.fixedDeltaTime,(rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
                 print("Detecting ground");
-                targetPosition = airborneHit.point + (transform.position - groundCheck.position) + Vector3.up * (groundCheckRadius * 2);
+                if (Time.timeScale == 1) {
+                    targetPosition = airborneHit.point + (transform.position - groundCheck.position) + Vector3.up * (groundCheckRadius * 2);
+                }
                 return;
             }
             vaultDirection = new Vector3(rig.velocity.x, 0, rig.velocity.z);
@@ -501,7 +540,7 @@ public class PlayerMover : MonoBehaviour {
             if (holdToVault) {
                 if (!Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck), (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask) && Input.GetButton("Jump")) {
                     isVaulting = true;
-                    vaultHandAnim.Play("VaultIdle");
+                    vaultHandAnim.SetTrigger("Vaulting");
                     Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck) + (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, Vector3.down, out vaultHit, Mathf.Infinity, groundCheckMask);
                     vaultTargetPosition = vaultHit.point + (Vector3.up * playerHeight);
                     print("Detecting ledge");
@@ -513,7 +552,7 @@ public class PlayerMover : MonoBehaviour {
             if (!holdToVault) {
                 if (!Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck), (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, (rig.velocity * Time.fixedDeltaTime).magnitude, groundCheckMask)) {
                     isVaulting = true;
-                    vaultHandAnim.Play("VaultIdle");
+                    vaultHandAnim.SetTrigger("Vaulting");
                     Physics.Raycast(groundCheck.position + (Vector3.up * ledgeCheck) + (vaultDirection * Time.fixedDeltaTime).normalized * vaultDistance, Vector3.down, out vaultHit, Mathf.Infinity, groundCheckMask);
                     vaultTargetPosition = vaultHit.point + (Vector3.up * playerHeight);
                     print("Detecting ledge");
@@ -591,6 +630,11 @@ public class PlayerMover : MonoBehaviour {
 
     void HitGround() {
         if (!onSlope) {
+            if (sfxLandOnce) {
+                FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/PLand");
+                sfxLandOnce = false;
+            }
+
             if (saveMomentumOnce && !sliding) {
                 savedMomentum = momentum;
                 if (momentum > 100) {
@@ -666,5 +710,9 @@ public class PlayerMover : MonoBehaviour {
         if (momentum > 0) {
             return true;
         } else return false;
+    }
+
+    public void Death() {
+        Speedwind.release();
     }
 }

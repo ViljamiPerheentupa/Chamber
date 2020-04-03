@@ -25,9 +25,21 @@ public class Trigger : MonoBehaviour
         if (type == Gun.AmmoType.eShock && triggerType == TriggerType.Shockable && !turnedOn) {
             onTriggerOn.Invoke();
             turnedOn = true;
+            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/SwitchE");
             return;
         }
         if (type == Gun.AmmoType.eShock && triggerType == TriggerType.Shockable && turnedOn) {
+            onTriggerOff.Invoke();
+            turnedOn = false;
+            return;
+        }
+        if (type == Gun.AmmoType.Piercing && triggerType == TriggerType.Normal && !turnedOn) {
+            onTriggerOn.Invoke();
+            turnedOn = true;
+            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/Switch");
+            return;
+        }
+        if (type == Gun.AmmoType.Piercing && triggerType == TriggerType.Normal && turnedOn) {
             onTriggerOff.Invoke();
             turnedOn = false;
             return;

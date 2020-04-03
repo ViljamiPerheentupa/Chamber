@@ -55,6 +55,7 @@ public class EnemyBehaviour : MonoBehaviour
     Material mat;
     Color originalColor;
 
+
     void Start() {
         es = Enemystate.Idling;
         player = GameObject.Find("PlayerBody");
@@ -148,6 +149,7 @@ public class EnemyBehaviour : MonoBehaviour
                     GoTo(player.transform.position);
                 if(Vector3.Distance(transform.position, agent.destination) < explodeDistance) {
                     GoTo(transform.position);
+                    FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/EChargeExp", transform.position);
                     print("Exploding soon" + Time.time);
                     Invoke("Explode", explodeTime);
                     timer = 0f;
@@ -241,6 +243,7 @@ public class EnemyBehaviour : MonoBehaviour
         print("Go BOOM!");
         if(Vector3.Distance(player.transform.position, transform.position) < explosionRadius) {
             var distance = Vector3.Distance(player.transform.position, transform.position);
+            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/EExplosion", transform.position);
             player.GetComponent<IPlayerDamage>().TakeDamage(explodeDamage, gameObject);
             var pr = player.GetComponent<Rigidbody>();
             player.GetComponent<PlayerMover>().airblastin = true;

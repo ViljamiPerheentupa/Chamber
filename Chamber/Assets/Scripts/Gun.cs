@@ -59,11 +59,10 @@ public class Gun : MonoBehaviour
     float shootTimer = 0;
 
     Animator gunAnim;
+    int anim1;
+    int anim2;
 
-    public string gunshotEventString = "event:/Gunshot";
-
-
-    void PullTrigger() {
+    public void PullTrigger() {
 
         // if reloading, stop
         if(isReloading) {
@@ -108,21 +107,11 @@ public class Gun : MonoBehaviour
             parameter = 2;
         }
 
-        FMOD.Studio.EventInstance gunshotE = FMODUnity.RuntimeManager.CreateInstance(gunshotEventString);
-        FMOD.Studio.EventDescription gunshotD;
-        FMOD.Studio.PARAMETER_DESCRIPTION parameterD;
-        FMOD.Studio.PARAMETER_ID parameterID;
-        gunshotD = FMODUnity.RuntimeManager.GetEventDescription(gunshotEventString);
-        gunshotD.getParameterDescriptionByName("AmmoType", out parameterD);
-        parameterID = parameterD.id;
-        gunshotE.setParameterByID(parameterID, parameter);
+        FMOD.Studio.EventInstance gunSound = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/Gunshot");
+        gunSound.setParameterByName("AmmoType", parameter);
+        gunSound.start();
+        gunSound.release();
 
-        if (type != AmmoType.Empty) {
-            //FMODUnity.RuntimeManager.PlayOneShot("event:/Gunshot", GameObject.FindGameObjectWithTag("PlayerObject").transform.position);
-            gunAnim.Play("Shoot");
-            gunshotE.start();
-            gunshotE.release();
-        }
         RaycastHit hit;
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity,  layerMask)){
             if (type == AmmoType.AirBlast) {
@@ -143,6 +132,7 @@ public class Gun : MonoBehaviour
                 }
             }
             if (hit.transform.gameObject.tag == "Hitspot" && type == AmmoType.Piercing) {
+                FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitBullet", hit.point);
                 hit.transform.GetComponent<EnemyHitspot>().HitspotHit();
             }
             if (hit.transform.gameObject.tag == "Enemy") {
@@ -152,8 +142,11 @@ public class Gun : MonoBehaviour
                         eb.GotStunned();
                     else if(type == AmmoType.AirBlast)
                         eb.GotBlasted();
-                    else if(type == AmmoType.Piercing)
-                        eb.GotDamage();
+                    else if(type == AmmoType.Piercing) {
+                        print("missed vitals");
+                    }
+
+
                     else
                         eb.LaughAtEmptyGun();
                 }
@@ -164,11 +157,46 @@ public class Gun : MonoBehaviour
                     ih.ShootTrigger(type);
                 }
             }
+            // Hit SFX
+            if (hit.transform.gameObject.tag == "Enemy") {
+                FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/MissEnemy", hit.point);
+            }
+            else if(type == AmmoType.Piercing) {
+                FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitGeneric", hit.point);
+            }
+            if (type == AmmoType.eShock) {
+                FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitElectric", hit.point);
+            }
+            if(type == AmmoType.AirBlast) {
+                FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitAir", hit.point);
+            }
+
         }
-        shootCD = true;
-        // Todo: Raycast, choose corresponding sound effect 
+
     }
 
+    void FireAnimation(AmmoType type) {
+        if (type != AmmoType.Empty) {
+            int i = Random.Range(1, 4);
+            if (anim2 != 0) {
+                if (i == anim2) {
+                    while (i == anim2) {
+                        i = Random.Range(1, 4);
+                    }
+                    anim1 = 0;
+                    anim2 = 0;
+                }
+            }
+            if (anim1 != 0) {
+                if (i == anim1) {
+                    anim2 = i;
+                }
+            }
+            anim1 = i;
+            gunAnim.Play("shoot_fire" + i);
+        } else gunAnim.Play("shoot_empty");
+        shootCD = true;
+    }
 
     void SetUICylinderTargetRotation(bool reset) {
 
@@ -206,7 +234,10 @@ public class Gun : MonoBehaviour
     }
 
     void StartReloadingAnimation() {
-        anim.Play("Reload");
+        for (int i = 0; i < loadout.Length; i++) {
+            SetChamberLoad(i, AmmoType.Empty);
+        }
+        gunAnim.SetTrigger("Reloading");
     }
 
     public void StartReloading() {
@@ -223,6 +254,7 @@ public class Gun : MonoBehaviour
 
     void StopReloading() {
         // Todo: Stop loading animation here
+        gunAnim.Play("gun_endreload");
         isReloading = false;
         reloadComplete = true;
         chamberIndex = 0;
@@ -278,8 +310,10 @@ public class Gun : MonoBehaviour
         }
 
         // Firing input
-        if(Input.GetButtonDown("Fire1") && !shootCD) {
-            PullTrigger();
+        if(Input.GetButton("Fire1") && !shootCD) {
+            if (isReloading && chamberIndex < 0) {
+                FireAnimation(loadout[chamberIndex-1]);
+            } else FireAnimation(loadout[chamberIndex]);
         }
 
         // Reload input
@@ -287,7 +321,7 @@ public class Gun : MonoBehaviour
             loadTimer += Time.deltaTime;
             if (loadTimer >= loadDuration) {
                 loadTimer = 0;
-                StartReloading();
+                StartReloadingAnimation();
             }
         }
         if (inputSpamEnabled && !isReloading) {
@@ -303,12 +337,12 @@ public class Gun : MonoBehaviour
                 }
             }
             if (inputSpam >= inputSpamLimit) {
-                StartReloading();
+                StartReloadingAnimation();
             }
         }
         if(Input.GetKeyDown(KeyCode.R)) {
             if(!isReloading)
-                StartReloading();
+                StartReloadingAnimation();
             else
                 StopReloading();
         }
@@ -330,6 +364,7 @@ public class Gun : MonoBehaviour
                     }
                 }
                 if (Input.GetKeyUp("1")) {
+                    gunAnim.Play("gun_reloadinsert");
                     LoadChamber(AmmoType.Piercing);
                     fillTimer = 0;
                 }
@@ -350,6 +385,7 @@ public class Gun : MonoBehaviour
                     }
                 }
                 if (Input.GetKeyUp("3")) {
+                    gunAnim.Play("gun_reloadinsert");
                     LoadChamber(AmmoType.eShock);
                     fillTimer = 0;
                 }
@@ -370,6 +406,7 @@ public class Gun : MonoBehaviour
                     }
                 }
                 if (Input.GetKeyUp("2")) {
+                    gunAnim.Play("gun_reloadinsert");
                     LoadChamber(AmmoType.AirBlast);
                     fillTimer = 0;
                 }

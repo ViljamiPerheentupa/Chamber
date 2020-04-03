@@ -24,9 +24,12 @@ public class LaserTest : MonoBehaviour
     bool shootCD = false;
     bool shooting = false;
     public int damage = 40;
+
+    FMOD.Studio.EventInstance Laserburn;
     void Start()
     {
-        
+        Laserburn = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/EChargeAim");
+        Laserburn.start();
     }
 
     // Update is called once per frame
@@ -66,6 +69,9 @@ public class LaserTest : MonoBehaviour
     }
 
     private void FixedUpdate() {
+        if (Physics.Raycast(transform.position, transform.forward, Mathf.Infinity, playerMask)) {
+            Laserburn.setParameterByName("LockOn", 1);
+        } else Laserburn.setParameterByName("LockOn", 0);
         if (followingPlayer) {
             if (!shooting) {
                 transform.forward = Vector3.Slerp(transform.forward, (GameObject.FindGameObjectWithTag("PlayerObject").transform.position - transform.position) + vectOffset, speed);
@@ -92,6 +98,7 @@ public class LaserTest : MonoBehaviour
         shootTimer += Time.deltaTime;
         if (shootTimer >= timeToShoot) {
             shootTimer = 0;
+            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX:/EShoot", transform.position);
             if (Physics.Raycast(transform.position, transform.forward, Mathf.Infinity, playerMask)) {
                 GameObject.FindGameObjectWithTag("PlayerObject").GetComponent<IPlayerDamage>().TakeDamage(damage, gameObject);
             }
