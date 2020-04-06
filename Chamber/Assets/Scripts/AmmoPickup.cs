@@ -20,6 +20,7 @@ public class AmmoPickup : MonoBehaviour
             if (ammo == Gun.AmmoType.AirBlast) {
                 GameObject.Find("Gunvas").GetComponent<Gun>().hasAirburst = true;
             }
+            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/Collectitem");
             onPickup.Invoke();
             Destroy(gameObject);
         }

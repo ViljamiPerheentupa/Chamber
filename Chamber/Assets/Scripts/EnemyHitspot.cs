@@ -11,6 +11,7 @@ public class EnemyHitspot : MonoBehaviour
             var particles = Instantiate(particlesPrefab, transform.position, transform.rotation);
             Destroy(particles, 5);
         }
+        GetComponent<EnemyBehaviour>().Death();
         Destroy(gameObject);
     }
 }

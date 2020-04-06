@@ -27,7 +27,7 @@ public class EnemyBehaviour : MonoBehaviour
     float timer;
     float alertTime = 5f;
     float huntTime = 2.5f;
-    float stunTime = 5f;
+    public float stunTime = 1f;
     float hideTime = 10f;
     float distractionTime = 10f;
 
@@ -51,13 +51,49 @@ public class EnemyBehaviour : MonoBehaviour
     public float explosionForce = 500;
     public float explosionRadius = 5;
     public float playerExplosionForce = 1.5f;
+    public UnityEvent onExplosion;
+
+    // Shooting stuff
+    public GameObject line1;
+    public GameObject line2;
+    LineRenderer laser;
+    LineRenderer laser2;
+    public LayerMask shootMask;
+    public LayerMask playerMask;
+    public LayerMask environmentMask;
+    RaycastHit hit;
+    float aimTimer = 0;
+    public float aimTime = 2.5f;
+    float shootTimer = 0;
+    public float timeToShoot = 0.5f;
+    float cdTimer = 0;
+    public float shootCooldown = 3;
+    bool shootCD = false;
+    bool shooting = false;
+    public int damage = 40;
+    public Transform gunPos;
+    public float speed = 0.5f;
+    public Vector3 vectOffset;
+    bool aiming = false;
+
+    FMOD.Studio.EventInstance Laserburn;
 
     Material mat;
     Color originalColor;
 
 
     void Start() {
-        es = Enemystate.Idling;
+        if (!isDumb) {
+            es = Enemystate.Idling;
+        }
+        if (!explosive) {
+            var laser1Prefab = Instantiate(line1, Vector3.zero, Quaternion.Euler(0, 0, 0));
+            laser = laser1Prefab.GetComponent<LineRenderer>();
+            var laser2Prefab = Instantiate(line2, Vector3.zero, Quaternion.Euler(0, 0, 0));
+            laser2 = laser2Prefab.GetComponent<LineRenderer>();
+            Laserburn = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/EChargeAim");
+            Laserburn.start();
+        }
         player = GameObject.Find("PlayerBody");
         agent = GetComponent<NavMeshAgent>();
         mat = GetComponent<MeshRenderer>().material;
@@ -77,63 +113,77 @@ public class EnemyBehaviour : MonoBehaviour
 
     #region Enemy states
     void Idling() {
-        if(previousES != Enemystate.Idling) {
-            print("Idling");
-        }
+        if (!isDumb) {
+            if (previousES != Enemystate.Idling) {
+                print("Idling");
+            }
 
-        if(PlayerSeen()) {
-            SawPlayer();
-            return;
-        }
+            if (PlayerSeen()) {
+                SawPlayer();
+                return;
+            }
 
-        if(PlayerHeard()) {
-            HeardPlayer();
-            es = Enemystate.Alerted;
+            if (PlayerHeard()) {
+                HeardPlayer();
+                es = Enemystate.Alerted;
+            }
         }
     }
 
     void Alerted() {
-        if(previousES != Enemystate.Alerted) {
-            timer = Time.time + alertTime;
-            print("Alerted");
-        }
+        if (!isDumb) {
+            if (previousES != Enemystate.Alerted) {
+                timer = Time.time + alertTime;
+                print("Alerted");
+            }
 
-        if(PlayerSeen()) {
-            SawPlayer();
-        }
+            if (PlayerSeen()) {
+                SawPlayer();
+            }
 
-        if(PlayerHeard()) {
-            HeardPlayer();
-        }
+            if (PlayerHeard()) {
+                HeardPlayer();
+            }
 
-        if(Time.time > timer) {
-            es = Enemystate.Idling;
+            if (Time.time > timer) {
+                es = Enemystate.Idling;
+            }
         }
     }
 
     void Hunting() {
-        if(previousES != Enemystate.Hunting) {
-            timer = Time.time + huntTime; ;
-            print("Hunting");
-        }
+        if (!isDumb) {
+            if (!explosive) {
+                aiming = false;
+                print("returning to hunting");
+            }
+            if (previousES != Enemystate.Hunting) {
+                timer = Time.time + huntTime; ;
+                print("Hunting");
+            }
 
-        if(PlayerSeen()) {
-            GoTo(player.transform.position);
-            return;
-        }
+            if (PlayerSeen() && explosive) {
+                GoTo(player.transform.position);
+                return;
+            } else if (PlayerSeen()) {
+                es = Enemystate.Shooting;
+            }
 
-        if(Time.time > timer) {
-            es = Enemystate.Alerted;
+            if (Time.time > timer) {
+                es = Enemystate.Alerted;
+            }
         }
-
     }
 
     void Shooting() {
         if(previousES != Enemystate.Shooting) {
-            // Shoot
+            if (!explosive) {
+                agent.destination = transform.position;
+                aiming = true;
+            }
             print("Shooting");
-        } else {
-            es = Enemystate.Alerted;
+        } else if (!aiming || shootCD) {
+            es = Enemystate.Hunting;
         }
     }
 
@@ -220,15 +270,19 @@ public class EnemyBehaviour : MonoBehaviour
     #region Actions
 
     void SawPlayer() {
-        if(explosive)
-            es = Enemystate.Exploding;
-        else
-            es = Enemystate.Hunting;
+        if (!isDumb) {
+            if (explosive)
+                es = Enemystate.Exploding;
+            else
+                es = Enemystate.Hunting;
+        }
     }
 
     void HeardPlayer() {
-        var pos = transform.position;
-        GoTo((Vector3.Normalize(player.transform.position - pos) * distanceToMoveWhenAlerted) + transform.position);
+        if (!isDumb) {
+            var pos = transform.position;
+            GoTo((Vector3.Normalize(player.transform.position - pos) * distanceToMoveWhenAlerted) + transform.position);
+        }
     }
 
     void GoTo(Vector3 target) {
@@ -236,7 +290,18 @@ public class EnemyBehaviour : MonoBehaviour
     }
 
     void Shoot() {
-        // Shooting goes here
+        laser.startColor = Color.red;
+        laser.endColor = Color.red;
+        shootTimer += Time.deltaTime;
+        if (shootTimer >= timeToShoot) {
+            shootTimer = 0;
+            //FMODUnity.RuntimeManager.PlayOneShot("event:/SFX:/EShoot", transform.position);
+            if (Physics.Raycast(gunPos.position, gunPos.forward, Mathf.Infinity, playerMask) && !Physics.Raycast(gunPos.position, gunPos.forward, Mathf.Infinity, environmentMask)) {
+                GameObject.FindGameObjectWithTag("PlayerObject").GetComponent<IPlayerDamage>().TakeDamage(damage, gameObject);
+            }
+            shooting = false;
+            shootCD = true;
+        }
     }
 
     void Explode() {
@@ -258,6 +323,7 @@ public class EnemyBehaviour : MonoBehaviour
                 ecRig.AddExplosionForce(explosionForce, transform.position, explosionRadius, 1);
             }
         }
+        onExplosion.Invoke();
         Destroy(gameObject);
     }
 
@@ -324,13 +390,66 @@ public class EnemyBehaviour : MonoBehaviour
     #endregion
 
     private void Update() {
-        memES = es;
-        actions[(int)es]();
-        previousES = memES;
+        if (!aiming) {
+            memES = es;
+            actions[(int)es]();
+            previousES = memES;
+        }
+
         if(Input.GetKeyDown(KeyCode.O)) {
             Distract(new Vector3(10, 0, 5));
         }
+        if (!explosive) {
+            laser.SetPosition(0, gunPos.position);
+            laser2.SetPosition(0, gunPos.position);
+            Physics.Raycast(gunPos.position, gunPos.forward, out hit, Mathf.Infinity, shootMask);
+            laser.SetPosition(1, hit.point);
+            laser2.SetPosition(1, hit.point);
+            if (!shooting) {
+                laser.startColor = new Color(1, 0, 0, 0.65f);
+                laser.endColor = new Color(1, 0, 0, 0.45f);
+            }
+            if (shooting) {
+                Shoot();
+            }
+            if (shootCD) {
+                cdTimer += Time.deltaTime;
+                if (cdTimer >= shootCooldown) {
+                    cdTimer = 0;
+                    shootCD = false;
+                }
+            }
+        }
     }
+
+    public void Death() {
+        Destroy(laser);
+        Destroy(laser2);
+        Laserburn.release();
+    }
+
+    private void FixedUpdate() {
+        if (aiming) {
+            if (!PlayerSeen()) {
+                aiming = false;
+                es = Enemystate.Hunting;
+            }
+            if (Physics.Raycast(gunPos.position, gunPos.forward, Mathf.Infinity, playerMask) && !Physics.Raycast(gunPos.position, gunPos.forward, Mathf.Infinity, environmentMask)) {
+                Laserburn.setParameterByName("LockOn", 1);
+            } else Laserburn.setParameterByName("LockOn", 0);
+            if (!shooting) {
+                gunPos.forward = Vector3.Slerp(gunPos.forward, (GameObject.FindGameObjectWithTag("PlayerObject").transform.position - gunPos.position) + vectOffset, speed);
+            }
+            if (!shootCD && !shooting) {
+                aimTimer += Time.deltaTime;
+                if (aimTimer >= aimTime) {
+                    aimTimer = 0;
+                    shooting = true;
+                }
+            }
+        }
+    }
+
     private void OnDrawGizmos() {
         if(hidingPointOffsets != null) {
             for(int i = 0; i < hidingPointOffsets.Length; i++) {

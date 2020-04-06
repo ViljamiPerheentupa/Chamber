@@ -106,11 +106,17 @@ public class Gun : MonoBehaviour
         if (type == AmmoType.AirBlast) {
             parameter = 2;
         }
+        if (type == AmmoType.Empty) {
+            parameter = -1;
+        }
 
-        FMOD.Studio.EventInstance gunSound = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/Gunshot");
-        gunSound.setParameterByName("AmmoType", parameter);
-        gunSound.start();
-        gunSound.release();
+        if (parameter != -1) {
+            FMOD.Studio.EventInstance gunSound = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/Gunshot");
+            gunSound.setParameterByName("AmmoType", parameter);
+            gunSound.start();
+            gunSound.release();
+        }
+
 
         RaycastHit hit;
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity,  layerMask)){
@@ -134,6 +140,10 @@ public class Gun : MonoBehaviour
             if (hit.transform.gameObject.tag == "Hitspot" && type == AmmoType.Piercing) {
                 FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitBullet", hit.point);
                 hit.transform.GetComponent<EnemyHitspot>().HitspotHit();
+            }
+            if (hit.transform.gameObject.tag == "Hitspot" && type == AmmoType.eShock) {
+                var eb = hit.transform.GetComponentInParent<EnemyBehaviour>();
+                eb.GotStunned();
             }
             if (hit.transform.gameObject.tag == "Enemy") {
                 var eb = hit.transform.GetComponent<EnemyBehaviour>();
@@ -369,7 +379,7 @@ public class Gun : MonoBehaviour
                     fillTimer = 0;
                 }
             }
-            if (hasAirburst) {
+            if (hasShock) {
                 if (Input.GetKey("3")) {
                     fillTimer += Time.deltaTime;
                     if (fillTimer >= fillDuration) {
@@ -390,7 +400,7 @@ public class Gun : MonoBehaviour
                     fillTimer = 0;
                 }
             }
-            if (hasShock) {
+            if (hasAirburst) {
                 if (Input.GetKey("2")) {
                     fillTimer += Time.deltaTime;
                     if (fillTimer >= fillDuration) {
@@ -424,6 +434,6 @@ public class Gun : MonoBehaviour
         crosshair = GameObject.Find("Crosshair").transform;
         //layerMask = LayerMask.GetMask(new string[] { "Environment", "Enemy", "Props" });
         anim = GetComponent<Animator>();
-        StartReloading();
+        //StartReloading();
     }
 }

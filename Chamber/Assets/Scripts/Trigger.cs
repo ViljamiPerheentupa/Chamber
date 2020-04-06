@@ -21,6 +21,18 @@ public class Trigger : MonoBehaviour
         
     }
 
+    private void OnTriggerEnter(Collider other) {
+        if (triggerType == TriggerType.Collision) {
+            onTriggerOn.Invoke();
+        }
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if (triggerType == TriggerType.Collision) {
+            onTriggerOff.Invoke();
+        }
+    }
+
     public void ShootTrigger(Gun.AmmoType type) {
         if (type == Gun.AmmoType.eShock && triggerType == TriggerType.Shockable && !turnedOn) {
             onTriggerOn.Invoke();

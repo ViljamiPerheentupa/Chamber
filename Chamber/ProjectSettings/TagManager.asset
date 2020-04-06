@@ -28,9 +28,9 @@ TagManager:
   - Enemy
   - PlayerPropField
   - Props
-  - 
-  - 
-  - 
+  - GunRender
+  - Effects
+  - Glass
   - 
   - 
   - 

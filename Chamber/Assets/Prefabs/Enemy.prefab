@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 48b4f0d5fc1cad645b3de9d72100e8b8, type: 2}
+  - {fileID: 2100000, guid: 526ee2013bd80e94a83ab0a00515092e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -210,55 +210,55 @@ MonoBehaviour:
   - m_Vertices: 0b0000000e00000012000000
   m_SharedTextures: []
   m_Positions:
-  - {x: -1, y: -1.5, z: 1}
-  - {x: 1, y: -1.5, z: 1}
-  - {x: -1, y: 1.5, z: 1}
-  - {x: 1, y: 1.5, z: 1}
-  - {x: 1, y: -1.5, z: 1}
-  - {x: 1, y: -1.5, z: -1}
-  - {x: 1, y: 1.5, z: 1}
-  - {x: 1, y: 1.5, z: -1}
-  - {x: 1, y: -1.5, z: -1}
-  - {x: -1, y: -1.5, z: -1}
-  - {x: 1, y: 1.5, z: -1}
-  - {x: -1, y: 1.5, z: -1}
-  - {x: -1, y: -1.5, z: -1}
-  - {x: -1, y: -1.5, z: 1}
-  - {x: -1, y: 1.5, z: -1}
-  - {x: -1, y: 1.5, z: 1}
-  - {x: -1, y: 1.5, z: 1}
-  - {x: 1, y: 1.5, z: 1}
-  - {x: -1, y: 1.5, z: -1}
-  - {x: 1, y: 1.5, z: -1}
-  - {x: -1, y: -1.5, z: -1}
-  - {x: 1, y: -1.5, z: -1}
-  - {x: -1, y: -1.5, z: 1}
-  - {x: 1, y: -1.5, z: 1}
+  - {x: -0.75, y: -1.5, z: 0.625}
+  - {x: 0.75, y: -1.5, z: 0.625}
+  - {x: -0.75, y: 1.5, z: 0.625}
+  - {x: 0.75, y: 1.5, z: 0.625}
+  - {x: 0.75, y: -1.5, z: 0.625}
+  - {x: 0.75, y: -1.5, z: -0.75}
+  - {x: 0.75, y: 1.5, z: 0.625}
+  - {x: 0.75, y: 1.5, z: -0.75}
+  - {x: 0.75, y: -1.5, z: -0.75}
+  - {x: -0.75, y: -1.5, z: -0.75}
+  - {x: 0.75, y: 1.5, z: -0.75}
+  - {x: -0.75, y: 1.5, z: -0.75}
+  - {x: -0.75, y: -1.5, z: -0.75}
+  - {x: -0.75, y: -1.5, z: 0.625}
+  - {x: -0.75, y: 1.5, z: -0.75}
+  - {x: -0.75, y: 1.5, z: 0.625}
+  - {x: -0.75, y: 1.5, z: 0.625}
+  - {x: 0.75, y: 1.5, z: 0.625}
+  - {x: -0.75, y: 1.5, z: -0.75}
+  - {x: 0.75, y: 1.5, z: -0.75}
+  - {x: -0.75, y: -1.5, z: -0.75}
+  - {x: 0.75, y: -1.5, z: -0.75}
+  - {x: -0.75, y: -1.5, z: 0.625}
+  - {x: 0.75, y: -1.5, z: 0.625}
   m_Textures0:
-  - {x: 1, y: -1.5}
-  - {x: -1, y: -1.5}
-  - {x: 1, y: 1.5}
-  - {x: -1, y: 1.5}
-  - {x: 1, y: -1.5}
-  - {x: -1, y: -1.5}
-  - {x: 1, y: 1.5}
-  - {x: -1, y: 1.5}
-  - {x: 1, y: -1.5}
-  - {x: -1, y: -1.5}
-  - {x: 1, y: 1.5}
-  - {x: -1, y: 1.5}
-  - {x: 1, y: -1.5}
-  - {x: -1, y: -1.5}
-  - {x: 1, y: 1.5}
-  - {x: -1, y: 1.5}
-  - {x: -1, y: 1}
-  - {x: 1, y: 1}
-  - {x: -1, y: -1}
-  - {x: 1, y: -1}
-  - {x: 1, y: -1}
-  - {x: -1, y: -1}
-  - {x: 1, y: 1}
-  - {x: -1, y: 1}
+  - {x: 0.75, y: -1.5}
+  - {x: -0.75, y: -1.5}
+  - {x: 0.75, y: 1.5}
+  - {x: -0.75, y: 1.5}
+  - {x: 0.625, y: -1.5}
+  - {x: -0.75, y: -1.5}
+  - {x: 0.625, y: 1.5}
+  - {x: -0.75, y: 1.5}
+  - {x: 0.75, y: -1.5}
+  - {x: -0.75, y: -1.5}
+  - {x: 0.75, y: 1.5}
+  - {x: -0.75, y: 1.5}
+  - {x: 0.75, y: -1.5}
+  - {x: -0.625, y: -1.5}
+  - {x: 0.75, y: 1.5}
+  - {x: -0.625, y: 1.5}
+  - {x: -0.75, y: 0.625}
+  - {x: 0.75, y: 0.625}
+  - {x: -0.75, y: -0.75}
+  - {x: 0.75, y: -0.75}
+  - {x: 0.75, y: -0.75}
+  - {x: -0.75, y: -0.75}
+  - {x: 0.75, y: 0.625}
+  - {x: -0.75, y: 0.625}
   m_Textures2: []
   m_Textures3: []
   m_Tangents:
@@ -322,7 +322,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 3.5
+  m_Speed: 6
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -347,3 +347,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   es: 0
+  explosive: 0
+  isDumb: 0
+  dumbTarget: {fileID: 0}
+  explodeDistance: 2
+  changeColor: {r: 0.9245283, g: 0.9245283, b: 0.9245283, a: 0}
+  explodeTime: 1.5
+  explodeMask:
+    serializedVersion: 2
+    m_Bits: 32768
+  explodeDamage: 40
+  explosionForce: 500
+  explosionRadius: 5
+  playerExplosionForce: 1.5
+  onExplosion:
+    m_PersistentCalls:
+      m_Calls: []

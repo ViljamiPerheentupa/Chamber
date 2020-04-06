@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class LaserTest : MonoBehaviour
 {
+    public GameObject line1;
+    public GameObject line2;
     public LineRenderer laser;
     public LineRenderer laser2;
     public LayerMask layerMask;
     public LayerMask playerMask;
+    public LayerMask environmentMask;
     RaycastHit hit;
     public Color changeColor;
     public float colorChangeSpeed = 1;
@@ -15,7 +18,7 @@ public class LaserTest : MonoBehaviour
     bool followingPlayer = false;
     public float speed = 0.5f;
     public Vector3 vectOffset;
-    float timer = 0;
+    float aimTimer = 0;
     public float aimTime = 2.5f;
     float shootTimer = 0;
     public float timeToShoot = 0.5f;
@@ -28,6 +31,10 @@ public class LaserTest : MonoBehaviour
     FMOD.Studio.EventInstance Laserburn;
     void Start()
     {
+        var laser1Prefab = Instantiate(line1, Vector3.zero, Quaternion.Euler(0, 0, 0));
+        laser = laser1Prefab.GetComponent<LineRenderer>();
+        var laser2Prefab = Instantiate(line2, Vector3.zero, Quaternion.Euler(0, 0, 0));
+        laser2 = laser2Prefab.GetComponent<LineRenderer>();
         Laserburn = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/EChargeAim");
         Laserburn.start();
     }
@@ -69,7 +76,7 @@ public class LaserTest : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        if (Physics.Raycast(transform.position, transform.forward, Mathf.Infinity, playerMask)) {
+        if (Physics.Raycast(transform.position, transform.forward, Mathf.Infinity, playerMask) && !Physics.Raycast(transform.position, transform.forward, Mathf.Infinity, environmentMask)) {
             Laserburn.setParameterByName("LockOn", 1);
         } else Laserburn.setParameterByName("LockOn", 0);
         if (followingPlayer) {
@@ -77,9 +84,9 @@ public class LaserTest : MonoBehaviour
                 transform.forward = Vector3.Slerp(transform.forward, (GameObject.FindGameObjectWithTag("PlayerObject").transform.position - transform.position) + vectOffset, speed);
             }
             if (!shootCD && !shooting) {
-                timer += Time.deltaTime;
-                if (timer >= aimTime) {
-                    timer = 0;
+                aimTimer += Time.deltaTime;
+                if (aimTimer >= aimTime) {
+                    aimTimer = 0;
                     shooting = true;
                 }
             }
@@ -99,7 +106,7 @@ public class LaserTest : MonoBehaviour
         if (shootTimer >= timeToShoot) {
             shootTimer = 0;
             FMODUnity.RuntimeManager.PlayOneShot("event:/SFX:/EShoot", transform.position);
-            if (Physics.Raycast(transform.position, transform.forward, Mathf.Infinity, playerMask)) {
+            if (Physics.Raycast(transform.position, transform.forward, Mathf.Infinity, playerMask) && !Physics.Raycast(transform.position, transform.forward, Mathf.Infinity, environmentMask)) {
                 GameObject.FindGameObjectWithTag("PlayerObject").GetComponent<IPlayerDamage>().TakeDamage(damage, gameObject);
             }
             shooting = false;
