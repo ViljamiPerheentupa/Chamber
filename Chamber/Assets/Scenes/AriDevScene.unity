@@ -2900,6 +2900,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   es: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  stunTime: 1
   explosive: 1
   isDumb: 1
   dumbTarget: {fileID: 95527176}
@@ -2913,6 +2917,27 @@ MonoBehaviour:
   explosionForce: 500
   explosionRadius: 5
   playerExplosionForce: 1.5
+  onExplosion:
+    m_PersistentCalls:
+      m_Calls: []
+  line1: {fileID: 0}
+  line2: {fileID: 0}
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  environmentMask:
+    serializedVersion: 2
+    m_Bits: 0
+  aimTime: 2.5
+  timeToShoot: 0.5
+  shootCooldown: 3
+  damage: 40
+  gunPos: {fileID: 0}
+  speed: 0.5
+  vectOffset: {x: 0, y: 0, z: 0}
 --- !u!33 &726901882
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -4722,6 +4747,106 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1358148360948675625, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148360948675625, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148360948675625, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361260023080, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361260023080, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361544654129, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361544654129, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361544654129, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361797543133, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361797543133, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361814325326, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361814325326, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361814325326, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361837742601, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361837742601, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148361837742601, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148362717211411, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148362717211411, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148362719709988, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1358148362719709988, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2663062311418323577, guid: 6cb8bfe5a4418e841af0fa772981e34f,
         type: 3}
       propertyPath: m_Name
@@ -10839,6 +10964,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   es: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  stunTime: 1
   explosive: 1
   isDumb: 0
   dumbTarget: {fileID: 0}
@@ -10852,6 +10981,27 @@ MonoBehaviour:
   explosionForce: 500
   explosionRadius: 5
   playerExplosionForce: 1.5
+  onExplosion:
+    m_PersistentCalls:
+      m_Calls: []
+  line1: {fileID: 0}
+  line2: {fileID: 0}
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  environmentMask:
+    serializedVersion: 2
+    m_Bits: 0
+  aimTime: 2.5
+  timeToShoot: 0.5
+  shootCooldown: 3
+  damage: 40
+  gunPos: {fileID: 0}
+  speed: 0.5
+  vectOffset: {x: 0, y: 0, z: 0}
 --- !u!195 &1604718136191052588
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -11199,6 +11349,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   es: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  stunTime: 1
   explosive: 0
   isDumb: 0
   dumbTarget: {fileID: 0}
@@ -11212,6 +11366,27 @@ MonoBehaviour:
   explosionForce: 500
   explosionRadius: 5
   playerExplosionForce: 1.5
+  onExplosion:
+    m_PersistentCalls:
+      m_Calls: []
+  line1: {fileID: 0}
+  line2: {fileID: 0}
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  environmentMask:
+    serializedVersion: 2
+    m_Bits: 0
+  aimTime: 2.5
+  timeToShoot: 0.5
+  shootCooldown: 3
+  damage: 40
+  gunPos: {fileID: 0}
+  speed: 0.5
+  vectOffset: {x: 0, y: 0, z: 0}
 --- !u!64 &1604718136245258346
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -28524,6 +28699,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   es: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  stunTime: 1
   explosive: 0
   isDumb: 0
   dumbTarget: {fileID: 0}
@@ -28537,6 +28716,27 @@ MonoBehaviour:
   explosionForce: 500
   explosionRadius: 5
   playerExplosionForce: 1.5
+  onExplosion:
+    m_PersistentCalls:
+      m_Calls: []
+  line1: {fileID: 0}
+  line2: {fileID: 0}
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  environmentMask:
+    serializedVersion: 2
+    m_Bits: 0
+  aimTime: 2.5
+  timeToShoot: 0.5
+  shootCooldown: 3
+  damage: 40
+  gunPos: {fileID: 0}
+  speed: 0.5
+  vectOffset: {x: 0, y: 0, z: 0}
 --- !u!195 &1604718137168003145
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -33313,6 +33513,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   es: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  stunTime: 1
   explosive: 0
   isDumb: 0
   dumbTarget: {fileID: 0}
@@ -33326,6 +33530,27 @@ MonoBehaviour:
   explosionForce: 500
   explosionRadius: 5
   playerExplosionForce: 1.5
+  onExplosion:
+    m_PersistentCalls:
+      m_Calls: []
+  line1: {fileID: 0}
+  line2: {fileID: 0}
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  environmentMask:
+    serializedVersion: 2
+    m_Bits: 0
+  aimTime: 2.5
+  timeToShoot: 0.5
+  shootCooldown: 3
+  damage: 40
+  gunPos: {fileID: 0}
+  speed: 0.5
+  vectOffset: {x: 0, y: 0, z: 0}
 --- !u!64 &1604718137686021574
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -35917,6 +36142,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   es: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  stunTime: 1
   explosive: 0
   isDumb: 0
   dumbTarget: {fileID: 0}
@@ -35930,6 +36159,27 @@ MonoBehaviour:
   explosionForce: 500
   explosionRadius: 5
   playerExplosionForce: 1.5
+  onExplosion:
+    m_PersistentCalls:
+      m_Calls: []
+  line1: {fileID: 0}
+  line2: {fileID: 0}
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  environmentMask:
+    serializedVersion: 2
+    m_Bits: 0
+  aimTime: 2.5
+  timeToShoot: 0.5
+  shootCooldown: 3
+  damage: 40
+  gunPos: {fileID: 0}
+  speed: 0.5
+  vectOffset: {x: 0, y: 0, z: 0}
 --- !u!64 &1604718137998416670
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -38991,6 +39241,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   es: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  stunTime: 1
   explosive: 0
   isDumb: 0
   dumbTarget: {fileID: 0}
@@ -39004,6 +39258,27 @@ MonoBehaviour:
   explosionForce: 500
   explosionRadius: 5
   playerExplosionForce: 1.5
+  onExplosion:
+    m_PersistentCalls:
+      m_Calls: []
+  line1: {fileID: 0}
+  line2: {fileID: 0}
+  shootMask:
+    serializedVersion: 2
+    m_Bits: 0
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  environmentMask:
+    serializedVersion: 2
+    m_Bits: 0
+  aimTime: 2.5
+  timeToShoot: 0.5
+  shootCooldown: 3
+  damage: 40
+  gunPos: {fileID: 0}
+  speed: 0.5
+  vectOffset: {x: 0, y: 0, z: 0}
 --- !u!64 &1604718138190061822
 MeshCollider:
   m_ObjectHideFlags: 0

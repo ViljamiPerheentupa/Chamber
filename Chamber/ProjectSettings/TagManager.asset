@@ -11,6 +11,7 @@ TagManager:
   - Interactable
   - GunRender
   - UIManager
+  - PData
   layers:
   - Default
   - TransparentFX

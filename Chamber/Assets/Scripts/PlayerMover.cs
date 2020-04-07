@@ -134,77 +134,79 @@ public class PlayerMover : MonoBehaviour {
     }
 
     void Update() {
-        if ((!sliding || isAirborne) && !isVaulting) {
-            vertical = Input.GetAxisRaw("Vertical");
-            horizontal = Input.GetAxisRaw("Horizontal");
-        }
-        if (vertical != 0 || horizontal != 0) {
-            isMoving = true;
-            lastInput = transform.TransformDirection(new Vector3(horizontal, 0, vertical));
-        } else isMoving = false;
+        if (!GameObject.Find("GameManager").GetComponent<GameManager>().paused) {
+            if ((!sliding || isAirborne) && !isVaulting) {
+                vertical = Input.GetAxisRaw("Vertical");
+                horizontal = Input.GetAxisRaw("Horizontal");
+            }
+            if (vertical != 0 || horizontal != 0) {
+                isMoving = true;
+                lastInput = transform.TransformDirection(new Vector3(horizontal, 0, vertical));
+            } else isMoving = false;
 
-        if (toggleSprint) {
-            if (Input.GetButtonDown("Sprint") && !sprinting && isMoving) {
-                lastInputState = PlayerState.Sprint;
-                sprinting = true;
+            if (toggleSprint) {
+                if (Input.GetButtonDown("Sprint") && !sprinting && isMoving) {
+                    lastInputState = PlayerState.Sprint;
+                    sprinting = true;
+                    return;
+                }
+                if (Input.GetButtonDown("Sprint") && sprinting && isMoving) {
+                    lastInputState = PlayerState.Normal;
+                    sprinting = false;
+                    return;
+                }
+            } else {
+                if (Input.GetButton("Sprint") && !sprinting && isMoving) {
+                    lastInputState = PlayerState.Sprint;
+                    sprinting = true;
+                }
+                if (Input.GetButtonUp("Sprint") && sprinting) {
+                    lastInputState = PlayerState.Normal;
+                }
+            }
+
+
+
+            if (toggleCrouch) {
+                if (Input.GetButtonDown("Crouch") && !crouching && !isAirborne && !losingMomentum) {
+                    lastInputState = PlayerState.Crouch;
+                    return;
+                }
+                if (Input.GetButton("Crouch") && isAirborne) {
+                    lastInputState = PlayerState.Crouch;
+                }
+                if (Input.GetButtonDown("Crouch") && crouching && !losingMomentum) {
+                    lastInputState = PlayerState.Normal;
+                    return;
+                }
+                if (Input.GetButtonDown("Crouch") && sliding) {
+                    lastInputState = PlayerState.Normal;
+                    return;
+                }
+            } else {
+                if (Input.GetButton("Crouch") && ((!crouching && !isAirborne && !losingMomentum) || isAirborne)) {
+                    lastInputState = PlayerState.Crouch;
+                }
+                if (Input.GetButtonUp("Crouch") && isAirborne) {
+                    lastInputState = PlayerState.Normal;
+                }
+                if (Input.GetButtonUp("Crouch") && ((crouching && !isAirborne && !losingMomentum) || sliding)) {
+                    lastInputState = PlayerState.Normal;
+                }
+            }
+
+
+            if (Input.GetButtonDown("Jump") && !isAirborne) {
+                lastInputState = PlayerState.Airborne;
+                jumped = true;
+                checkGround = false;
                 return;
             }
-            if (Input.GetButtonDown("Sprint") && sprinting && isMoving) {
-                lastInputState = PlayerState.Normal;
-                sprinting = false;
-                return;
-            }
-        } else {
-            if (Input.GetButton("Sprint") && !sprinting && isMoving) {
-                lastInputState = PlayerState.Sprint;
-                sprinting = true;
-            }
-            if (Input.GetButtonUp("Sprint") && sprinting) {
+
+
+            if (momentum <= 0 && currentState == PlayerState.Sprint && toggleSprint) {
                 lastInputState = PlayerState.Normal;
             }
-        }
-
-
-
-        if (toggleCrouch) {
-            if (Input.GetButtonDown("Crouch") && !crouching && !isAirborne && !losingMomentum) {
-                lastInputState = PlayerState.Crouch;
-                return;
-            }
-            if (Input.GetButton("Crouch") && isAirborne) {
-                lastInputState = PlayerState.Crouch;
-            }
-            if (Input.GetButtonDown("Crouch") && crouching && !losingMomentum) {
-                lastInputState = PlayerState.Normal;
-                return;
-            }
-            if (Input.GetButtonDown("Crouch") && sliding) {
-                lastInputState = PlayerState.Normal;
-                return;
-            }
-        } else {
-            if (Input.GetButton("Crouch") && ((!crouching && !isAirborne && !losingMomentum) || isAirborne)) {
-                lastInputState = PlayerState.Crouch;
-            }
-            if (Input.GetButtonUp("Crouch") && isAirborne) {
-                lastInputState = PlayerState.Normal;
-            }
-            if (Input.GetButtonUp("Crouch") && ((crouching && !isAirborne && !losingMomentum) || sliding)) {
-                lastInputState = PlayerState.Normal;
-            }
-        }
-
-
-        if (Input.GetButtonDown("Jump") && !isAirborne) {
-            lastInputState = PlayerState.Airborne;
-            jumped = true;
-            checkGround = false;
-            return;
-        }
-
-
-        if (momentum <= 0 && currentState == PlayerState.Sprint && toggleSprint) {
-            lastInputState = PlayerState.Normal;
         }
     }
 

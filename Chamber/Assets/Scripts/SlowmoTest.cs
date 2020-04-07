@@ -22,32 +22,34 @@ public class SlowmoTest : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetButton("Fire2") && !cooldown) {
-            Time.timeScale = peakSlowmo;
-            Time.fixedDeltaTime = 0.02f * Time.timeScale;
-            amount -= Time.unscaledDeltaTime;
-            if (amount <= 0) {
-                cooldown = true;
-                amount = 0;
-            }
-        } else {
-            Time.timeScale = 1;
-            Time.fixedDeltaTime = 0.02f;
-            if (amount < maxDuration) {
-                amount += Time.unscaledDeltaTime / 4;
-                if (amount > maxDuration) {
-                    amount = maxDuration;
+        if (!GameObject.Find("GameManager").GetComponent<GameManager>().paused) {
+            if (Input.GetButton("Fire2") && !cooldown) {
+                Time.timeScale = peakSlowmo;
+                Time.fixedDeltaTime = 0.02f * Time.timeScale;
+                amount -= Time.unscaledDeltaTime;
+                if (amount <= 0) {
+                    cooldown = true;
+                    amount = 0;
+                }
+            } else {
+                Time.timeScale = 1;
+                Time.fixedDeltaTime = 0.02f;
+                if (amount < maxDuration) {
+                    amount += Time.unscaledDeltaTime / 4;
+                    if (amount > maxDuration) {
+                        amount = maxDuration;
+                    }
                 }
             }
+            if (cooldown) {
+                FlashBar();
+                if (amount >= maxDuration) {
+                    cooldown = false;
+                    flashing = false;
+                }
+            } else if (!cooldown) uiElement.color = normalColor;
+            uiElement.fillAmount = amount / maxDuration;
         }
-        if (cooldown) {
-            FlashBar();
-            if (amount >= maxDuration) {
-                cooldown = false;
-                flashing = false;
-            }
-        } else if (!cooldown) uiElement.color = normalColor;
-        uiElement.fillAmount = amount / maxDuration;
     }
 
     void FlashBar() {

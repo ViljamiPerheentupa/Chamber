@@ -7,9 +7,9 @@ public class GameManager : MonoBehaviour
 {
     GameObject pauseMenu;
     GameObject inGameUI;
-    bool paused;
+    public bool paused;
     private void Update() {
-        if(Input.GetKeyDown(KeyCode.P)) {
+        if(Input.GetButtonDown("Cancel")) {
             Pause();
         }
     }
@@ -20,11 +20,13 @@ public class GameManager : MonoBehaviour
     }
     public void Pause() {
         Time.timeScale = paused ? 1 : 0;
+        Cursor.lockState = paused ? CursorLockMode.Locked : CursorLockMode.Confined;
         pauseMenu.SetActive(!paused);
         inGameUI.SetActive(paused);
         paused = !paused;
     }
     public void LoadScene(int scene) {
         SceneManager.LoadScene(scene);
+        Time.timeScale = 1;
     }
 }

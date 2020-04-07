@@ -20,9 +20,13 @@ public class MenuManager : MonoBehaviour
 
     FMOD.Studio.EventInstance Music;
 
+    public bool menu = true;
+
     private void Start() {
-        Music = FMODUnity.RuntimeManager.CreateInstance("event:/Music/Main Menu");
-        Music.start();
+        if (menu) {
+            Music = FMODUnity.RuntimeManager.CreateInstance("event:/Music/Main Menu");
+            Music.start();
+        }
     }
     public void StartGame() {
         outroGoing = true;
@@ -37,16 +41,20 @@ public class MenuManager : MonoBehaviour
 
     public void OptionsMenu() {
         opAnim.Play("OptionsPopIn");
-        foreach (MenuButtonEnabler button in buttons) {
-            button.GetComponent<Button>().interactable = false;
+        if (menu) {
+            foreach (MenuButtonEnabler button in buttons) {
+                button.GetComponent<Button>().interactable = false;
+            }
         }
         opMenuCloser.gameObject.SetActive(true);
     }
 
     public void OptionsMenuClose() {
         opAnim.Play("OptionsPopOut");
-        foreach (MenuButtonEnabler button in buttons) {
-            button.GetComponent<Button>().interactable = true;
+        if (menu) {
+            foreach (MenuButtonEnabler button in buttons) {
+                button.GetComponent<Button>().interactable = true;
+            }
         }
         opMenuCloser.gameObject.SetActive(false);
     }

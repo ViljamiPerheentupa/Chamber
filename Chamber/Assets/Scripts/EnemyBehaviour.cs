@@ -16,7 +16,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     GameObject player;
     NavMeshAgent agent;
-    LayerMask layerMask;
+    public LayerMask layerMask;
 
     // Sensing distances
     float viewAngle = 90f;
@@ -85,7 +85,7 @@ public class EnemyBehaviour : MonoBehaviour
     void Start() {
         if (!isDumb) {
             es = Enemystate.Idling;
-        }
+        } else es = Enemystate.Exploding;
         if (!explosive) {
             var laser1Prefab = Instantiate(line1, Vector3.zero, Quaternion.Euler(0, 0, 0));
             laser = laser1Prefab.GetComponent<LineRenderer>();
@@ -96,10 +96,10 @@ public class EnemyBehaviour : MonoBehaviour
         }
         player = GameObject.Find("PlayerBody");
         agent = GetComponent<NavMeshAgent>();
-        mat = GetComponent<MeshRenderer>().material;
+        mat = GetComponentInChildren<SkinnedMeshRenderer>().material;
         originalColor = mat.color;
         actions = new UnityAction[] { Idling, Alerted, Hunting, Shooting, Exploding, Hiding, Sneaking, Stunned, Distracted };
-        layerMask = LayerMask.GetMask(new string[] { "Environment" });
+        //layerMask = LayerMask.GetMask(new string[] { "Environment" });
         hidingPointOffsets = new Vector3[hidingSpotsPerCircle * hidingSpotCircles];
         for(int i = 0; i < hidingPointOffsets.Length; i++) {
             for(int j = 0; j < hidingSpotCircles; j++) {
@@ -399,7 +399,7 @@ public class EnemyBehaviour : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.O)) {
             Distract(new Vector3(10, 0, 5));
         }
-        if (!explosive) {
+        if (!explosive && gunPos != null) {
             laser.SetPosition(0, gunPos.position);
             laser2.SetPosition(0, gunPos.position);
             Physics.Raycast(gunPos.position, gunPos.forward, out hit, Mathf.Infinity, shootMask);
@@ -420,6 +420,9 @@ public class EnemyBehaviour : MonoBehaviour
                 }
             }
         }
+        if (agent.remainingDistance > explodeDistance) {
+            GetComponentInChildren<Animator>().Play("RunCycle");
+        } else GetComponentInChildren<Animator>().Play("Idle");
     }
 
     public void Death() {
