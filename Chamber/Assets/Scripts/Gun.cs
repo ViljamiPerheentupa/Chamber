@@ -168,7 +168,7 @@ public class Gun : MonoBehaviour
                 }
             }
             // Hit SFX
-            if (hit.transform.gameObject.tag == "Enemy") {
+            if (hit.transform.gameObject.tag == "Enemy" && type != AmmoType.Empty) {
                 FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/MissEnemy", hit.point);
             }
             else if(type == AmmoType.Piercing) {
