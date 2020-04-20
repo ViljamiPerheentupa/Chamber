@@ -295,7 +295,7 @@ public class EnemyBehaviour : MonoBehaviour
         shootTimer += Time.deltaTime;
         if (shootTimer >= timeToShoot) {
             shootTimer = 0;
-            //FMODUnity.RuntimeManager.PlayOneShot("event:/SFX:/EShoot", transform.position);
+            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX:/EShoot", transform.position);
             if (Physics.Raycast(gunPos.position, gunPos.forward, Mathf.Infinity, playerMask) && !Physics.Raycast(gunPos.position, gunPos.forward, Mathf.Infinity, environmentMask)) {
                 GameObject.FindGameObjectWithTag("PlayerObject").GetComponent<IPlayerDamage>().TakeDamage(damage, gameObject);
             }

@@ -62,6 +62,8 @@ public class Gun : MonoBehaviour
     int anim1;
     int anim2;
 
+    public GameObject abBubblePrefab;
+
     public void PullTrigger() {
 
         // if reloading, stop
@@ -121,6 +123,7 @@ public class Gun : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity,  layerMask)){
             if (type == AmmoType.AirBlast) {
+                Instantiate(abBubblePrefab, hit.point, transform.rotation);
                 var objectsHit = Physics.OverlapSphere(hit.point, airblastRadius, layerMask);
                 foreach (Collider col in objectsHit) {
                     var rb = col.GetComponent<Rigidbody>();
@@ -357,7 +360,8 @@ public class Gun : MonoBehaviour
                 StopReloading();
         }
 
-        if(isReloading) {
+        if (isReloading) {
+            gunAnim.SetBool("inReload", true);
             if (hasNormal) {
                 if (Input.GetKey("1")) {
                     fillTimer += Time.deltaTime;
@@ -421,7 +425,7 @@ public class Gun : MonoBehaviour
                     fillTimer = 0;
                 }
             }
-        }
+        } else gunAnim.SetBool("inReload", false);
 
         // UICylinder rotation
         if(rotate) {

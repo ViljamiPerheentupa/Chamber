@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     GameObject pauseMenu;
     GameObject inGameUI;
     public bool paused;
+    FMOD.Studio.EventInstance pausefilter;
     private void Update() {
         if(Input.GetButtonDown("Cancel")) {
             Pause();
@@ -19,6 +20,12 @@ public class GameManager : MonoBehaviour
         pauseMenu.gameObject.SetActive(false);
     }
     public void Pause() {
+        if (!paused) {
+            pausefilter = FMODUnity.RuntimeManager.CreateInstance("snapshot:/Pause");
+            pausefilter.start();
+            pausefilter.release();
+        } else pausefilter.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+
         Time.timeScale = paused ? 1 : 0;
         Cursor.lockState = paused ? CursorLockMode.Locked : CursorLockMode.Confined;
         pauseMenu.SetActive(!paused);

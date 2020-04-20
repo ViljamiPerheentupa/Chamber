@@ -11,6 +11,7 @@ public class MouseLook : MonoBehaviour
     Rigidbody rig;
 
     void Start() {
+        mouseSensitivity = GameObject.FindGameObjectWithTag("PData").GetComponent<PData>().mouseSensitivity;
         rig = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked; //Lock the cursor (Makes it invisible, and so it can't escape the game window)
     }
