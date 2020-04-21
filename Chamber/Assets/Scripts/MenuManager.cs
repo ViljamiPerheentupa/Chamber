@@ -14,19 +14,23 @@ public class MenuManager : MonoBehaviour
     public Button opMenuCloser;
     bool outroGoing = false;
 
-    public Slider mVolume;
-    public Slider musicVolume;
-    public AudioMixer master;
+    PData pdata;
 
     FMOD.Studio.EventInstance Music;
 
     public bool menu = true;
 
+    private void Awake() {
+
+    }
     private void Start() {
         if (menu) {
             Music = FMODUnity.RuntimeManager.CreateInstance("event:/Music/Main Menu");
             Music.start();
         }
+        //opMenuCloser = GameObject.FindGameObjectWithTag("OptionsCloser").GetComponent<Button>();
+        //opAnim = GameObject.FindGameObjectWithTag("Options").GetComponent<Animator>();
+        //pdata = GameObject.FindGameObjectWithTag("PData").GetComponent<PData>();
     }
     public void StartGame() {
         outroGoing = true;
@@ -62,13 +66,6 @@ public class MenuManager : MonoBehaviour
 
     public void QuitGame() {
         Application.Quit();
-    }
-
-    private void Update() {
-        if (!outroGoing) {
-            master.SetFloat("Volume", mVolume.value);
-            master.SetFloat("musicVol", musicVolume.value);
-        }
     }
 
     public void UISelectSound() {

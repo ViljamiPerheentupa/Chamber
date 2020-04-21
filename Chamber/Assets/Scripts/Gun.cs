@@ -63,6 +63,12 @@ public class Gun : MonoBehaviour
     int anim2;
 
     public GameObject abBubblePrefab;
+    public GameObject abWavePrefab;
+    public GameObject bulletholeDecalPrefab;
+    public GameObject bulletmarkDecalPrefab;
+    public GameObject genericParticlesPrefab;
+    public GameObject sparksParticlesPrefab;
+    public GameObject shockParticlesPrefab;
 
     public void PullTrigger() {
 
@@ -122,8 +128,28 @@ public class Gun : MonoBehaviour
 
         RaycastHit hit;
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity,  layerMask)){
+            if (type != AmmoType.Empty) {
+                var gParticles = Instantiate(sparksParticlesPrefab, hit.point + hit.normal * 0.05f, Quaternion.LookRotation(hit.normal));
+                Destroy(gParticles, 1);
+                if (type == AmmoType.eShock) {
+                    var sParticles = Instantiate(shockParticlesPrefab, hit.point + hit.normal * 0.05f, Quaternion.LookRotation(hit.normal));
+                    Destroy(sParticles, 1);
+                }
+            }
+            if (type != AmmoType.Empty && hit.transform.gameObject.layer == LayerMask.NameToLayer("Environment")) {
+                //Instantiate(bulletholeDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform);
+                if (type == AmmoType.Piercing) {
+                    GameObject.Find("Decals").GetComponent<DecalManager>().NewDecal(Instantiate(bulletholeDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform));
+                }
+                if (type == AmmoType.eShock || type == AmmoType.AirBlast) {
+                    GameObject.Find("Decals").GetComponent<DecalManager>().NewDecal(Instantiate(bulletmarkDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform));
+                }
+                var gParticles = Instantiate(genericParticlesPrefab, hit.point + hit.normal * 0.05f, Quaternion.LookRotation(hit.normal));
+                Destroy(gParticles, 15);
+            }
             if (type == AmmoType.AirBlast) {
                 Instantiate(abBubblePrefab, hit.point, transform.rotation);
+                Instantiate(abWavePrefab, hit.point, Quaternion.LookRotation(hit.normal));
                 var objectsHit = Physics.OverlapSphere(hit.point, airblastRadius, layerMask);
                 foreach (Collider col in objectsHit) {
                     var rb = col.GetComponent<Rigidbody>();

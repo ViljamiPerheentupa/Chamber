@@ -116,6 +116,8 @@ public class PlayerMover : MonoBehaviour {
     float sfxLandCD = 0.3f;
     float sfxLandTimer = 0;
     FMOD.Studio.EventInstance Speedwind;
+
+    public Animator cameraAnim;
     void Start() {
         rig = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
@@ -142,7 +144,15 @@ public class PlayerMover : MonoBehaviour {
             if (vertical != 0 || horizontal != 0) {
                 isMoving = true;
                 lastInput = transform.TransformDirection(new Vector3(horizontal, 0, vertical));
-            } else isMoving = false;
+                if (!sliding) {
+                    if (sprinting) {
+                        cameraAnim.Play("PlayerSprint");
+                    } else cameraAnim.Play("PlayerWalk");
+                }
+            } else {
+                isMoving = false;
+                cameraAnim.Play("CameraNormal");
+            }
 
             if (toggleSprint) {
                 if (Input.GetButtonDown("Sprint") && !sprinting && isMoving) {
@@ -336,16 +346,6 @@ public class PlayerMover : MonoBehaviour {
 
                 if (HasMomentum() && isMoving && !sliding && !isAirborne && !airblastin && !inputInWall) {
                     rig.velocity = velocity;
-                    if (!fsCd) {
-                        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/PFootstep");
-                        fsCd = true;
-                    } else {
-                        fsCdTimer += Time.fixedDeltaTime;
-                        if (fsCdTimer >= fsTargetAt100) {
-                            fsCdTimer -= fsTargetAt100;
-                            fsCd = false;
-                        }
-                    }
                 }
                 if (sliding && !isAirborne && !airblastin) {
                     velocity = momentum * lastInput * Time.fixedDeltaTime * movementSpeedMultiplier;
@@ -490,6 +490,8 @@ public class PlayerMover : MonoBehaviour {
             }
             if (momentum >= slideMomentumRequirement && canSlide && !isAirborne) {
                 currentState = PlayerState.Slide;
+                FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/PSlide");
+                cameraAnim.Play("PlayerEnterSlide");
                 canSlide = false;
                 sprinting = false;
                 crouching = false;
