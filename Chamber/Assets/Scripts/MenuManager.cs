@@ -14,14 +14,55 @@ public class MenuManager : MonoBehaviour
     public Button opMenuCloser;
     bool outroGoing = false;
 
-    PData pdata;
+    public float mouseSensitivity;
+    public float volumeMaster;
+    public float volumeMusic;
+    public float volumeSFX;
+    FMOD.Studio.VCA masterVolume;
+    FMOD.Studio.VCA musicVolume;
+    FMOD.Studio.VCA sfxVolume;
+
+    public float decalLimit;
+    public bool mInverse = false;
 
     FMOD.Studio.EventInstance Music;
 
     public bool menu = true;
 
     private void Awake() {
-
+        masterVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/Master");
+        musicVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/Music");
+        sfxVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/SFX");
+        if (PlayerPrefs.GetInt("HasSettings") != 1) {
+            print("Creating settings");
+            volumeMaster = GameObject.Find("MasterVolume").GetComponent<Slider>().value;
+            volumeMusic = GameObject.Find("MusicVolume").GetComponent<Slider>().value;
+            volumeSFX = GameObject.Find("SFXVolume").GetComponent<Slider>().value;
+            decalLimit = GameObject.Find("DecalLimit").GetComponent<Slider>().value;
+            mouseSensitivity = GameObject.Find("MouseSensitivity").GetComponent<Slider>().value;
+            PlayerPrefs.SetFloat("vMaster", volumeMaster);
+            PlayerPrefs.SetFloat("vMusic", volumeMusic);
+            PlayerPrefs.SetFloat("vSFX", volumeSFX);
+            PlayerPrefs.SetFloat("mouseSensitivity", mouseSensitivity);
+            PlayerPrefs.SetFloat("dLimit", decalLimit);
+            PlayerPrefs.SetInt("mInverse", 0);
+            PlayerPrefs.SetInt("HasSettings", 1);
+            PlayerPrefs.Save();
+        } else {
+            print("Fetched settings " + PlayerPrefs.GetInt("mInverse"));
+            volumeMaster = PlayerPrefs.GetFloat("vMaster");
+            volumeMusic = PlayerPrefs.GetFloat("vMusic");
+            volumeSFX = PlayerPrefs.GetFloat("vSFX");
+            decalLimit = PlayerPrefs.GetFloat("dLimit");
+            mouseSensitivity = PlayerPrefs.GetFloat("mouseSensitivity");
+            if (PlayerPrefs.GetInt("mInverse") != 0) {
+                GameObject.Find("InvertMouse").GetComponent<Toggle>().isOn = true;
+                mInverse = true;
+            } else {
+                GameObject.Find("InvertMouse").GetComponent<Toggle>().isOn = false;
+                mInverse = false;
+            }
+        }
     }
     private void Start() {
         if (menu) {
@@ -31,6 +72,31 @@ public class MenuManager : MonoBehaviour
         //opMenuCloser = GameObject.FindGameObjectWithTag("OptionsCloser").GetComponent<Button>();
         //opAnim = GameObject.FindGameObjectWithTag("Options").GetComponent<Animator>();
         //pdata = GameObject.FindGameObjectWithTag("PData").GetComponent<PData>();
+    }
+
+    private void Update() {
+        if (GameObject.Find("MouseSensitivity").GetComponent<Slider>().value != mouseSensitivity) GameObject.Find("MouseSensitivity").GetComponent<Slider>().value = mouseSensitivity;
+        if (GameObject.Find("DecalLimit").GetComponent<Slider>().value != decalLimit) GameObject.Find("DecalLimit").GetComponent<Slider>().value = decalLimit;
+        if (GameObject.Find("MasterVolume").GetComponent<Slider>().value != volumeMaster) GameObject.Find("MasterVolume").GetComponent<Slider>().value = volumeMaster;
+        if (GameObject.Find("MusicVolume").GetComponent<Slider>().value != volumeMusic) GameObject.Find("MusicVolume").GetComponent<Slider>().value = volumeMusic;
+        if (GameObject.Find("SFXVolume").GetComponent<Slider>().value != volumeSFX) GameObject.Find("SFXVolume").GetComponent<Slider>().value = volumeSFX;
+        masterVolume.setVolume(volumeMaster);
+        musicVolume.setVolume(volumeMusic);
+        sfxVolume.setVolume(volumeSFX);
+        if (Camera.main != null) {
+            if (Camera.main.GetComponent<MouseLook>() != null) {
+                if (Camera.main.GetComponent<MouseLook>().mouseSensitivity != mouseSensitivity) Camera.main.GetComponent<MouseLook>().mouseSensitivity = mouseSensitivity;
+                if (mInverse) {
+                    Camera.main.GetComponent<MouseLook>().inverted = true;
+                } else Camera.main.GetComponent<MouseLook>().inverted = false;
+            }
+        }
+        if (GameObject.Find("Decals") != null) {
+            GameObject.Find("Decals").GetComponent<DecalManager>().decalLimit = Mathf.FloorToInt(decalLimit);
+        }
+        if (!GameObject.Find("MenuManager").GetComponent<MenuManager>().menu) {
+            GameObject.Find("DecalLimit").GetComponent<Slider>().interactable = false;
+        } else GameObject.Find("DecalLimit").GetComponent<Slider>().interactable = true;
     }
     public void StartGame() {
         outroGoing = true;
@@ -60,6 +126,7 @@ public class MenuManager : MonoBehaviour
                 button.GetComponent<Button>().interactable = true;
             }
         }
+        PlayerPrefs.Save();
         opMenuCloser.gameObject.SetActive(false);
     }
 
@@ -78,5 +145,42 @@ public class MenuManager : MonoBehaviour
         FMOD.Studio.EventInstance clickSound = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/UIClick");
         clickSound.start();
         clickSound.release();
+    }
+
+    public void UpdateMSensitivity() {
+        mouseSensitivity = GameObject.Find("MouseSensitivity").GetComponent<Slider>().value;
+        PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
+    }
+
+    public void UpdateVolumeMaster() {
+        volumeMaster = GameObject.Find("MasterVolume").GetComponent<Slider>().value;
+        PlayerPrefs.SetFloat("vMaster", volumeMaster);
+    }
+
+    public void UpdateVolumeMusic() {
+        volumeMusic = GameObject.Find("MusicVolume").GetComponent<Slider>().value;
+        PlayerPrefs.SetFloat("vMusic", volumeMusic);
+    }
+
+    public void UpdateVolumeSFX() {
+        volumeSFX = GameObject.Find("SFXVolume").GetComponent<Slider>().value;
+        PlayerPrefs.SetFloat("vSFX", volumeSFX);
+    }
+
+    public void UpdateDecalLimit() {
+        decalLimit = GameObject.Find("DecalLimit").GetComponent<Slider>().value;
+        PlayerPrefs.SetFloat("dLimit", decalLimit);
+    }
+
+    public void UpdateMouseInvert() {
+        if (mInverse) {
+            PlayerPrefs.SetInt("mInverse", 0);
+            print("Mouse Invert disabled " + PlayerPrefs.GetInt("mInverse"));
+            mInverse = false;
+        } else {
+            PlayerPrefs.SetInt("mInverse", 1);
+            print("Mouse Invert enabled " + PlayerPrefs.GetInt("mInverse"));
+            mInverse = true;
+        }
     }
 }

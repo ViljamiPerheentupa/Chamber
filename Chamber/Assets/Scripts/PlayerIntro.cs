@@ -11,4 +11,8 @@ public class PlayerIntro : MonoBehaviour
         gunvas.SetActive(true);
         Destroy(gameObject);
     }
+
+    public void PlaySound() {
+        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/WakeAnim");
+    }
 }

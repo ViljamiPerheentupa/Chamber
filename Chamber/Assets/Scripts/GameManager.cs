@@ -28,11 +28,13 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = paused ? 1 : 0;
         Cursor.lockState = paused ? CursorLockMode.Locked : CursorLockMode.Confined;
+        Cursor.visible = paused ? false : true;
         pauseMenu.SetActive(!paused);
         inGameUI.SetActive(paused);
         paused = !paused;
     }
     public void LoadScene(int scene) {
+        GameObject.Find("MusicManager").GetComponent<MusicManager>().StopMusic();
         SceneManager.LoadScene(scene);
         Time.timeScale = 1;
     }

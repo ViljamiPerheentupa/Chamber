@@ -16,15 +16,22 @@ public class SlowmoTest : MonoBehaviour
     public AnimationCurve flashCurve;
     float flashTimer = 0;
 
+    FMOD.Studio.EventInstance slowmo;
+
     private void Start() {
         normalColor = uiElement.color;
         amount = maxDuration;
+        slowmo = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/BulletTime");
+        slowmo.setParameterByName("BulletTime", 0);
+        slowmo.start();
+        slowmo.release();
     }
     void Update()
     {
         if (!GameObject.Find("GameManager").GetComponent<GameManager>().paused) {
             if (Input.GetButton("Fire2") && !cooldown) {
                 Time.timeScale = peakSlowmo;
+                slowmo.setParameterByName("BulletTime", 1);
                 Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 amount -= Time.unscaledDeltaTime;
                 if (amount <= 0) {
@@ -34,6 +41,7 @@ public class SlowmoTest : MonoBehaviour
             } else {
                 Time.timeScale = 1;
                 Time.fixedDeltaTime = 0.02f;
+                slowmo.setParameterByName("BulletTime", 0);
                 if (amount < maxDuration) {
                     amount += Time.unscaledDeltaTime / 4;
                     if (amount > maxDuration) {
@@ -57,5 +65,9 @@ public class SlowmoTest : MonoBehaviour
         flashTimer += Time.deltaTime;
         float t = flashCurve.Evaluate(flashTimer);
         uiElement.color = new Color(t, 0, 0);
+    }
+
+    private void OnDestroy() {
+        slowmo.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 }

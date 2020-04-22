@@ -20,7 +20,9 @@ public class DecalManager : MonoBehaviour
     //}
 
     public void NewDecal(GameObject decal) {
-        if (decalAmount > decalLimit) {
+        if (decalLimit == 0) {
+            return;
+        } else if (decalAmount > decalLimit) {
             var destroyDecal = particles[0];
             particles.Remove(destroyDecal);
             Destroy(destroyDecal);

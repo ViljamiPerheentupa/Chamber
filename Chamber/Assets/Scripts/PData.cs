@@ -15,21 +15,29 @@ public class PData : MonoBehaviour
 
     public float decalLimit;
     private void Awake() {
-        volumeMaster = GameObject.Find("MasterVolume").GetComponent<Slider>().value;
-        volumeMusic = GameObject.Find("MusicVolume").GetComponent<Slider>().value;
-        volumeSFX = GameObject.Find("SFXVolume").GetComponent<Slider>().value;
-        decalLimit = GameObject.Find("DecalLimit").GetComponent<Slider>().value;
         masterVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/Master");
         musicVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/Music");
         sfxVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/SFX");
-        mouseSensitivity = GameObject.Find("MouseSensitivity").GetComponent<Slider>().value;
-        GameObject[] objs = GameObject.FindGameObjectsWithTag("PData");
-        if (objs.Length > 1) {
-            for (int i = 0; i < objs.Length - 1; i++) {
-                Destroy(objs[i + 1]);
-            }
+        if (PlayerPrefs.GetInt("HasSettings") != 1) {
+            volumeMaster = GameObject.Find("MasterVolume").GetComponent<Slider>().value;
+            volumeMusic = GameObject.Find("MusicVolume").GetComponent<Slider>().value;
+            volumeSFX = GameObject.Find("SFXVolume").GetComponent<Slider>().value;
+            decalLimit = GameObject.Find("DecalLimit").GetComponent<Slider>().value;
+            mouseSensitivity = GameObject.Find("MouseSensitivity").GetComponent<Slider>().value;
+            PlayerPrefs.SetFloat("vMaster", volumeMaster);
+            PlayerPrefs.SetFloat("vMusic", volumeMusic);
+            PlayerPrefs.SetFloat("vSFX", volumeSFX);
+            PlayerPrefs.SetFloat("mouseSensitivity", mouseSensitivity);
+            PlayerPrefs.SetFloat("dLimit", decalLimit);
+            PlayerPrefs.SetInt("HasSettings", 1);
+            PlayerPrefs.Save();
+        } else {
+            volumeMaster = PlayerPrefs.GetFloat("vMaster");
+            volumeMusic = PlayerPrefs.GetFloat("vMusic");
+            volumeSFX = PlayerPrefs.GetFloat("vSFX");
+            decalLimit = PlayerPrefs.GetFloat("dLimit");
+            mouseSensitivity = PlayerPrefs.GetFloat("mouseSensitivity");
         }
-        DontDestroyOnLoad(gameObject);
     }
 
     void Update()
