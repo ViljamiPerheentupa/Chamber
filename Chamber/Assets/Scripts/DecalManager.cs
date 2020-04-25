@@ -26,6 +26,7 @@ public class DecalManager : MonoBehaviour
             var destroyDecal = particles[0];
             particles.Remove(destroyDecal);
             Destroy(destroyDecal);
+            decalAmount--;
         }
         particles.Add(decal);
         decalAmount++;

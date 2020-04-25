@@ -13,3 +13,11 @@ public interface IRestorable {
 public interface IUIMessage {
     void UIMessage(string text, float duration);
 }
+
+public interface ITimeLock {
+    void TimeLock();
+}
+
+public interface IGrapple {
+    void Grab(Vector3 direction);
+}

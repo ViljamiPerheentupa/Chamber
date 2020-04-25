@@ -5,15 +5,11 @@ using UnityEngine;
 public class FollowCamera : MonoBehaviour
 {
     public Vector3 vectOffset;
-    GameObject goFollow;
+    public GameObject goFollow;
     [SerializeField] float speed = 3.0f;
-    Rigidbody rig;
 
     private void Start() {
-        goFollow = Camera.main.gameObject;
-        if (GetComponent<Rigidbody>() != null) {
-            rig = GetComponent<Rigidbody>();
-        }
+        //goFollow = Camera.main.gameObject;
         vectOffset = transform.position - goFollow.transform.position;
     }
 
@@ -21,14 +17,8 @@ public class FollowCamera : MonoBehaviour
     //    rig.transform.position = goFollow.GetComponent<Rigidbody>().transform.position + vectOffset;
     //}
     private void Update() {
-        if (GetComponent<Rigidbody>() != null) {
-            rig.MovePosition(goFollow.GetComponent<Rigidbody>().transform.position + vectOffset);
-            rig.MoveRotation(Quaternion.Slerp(rig.transform.rotation, goFollow.GetComponent<Rigidbody>().transform.rotation, speed));
-        }
-        if (GetComponent<Rigidbody>() == null) {
-            transform.position = goFollow.transform.position + vectOffset;
-            transform.rotation = Quaternion.Slerp(transform.rotation, goFollow.transform.rotation, speed);
-        }
+        transform.position = goFollow.transform.position + vectOffset;
+        transform.localRotation = Quaternion.Slerp(transform.rotation, goFollow.transform.rotation, speed);
         //rig.MoveRotation(Quaternion.Slerp(rig.rotation, goFollow.GetComponent<Rigidbody>().transform.rotation, speed * Time.deltaTime));
     }
 

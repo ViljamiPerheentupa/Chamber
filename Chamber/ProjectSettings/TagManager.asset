@@ -14,6 +14,7 @@ TagManager:
   - PData
   - Options
   - OptionsCloser
+  - GrappleSpot
   layers:
   - Default
   - TransparentFX
@@ -35,7 +36,7 @@ TagManager:
   - Effects
   - Glass
   - Debris
-  - 
+  - Interactable
   - 
   - 
   - 

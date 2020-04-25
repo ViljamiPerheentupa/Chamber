@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
         pauseMenu = GameObject.Find("PauseMenu");
         inGameUI = GameObject.Find("InGameUI");
         pauseMenu.gameObject.SetActive(false);
+        Cursor.visible = false;
     }
     public void Pause() {
         if (!paused) {

@@ -29,6 +29,9 @@ public class MenuManager : MonoBehaviour
 
     public bool menu = true;
 
+    public GameObject devTL;
+    public GameObject devGG;
+
     private void Awake() {
         masterVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/Master");
         musicVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/Music");
@@ -182,5 +185,15 @@ public class MenuManager : MonoBehaviour
             print("Mouse Invert enabled " + PlayerPrefs.GetInt("mInverse"));
             mInverse = true;
         }
+    }
+
+    public void DevTimelock() {
+        devGG.SetActive(false);
+        devTL.SetActive(true);
+    }
+
+    public void DevGrabGrapple() {
+        devTL.SetActive(false);
+        devGG.SetActive(true);
     }
 }

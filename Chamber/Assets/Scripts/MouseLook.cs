@@ -8,11 +8,9 @@ public class MouseLook : MonoBehaviour
     float mouseX;
     float mouseY;
     float xRotation = 0f;
-    Rigidbody rig;
     public bool inverted = false;
 
     void Start() {
-        rig = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked; //Lock the cursor (Makes it invisible, and so it can't escape the game window)
     }
     void Update() {
@@ -25,7 +23,8 @@ public class MouseLook : MonoBehaviour
             xRotation -= mouseY;
             xRotation = Mathf.Clamp(xRotation, -90, 90); //Don't let the player do a 360 in a Y axis, so they can't look behind them
 
-            rig.MoveRotation(Quaternion.Euler(xRotation, mouseX, 0));
+            transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+            transform.parent.rotation = Quaternion.Euler(0, mouseX, 0);
             //transform.rotation = Quaternion.Euler(xRotation, mouseX, 0); //Rotate the player based on input
         }
     }
