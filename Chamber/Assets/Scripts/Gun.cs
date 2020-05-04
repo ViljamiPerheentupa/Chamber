@@ -8,7 +8,7 @@ using FMODUnity;
 
 public class Gun : MonoBehaviour
 {
-    public enum AmmoType { Empty, Piercing, eShock, AirBlast };
+    public enum AmmoType { Empty, eShock, Magnet, Time };
     AmmoType[] loadout = new AmmoType[3];
     Animator anim;
     Camera cam;    
@@ -51,11 +51,10 @@ public class Gun : MonoBehaviour
     public float inputSpamDuration = 0.3f;
     float inputSpamTimer = 0;
 
-    public bool hasNormal = false;
-    public bool hasAirburst = false;
+    public bool hasTime = false;
+    public bool hasMagnet = false;
     public bool hasShock = false;
-    public float shootingCooldown = 0.3f;
-    bool shootCD = false;
+    public float shootingCooldown = 0.1f;
     float shootTimer = 0;
 
     Animator gunAnim;
@@ -105,13 +104,13 @@ public class Gun : MonoBehaviour
     void Fire(AmmoType type) {
         //print("Bäng");
         float parameter = 0;
-        if (type == AmmoType.Piercing) {
+        if (type == AmmoType.Magnet) {
             parameter = 0;
         }
         if (type == AmmoType.eShock) {
             parameter = 1;
         }
-        if (type == AmmoType.AirBlast) {
+        if (type == AmmoType.Time) {
             parameter = 2;
         }
         if (type == AmmoType.Empty) {
@@ -138,16 +137,14 @@ public class Gun : MonoBehaviour
             }
             if (type != AmmoType.Empty && hit.transform.gameObject.layer == LayerMask.NameToLayer("Environment")) {
                 //Instantiate(bulletholeDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform);
-                if (type == AmmoType.Piercing) {
-                    GameObject.Find("Decals").GetComponent<DecalManager>().NewDecal(Instantiate(bulletholeDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform));
-                }
-                if (type == AmmoType.eShock || type == AmmoType.AirBlast) {
+                if (type == AmmoType.eShock) {
+                    // GameObject.Find("Decals").GetComponent<DecalManager>().NewDecal(Instantiate(bulletholeDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform));
                     GameObject.Find("Decals").GetComponent<DecalManager>().NewDecal(Instantiate(bulletmarkDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform));
                 }
                 var gParticles = Instantiate(genericParticlesPrefab, hit.point + hit.normal * 0.05f, Quaternion.LookRotation(hit.normal));
                 Destroy(gParticles, 15);
             }
-            if (type == AmmoType.AirBlast) {
+            /*if (type == AmmoType.AirBlast) {
                 Instantiate(abBubblePrefab, hit.point, transform.rotation);
                 Instantiate(abWavePrefab, hit.point, Quaternion.LookRotation(hit.normal));
                 var objectsHit = Physics.OverlapSphere(hit.point, airblastRadius, layerMask);
@@ -165,23 +162,23 @@ public class Gun : MonoBehaviour
                     player.velocity = new Vector3(player.velocity.x, 0, player.velocity.z);
                     player.AddForce((player.position - hit.point) * airblastForcePlayer * (airblastRadius / distance), ForceMode.VelocityChange);
                 }
-            }
-            if (hit.transform.gameObject.tag == "Hitspot" && type == AmmoType.Piercing) {
+            }*/
+            /*if (hit.transform.gameObject.tag == "Hitspot" && type == AmmoType.Piercing) {
+            }*/
+            if (hit.transform.gameObject.tag == "Hitspot" && type == AmmoType.eShock) {
                 FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitBullet", hit.point);
                 hit.transform.GetComponent<EnemyHitspot>().HitspotHit();
-            }
-            if (hit.transform.gameObject.tag == "Hitspot" && type == AmmoType.eShock) {
-                var eb = hit.transform.GetComponentInParent<EnemyBehaviour>();
-                eb.GotStunned();
+                // var eb = hit.transform.GetComponentInParent<EnemyBehaviour>();
+                // eb.GotStunned();
             }
             if (hit.transform.gameObject.tag == "Enemy") {
                 var eb = hit.transform.GetComponent<EnemyBehaviour>();
                 if(eb != null) {
                     if(type == AmmoType.eShock)
                         eb.GotStunned();
-                    else if(type == AmmoType.AirBlast)
+                    else if(type == AmmoType.Time)
                         eb.GotBlasted();
-                    else if(type == AmmoType.Piercing) {
+                    else if(type == AmmoType.Magnet) {
                         print("missed vitals");
                     }
 
@@ -200,13 +197,13 @@ public class Gun : MonoBehaviour
             if (hit.transform.gameObject.tag == "Enemy" && type != AmmoType.Empty) {
                 FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/MissEnemy", hit.point);
             }
-            else if(type == AmmoType.Piercing) {
+            else if(type == AmmoType.Time) {
                 FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitGeneric", hit.point);
             }
             if (type == AmmoType.eShock) {
                 FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitElectric", hit.point);
             }
-            if(type == AmmoType.AirBlast) {
+            if(type == AmmoType.Magnet) {
                 FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitAir", hit.point);
             }
 
@@ -234,7 +231,8 @@ public class Gun : MonoBehaviour
             anim1 = i;
             gunAnim.Play("shoot_fire" + i);
         } else gunAnim.Play("shoot_empty");
-        shootCD = true;
+        
+        shootTimer = Time.time + shootingCooldown;
     }
 
     void SetUICylinderTargetRotation(bool reset) {
@@ -261,12 +259,12 @@ public class Gun : MonoBehaviour
         // Set Crosshair slot color
         if(ammo == AmmoType.Empty)
             chamberUI[chamber].color = colors[0];
-        if(ammo == AmmoType.Piercing)
-            chamberUI[chamber].color = colors[3];
         if(ammo == AmmoType.eShock)
-            chamberUI[chamber].color = colors[2];
-        if(ammo == AmmoType.AirBlast)
             chamberUI[chamber].color = colors[1];
+        if(ammo == AmmoType.Magnet)
+            chamberUI[chamber].color = colors[2];
+        if(ammo == AmmoType.Time)
+            chamberUI[chamber].color = colors[3];
 
         // Rotate cylinder
         SetUICylinderTargetRotation(false);
@@ -340,19 +338,17 @@ public class Gun : MonoBehaviour
     }
 
     private void Update() {
-        if (shootCD) {
-            shootTimer += Time.deltaTime;
-            if (shootTimer >= shootingCooldown) {
-                shootCD = false;
-                shootTimer = 0;
-            }
+        // Don't fire if cooling down
+        if (Time.time <= shootTimer) {
+            return;
         }
 
         // Firing input
-        if(Input.GetButton("Fire1") && !shootCD) {
-            if (isReloading && chamberIndex < 0) {
-                FireAnimation(loadout[chamberIndex-1]);
-            } else FireAnimation(loadout[chamberIndex]);
+        if(Input.GetButton("Fire1")) {
+            // Check that we're not reloading, and that the chamber is valid (just in case)
+            if (!isReloading && chamberIndex >= 0 && chamberIndex < 3) {
+                FireAnimation(loadout[chamberIndex]);
+            }
         }
 
         // Reload input
@@ -388,29 +384,8 @@ public class Gun : MonoBehaviour
 
         if (isReloading) {
             gunAnim.SetBool("inReload", true);
-            if (hasNormal) {
-                if (Input.GetKey("1")) {
-                    fillTimer += Time.deltaTime;
-                    if (fillTimer >= fillDuration) {
-                        for (int i = 0; i < 3 - chamberIndex; i++) {
-                            SetChamberLoad(chamberIndex, AmmoType.Piercing);
-                            chamberIndex++;
-                            if (chamberIndex > 2) {
-                                fillTimer = 0;
-                                StopReloading();
-                                return;
-                            }
-                        }
-                    }
-                }
-                if (Input.GetKeyUp("1")) {
-                    gunAnim.Play("gun_reloadinsert");
-                    LoadChamber(AmmoType.Piercing);
-                    fillTimer = 0;
-                }
-            }
             if (hasShock) {
-                if (Input.GetKey("3")) {
+                if (Input.GetKey("1")) {
                     fillTimer += Time.deltaTime;
                     if (fillTimer >= fillDuration) {
                         for (int i = 0; i < 3 - chamberIndex; i++) {
@@ -424,18 +399,39 @@ public class Gun : MonoBehaviour
                         }
                     }
                 }
-                if (Input.GetKeyUp("3")) {
+                if (Input.GetKeyUp("1")) {
                     gunAnim.Play("gun_reloadinsert");
                     LoadChamber(AmmoType.eShock);
                     fillTimer = 0;
                 }
             }
-            if (hasAirburst) {
+            if (hasTime) {
+                if (Input.GetKey("3")) {
+                    fillTimer += Time.deltaTime;
+                    if (fillTimer >= fillDuration) {
+                        for (int i = 0; i < 3 - chamberIndex; i++) {
+                            SetChamberLoad(chamberIndex, AmmoType.Time);
+                            chamberIndex++;
+                            if (chamberIndex > 2) {
+                                fillTimer = 0;
+                                StopReloading();
+                                return;
+                            }
+                        }
+                    }
+                }
+                if (Input.GetKeyUp("3")) {
+                    gunAnim.Play("gun_reloadinsert");
+                    LoadChamber(AmmoType.Time);
+                    fillTimer = 0;
+                }
+            }
+            if (hasMagnet) {
                 if (Input.GetKey("2")) {
                     fillTimer += Time.deltaTime;
                     if (fillTimer >= fillDuration) {
                         for (int i = 0; i < 3 - chamberIndex; i++) {
-                            SetChamberLoad(chamberIndex, AmmoType.AirBlast);
+                            SetChamberLoad(chamberIndex, AmmoType.Magnet);
                             chamberIndex++;
                             if (chamberIndex > 2) {
                                 fillTimer = 0;
@@ -447,7 +443,7 @@ public class Gun : MonoBehaviour
                 }
                 if (Input.GetKeyUp("2")) {
                     gunAnim.Play("gun_reloadinsert");
-                    LoadChamber(AmmoType.AirBlast);
+                    LoadChamber(AmmoType.Magnet);
                     fillTimer = 0;
                 }
             }
@@ -465,5 +461,10 @@ public class Gun : MonoBehaviour
         //layerMask = LayerMask.GetMask(new string[] { "Environment", "Enemy", "Props" });
         anim = GetComponent<Animator>();
         //StartReloading();
+
+        // Set the crosshair images to the default color
+        for (int i = 0; i < 3; i++) {
+            chamberUI[i].color = colors[0];
+        }
     }
 }

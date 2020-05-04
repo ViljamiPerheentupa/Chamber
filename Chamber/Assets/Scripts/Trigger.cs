@@ -45,13 +45,13 @@ public class Trigger : MonoBehaviour
             turnedOn = false;
             return;
         }
-        if (type == Gun.AmmoType.Piercing && triggerType == TriggerType.Normal && !turnedOn) {
+        if (type == Gun.AmmoType.Magnet && triggerType == TriggerType.Normal && !turnedOn) {
             onTriggerOn.Invoke();
             turnedOn = true;
             FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/Switch");
             return;
         }
-        if (type == Gun.AmmoType.Piercing && triggerType == TriggerType.Normal && turnedOn) {
+        if (type == Gun.AmmoType.Time && triggerType == TriggerType.Normal && turnedOn) {
             onTriggerOff.Invoke();
             turnedOn = false;
             return;
