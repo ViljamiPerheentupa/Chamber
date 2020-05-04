@@ -44,8 +44,8 @@ ModelImporter:
       name: Idle
       takeName: Take 001
       internalID: 0
-      firstFrame: 24
-      lastFrame: 25
+      firstFrame: 0
+      lastFrame: 210
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -147,7 +147,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.0127
+    globalScale: 0.5
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
