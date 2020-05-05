@@ -20,4 +20,6 @@ public interface IGrapple {
 
 public interface IProp {
     void TimeLock();
+    void PropForce(Vector3 force, ForceMode forceMode);
+    void PropExplosiveForce(Vector3 location, float force, float radius);
 }
