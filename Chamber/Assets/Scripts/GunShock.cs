@@ -12,6 +12,11 @@ public class GunShock : GunAmmoBase {
         if(Physics.Raycast(startPos, forward, out hit, Mathf.Infinity)) {
             HitWall(hit.point, forward, hit.normal);
 
+            ShockTrigger st = hit.collider.GetComponent<ShockTrigger>();
+            if (st) {
+                st.OnTrigger();
+            }
+
             if (hit.rigidbody) {
                 Vector3 force = forward * forceAmount;
                 hit.rigidbody.AddForceAtPosition(force, hit.point, ForceMode.Impulse);

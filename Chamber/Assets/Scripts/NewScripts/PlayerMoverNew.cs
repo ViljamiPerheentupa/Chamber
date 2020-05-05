@@ -9,11 +9,15 @@ public class PlayerMoverNew : MonoBehaviour {
     public float runSpeed = 3.0f;
     public float sprintSpeed = 8.0f;
     public float maxSpeed = 40.0f;
-    public float jumpImpulse = 10.0f;
-    public float fallMultiplier = 1.5f;
+    public float jumpImpulse = 6.0f;
+    public float jumpContinuationForce = 0.6f;
+    public float jumpContinuationTime = 0.4f;
+    public float fallMultiplier = 1.8f;
     public float maintainAirSpeedCoefficient = 0.98f;
     public float maintainSpeedCoefficient = 0.8f;
     public LayerMask floorMask = ~(1 << 9); 
+
+    private float endOfJumpTime = 0.0f;
 
     Rigidbody rigidBody;
     Collider c_collider;
@@ -28,9 +32,10 @@ public class PlayerMoverNew : MonoBehaviour {
     }
     
     void Update() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        if (Input.GetButtonDown("Jump")) {
             if (isGrounded()) {
                 rigidBody.AddForce(new Vector3(0, jumpImpulse, 0), ForceMode.Impulse);
+                endOfJumpTime = Time.time + jumpContinuationTime;
             }
         }
     }
@@ -65,6 +70,9 @@ public class PlayerMoverNew : MonoBehaviour {
 
             if (velocity.y < 0) {
                 velocity.y += Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+            }
+            else if (Input.GetButton("Jump") && endOfJumpTime > Time.time) {
+                velocity.y -= Physics.gravity.y * (jumpContinuationForce) * Time.deltaTime;
             }
         }
 

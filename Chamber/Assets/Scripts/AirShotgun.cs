@@ -33,11 +33,8 @@ public class AirShotgun : MonoBehaviour {
                 }
             }
 
-            float d = Vector3.Dot(-Vector3.up, fwd);
-            if (d > 0.5) {
-                if (rb) {
-                    rb.AddForce(-fwd * selfForceAmount * (d - 0.5f) * 2.0f, ForceMode.Impulse);
-                }
+            if (rb) {
+                rb.AddForce(-fwd * selfForceAmount, ForceMode.Impulse);
             }
             
             nextFire = Time.time + fireCooldownTime;
