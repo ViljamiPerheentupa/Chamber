@@ -10516,7 +10516,7 @@ MonoBehaviour:
     m_Bits: 2096439
   cameraHeight: -0.25
   standCapsuleHeight: 2
-  crouchCapsuleHeight: 1
+  crouchCapsuleHeight: 1.25
   startCrouchTime: 0
   crouchDelay: 0.5
   isCrouching: 0

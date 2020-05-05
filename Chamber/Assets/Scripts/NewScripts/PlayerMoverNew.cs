@@ -55,7 +55,7 @@ public class PlayerMoverNew : MonoBehaviour {
         
         float t = crouchDelay - (Time.time - startCrouchTime);
         t = Mathf.Clamp(t, 0.0f, crouchDelay);
-        if (Input.GetKey("c")) {
+        if (Input.GetButton("Crouch")) {
             if (!isCrouching) {
                 isCrouching = true;
                 startCrouchTime = Time.time - t;
@@ -100,7 +100,7 @@ public class PlayerMoverNew : MonoBehaviour {
     void FixedUpdate() {
         HandleCrouch();
 
-        bool isSprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        bool isSprinting = Input.GetButton("Sprint") || Input.GetButton("Sprint");
         float moveSpeed = 0.0f;
 
         Vector3 velocity;
