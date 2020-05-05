@@ -17,10 +17,10 @@ public class TimeStopBulletTest : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire1")) {
             if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity, layerMask)){
-                if (hit.collider.GetComponent<ITimeLock>() != null) {
-                    hit.collider.GetComponent<ITimeLock>().TimeLock();
-                } else if (hit.collider.GetComponentInParent<ITimeLock>() != null) {
-                    hit.collider.GetComponentInParent<ITimeLock>().TimeLock();
+                if (hit.collider.GetComponent<IProp>() != null) {
+                    hit.collider.GetComponent<IProp>().TimeLock();
+                } else if (hit.collider.GetComponentInParent<IProp>() != null) {
+                    hit.collider.GetComponentInParent<IProp>().TimeLock();
                 } else print("Hit object cannot be timelocked");
             }
         }
