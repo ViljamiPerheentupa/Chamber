@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class PlayerMoverNew : MonoBehaviour {
+    public float crouchMoveSpeed = 0.5f;
     public float airSpeed = 2.0f;
     public float runSpeed = 3.0f;
     public float sprintSpeed = 8.0f;
@@ -23,8 +24,25 @@ public class PlayerMoverNew : MonoBehaviour {
     public bool isCrouching = false;
     public AnimationCurve crouchCurve;
     public Transform cameraTransform;
+    public Transform gunTransform;
+    private float weaponBobFactorChange;
+    public float weaponBobFactorChangeSpeed = 0.2f;
+    private float weaponBobFactor = 0.0f;
+    private float weaponBobTime = 0.0f;
+    public float weaponBobSpeed = 4f;
+    public Vector2 weaponBobAmount = new Vector2(2.0f, 2.0f);
+    public Vector2 weaponSwayAmount;
+    private Vector2 weaponSwayKick;
+    private Vector2 weaponSwayKickVelocity;
+    public float weaponSwayRecoverSpeed = 0.2f;
+    private Vector3 weaponSway;
+    private Vector3 weaponSwayVelocity;
+    public float standToCrouchWeaponSway = 80.0f;
+    public float crouchToStandWeaponSway = 80.0f;
+    public float jumpSway = 100.0f;
+    public float landSwayMultiplier = 10.0f;
 
-
+    private float previousVelocityY;
     private float endOfJumpTime = 0.0f;
 
     Rigidbody rigidBody;
@@ -45,9 +63,23 @@ public class PlayerMoverNew : MonoBehaviour {
         return !Physics.Raycast(topOfHead, Vector3.up, distance, floorMask); 
     }
     
+    void CalculateBob() {
+        weaponBobTime += weaponBobFactor * Time.deltaTime;
+        float t = weaponBobTime * weaponBobSpeed;
+        weaponSwayKick = Vector2.SmoothDamp(weaponSwayKick, new Vector2(0,0), ref weaponSwayKickVelocity, weaponSwayRecoverSpeed);
+        weaponSway = Vector3.SmoothDamp(weaponSway, new Vector3(0,0,0), ref weaponSwayVelocity, weaponSwayRecoverSpeed);
+        weaponSway.x -= (weaponSwayKick.y + Input.GetAxisRaw("Mouse Y") * weaponSwayAmount.y) * Time.deltaTime;
+        weaponSway.y -= (weaponSwayKick.x + Input.GetAxisRaw("Mouse X") * weaponSwayAmount.x) * Time.deltaTime;
+        Vector3 weaponBob = weaponBobFactor * new Vector3(weaponBobAmount.y * Mathf.Sin(2 * t), weaponBobAmount.x * Mathf.Sin(t + Mathf.PI / 2.0f), 0);
+        gunTransform.localEulerAngles = weaponSway + weaponBob;
+    }
+    
     void Update() {
+        CalculateBob();
+
         if (Input.GetButtonDown("Jump")) {
             if (isGrounded()) {
+                weaponSwayKick.y -= jumpSway;
                 rigidBody.AddForce(new Vector3(0, jumpImpulse, 0), ForceMode.Impulse);
                 endOfJumpTime = Time.time + jumpContinuationTime;
             }
@@ -57,6 +89,7 @@ public class PlayerMoverNew : MonoBehaviour {
         t = Mathf.Clamp(t, 0.0f, crouchDelay);
         if (Input.GetButton("Crouch")) {
             if (!isCrouching) {
+                weaponSwayKick.y += standToCrouchWeaponSway;
                 isCrouching = true;
                 startCrouchTime = Time.time - t;
             }
@@ -64,11 +97,9 @@ public class PlayerMoverNew : MonoBehaviour {
         else {
             if (isCrouching) {
                 if (CanStand()) {
+                    weaponSwayKick.y -= crouchToStandWeaponSway;
                     isCrouching = false;
                     startCrouchTime = Time.time - t;
-                }
-                else {
-                    Debug.Log("Can't stand");
                 }
             }
         }
@@ -100,11 +131,19 @@ public class PlayerMoverNew : MonoBehaviour {
     void FixedUpdate() {
         HandleCrouch();
 
-        bool isSprinting = Input.GetButton("Sprint") || Input.GetButton("Sprint");
+        bool isSprinting = Input.GetButton("Sprint");
         float moveSpeed = 0.0f;
 
         Vector3 velocity;
         Vector3 newVelocity = new Vector3();
+
+        
+        if (previousVelocityY < -0.05f) {
+            if (rigidBody.velocity.y > -0.05f) {
+                Debug.Log("Land!");
+                weaponSwayKick.y += landSwayMultiplier * -previousVelocityY;
+            }
+        }
 
         if (isGrounded()) {
             velocity = rigidBody.velocity;
@@ -112,7 +151,10 @@ public class PlayerMoverNew : MonoBehaviour {
             velocity.x *= maintainSpeedCoefficient;
             velocity.z *= maintainSpeedCoefficient;
 
-            if (isSprinting) {
+            if (isCrouching) {
+                moveSpeed = crouchMoveSpeed;
+            }
+            else if (isSprinting) {
                 moveSpeed = sprintSpeed;
             }
             else {
@@ -143,8 +185,11 @@ public class PlayerMoverNew : MonoBehaviour {
 
         float speed = Vector3.Magnitude(newVelocity);
         speed = Mathf.Min(speed, maxSpeed);
+        weaponBobFactor = Mathf.SmoothDamp(weaponBobFactor, speed / sprintSpeed, ref weaponBobFactorChange, weaponBobFactorChangeSpeed);
 
         velocity += Vector3.Normalize(newVelocity) * speed;
+
+        previousVelocityY = velocity.y;
 
         rigidBody.velocity = velocity;
     }
