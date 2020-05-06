@@ -59,7 +59,7 @@ public class PlayerMoverNew : MonoBehaviour {
 
     bool CanStand() {
         Vector3 topOfHead = transform.position;
-        float distance = 1.0f;
+        float distance = standCapsuleHeight - crouchCapsuleHeight;
         return !Physics.Raycast(topOfHead, Vector3.up, distance, floorMask); 
     }
     
