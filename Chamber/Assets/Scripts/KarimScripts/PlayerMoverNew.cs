@@ -140,7 +140,6 @@ public class PlayerMoverNew : MonoBehaviour {
         
         if (previousVelocityY < -0.05f) {
             if (rigidBody.velocity.y > -0.05f) {
-                Debug.Log("Land!");
                 weaponSwayKick.y += landSwayMultiplier * -previousVelocityY;
             }
         }

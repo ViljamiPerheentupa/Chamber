@@ -5047,7 +5047,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 713930251}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6.6413035, y: 3, z: -5.9980364}
+  m_LocalPosition: {x: 6.6413035, y: 3.247, z: -5.9980364}
   m_LocalScale: {x: 4, y: 1, z: 2}
   m_Children: []
   m_Father: {fileID: 0}
@@ -10466,6 +10466,9 @@ MonoBehaviour:
   tlDuration: 5
   tlEffectMagnitude: 0.25
   tlSlowAmount: 0.025
+  isLiftable: 1
+  liftDistance: 2
+  liftAngle: {x: 0, y: 0, z: 0}
 --- !u!1 &871595241
 GameObject:
   m_ObjectHideFlags: 0
@@ -12561,6 +12564,9 @@ MonoBehaviour:
   tlDuration: 5
   tlEffectMagnitude: 0.25
   tlSlowAmount: 0.025
+  isLiftable: 1
+  liftDistance: 2
+  liftAngle: {x: 0, y: 0, z: 0}
 --- !u!1 &1122302366
 GameObject:
   m_ObjectHideFlags: 0
@@ -12571,6 +12577,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1122302367}
   - component: {fileID: 1122302371}
+  - component: {fileID: 1122302373}
   - component: {fileID: 1122302370}
   - component: {fileID: 1122302369}
   - component: {fileID: 1122302368}
@@ -12735,6 +12742,27 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!114 &1122302373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1122302366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2406920ba45382f4f8328acbb6c38dfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunContainer: {fileID: 871595249}
+  maxLiftDistance: 4
+  abandonDistance: 5
+  liftForce: 20
+  rotateSpeed: 360
+  rayTraceLayerMask:
+    serializedVersion: 2
+    m_Bits: 2096439
+  characterTransform: {fileID: 871595244}
 --- !u!43 &1147841589
 Mesh:
   m_ObjectHideFlags: 0
@@ -14963,7 +14991,7 @@ GameObject:
   - component: {fileID: 1401455258}
   - component: {fileID: 1401455257}
   - component: {fileID: 1401455262}
-  m_Layer: 0
+  m_Layer: 20
   m_Name: Crate 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15077,6 +15105,9 @@ MonoBehaviour:
   tlDuration: 5
   tlEffectMagnitude: 0.25
   tlSlowAmount: 0.025
+  isLiftable: 1
+  liftDistance: 2
+  liftAngle: {x: 0, y: 0, z: 0}
 --- !u!1 &1416315447
 GameObject:
   m_ObjectHideFlags: 0
@@ -16742,13 +16773,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1714933482}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0.0037186588, y: -0, z: -0, w: 0.9999931}
   m_LocalPosition: {x: 3.6749663, y: -3.9601195, z: 0.8180361}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2134741993}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0.42600003, y: 0, z: 0}
 --- !u!114 &1714933488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16766,6 +16797,9 @@ MonoBehaviour:
   tlDuration: 5
   tlEffectMagnitude: 0.25
   tlSlowAmount: 0.025
+  isLiftable: 1
+  liftDistance: 2
+  liftAngle: {x: 0, y: 0, z: 0}
 --- !u!1 &1808581936
 GameObject:
   m_ObjectHideFlags: 0
@@ -24696,6 +24730,9 @@ MonoBehaviour:
   tlDuration: 5
   tlEffectMagnitude: 0.25
   tlSlowAmount: 0.025
+  isLiftable: 1
+  liftDistance: 2
+  liftAngle: {x: 0, y: 0, z: 0}
 --- !u!1 &2122737457
 GameObject:
   m_ObjectHideFlags: 0

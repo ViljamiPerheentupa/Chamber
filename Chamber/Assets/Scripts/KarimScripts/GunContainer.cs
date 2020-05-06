@@ -19,8 +19,9 @@ public class GunContainer : MonoBehaviour {
     public Color emptyColor;
     public float chamberUiRotateDuration = 0.5f;
     public Animator animator;
-    
+
     // Private
+    private bool isHolstering = false;
     private uint rotationPrevSlot = 3;
     private float targetAngle = 0.0f;
     private float startAngle = 0.0f;
@@ -61,12 +62,29 @@ public class GunContainer : MonoBehaviour {
         SetTargetAngle(currentChamber);
     }
 
+    public void SetHolstering(bool status) {
+        isHolstering = status;
+
+        if (isInReload) {
+            isInReload = false;
+            currentChamber = 0;
+            animator.Play("gun_endreload");
+            SetTargetAngle(0);
+        }
+
+        // Do animations
+    }
+
     void Update() {
         // Calculate crosshair position
         float ang = (Time.time - startRotateTime) / chamberUiRotateDuration;
         ang = Mathf.Clamp(ang, 0.0f, 1.0f);
         ang = Mathf.Lerp(startAngle, targetAngle, ang);
         SetCrosshairToAngle(ang);
+
+        if (isHolstering) {
+            return;
+        }
 
         // In cooldown
         if (nextFire > Time.time) {

@@ -15,8 +15,16 @@ public class DynamicProp : MonoBehaviour, IProp
     public float tlEffectMagnitude = 0.25f;
     [Tooltip("The amount of slow applied. 0.01 = 1% of the normal speed.")]
     public float tlSlowAmount = 0.025f;
-    float tlTimer = 0;
+    
 
+    [Tooltip("Whether or not the player can lift it.")]
+    public bool isLiftable = true;
+    [Tooltip("How far from the player does the object go when lifted.")]
+    public float liftDistance = 1.0f;
+    [Tooltip("When lifted, the object will tend to this angle.")]
+    public Vector3 liftAngle;
+
+    float tlTimer = 0;
     Vector3 lockedDirection;
     Vector3 lockedRotation;
     float lockedAnimSpeed;
