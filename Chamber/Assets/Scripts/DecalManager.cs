@@ -19,6 +19,16 @@ public class DecalManager : MonoBehaviour
     //    decalAmount = transform.childCount;
     //}
 
+    public void ClearAll() {
+        while (particles.Count > 0) {
+            GameObject decal = particles[0];
+            particles.Remove(decal);
+            Destroy(decal);
+        }
+
+        decalAmount = 0;
+    }
+
     public void NewDecal(GameObject decal) {
         if (decalLimit == 0) {
             return;

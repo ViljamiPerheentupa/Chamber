@@ -9,9 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7678307990215455382}
+  - component: {fileID: 3998869115744752419}
   - component: {fileID: 7678307990215455381}
   - component: {fileID: 7678307990215455386}
   - component: {fileID: 7678307990215455376}
+  - component: {fileID: 5259181975919451932}
   - component: {fileID: 7678307990215455377}
   m_Layer: 20
   m_Name: Crate 2
@@ -35,6 +37,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3998869115744752419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7678307990215455387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca52108456e61ef439b690caef31fe42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!65 &7678307990215455381
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -79,6 +93,18 @@ MonoBehaviour:
   maximumHealth: 100
   currentHealth: 100
   isDead: 0
+--- !u!114 &5259181975919451932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7678307990215455387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a55770a4220ce474d8646c5d0d809971, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7678307990215455377
 MonoBehaviour:
   m_ObjectHideFlags: 0

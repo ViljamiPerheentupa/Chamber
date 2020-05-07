@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class PropHealth : BaseHealth {
     protected override void Die() {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
+    }
+
+    public override void StartReset() {
+        base.StartReset();
+        
+        gameObject.SetActive(true);
     }
 }
