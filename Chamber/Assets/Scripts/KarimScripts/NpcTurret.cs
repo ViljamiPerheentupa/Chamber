@@ -6,8 +6,9 @@ public class NpcTurret : MonoBehaviour {
     public float bulletForce = 20.0f;
     public float playerDetectRange = 10.0f;
     public float playerLoseRange = 12.0f;
-    public float playerDetectTime = 1.0f;
-    public float playerForgetTime = 0.0f;
+    public float detectConeAngle = 45.0f;
+    // public float playerDetectTime = 1.0f;
+    public float playerForgetTime = 4.0f;
     public float bulletHitRange = Mathf.Infinity;
     public float minimumBulletDamage = 10.0f;
     public float maximumBulletDamage = 50.0f;
@@ -24,6 +25,10 @@ public class NpcTurret : MonoBehaviour {
     public Transform turretBase;
     public Transform barrelPivot;
     public Transform firePoint;
+    public float turningIdleSpeed = 20.0f;
+    public bool shouldPingPong = true;
+    public float pingPongAngle = 45.0f;
+    public LayerMask layerMask;
 
     // Private
     private float lastSeePlayer = 0.0f;
@@ -31,25 +36,43 @@ public class NpcTurret : MonoBehaviour {
     private float nextShot = 0.0f;
     private Vector3 targetDirection;
     private Vector3 targetDirectionVelocity;
-    private bool foundPlayer = true;
+    private bool foundPlayer = false;
     private DecalManager decalManager;
     private LineRenderer lineRenderer;
+    private bool isSpinningCW;
 
     void Start() {
         decalManager = GameObject.Find("Decals").GetComponent<DecalManager>();
         lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.enabled = false;
+        lineRenderer.enabled = true;
     }
 
     void Update() {
         if (lineRenderer) {
-            lineRenderer.enabled = false;
+            lineRenderer.SetPosition(0, firePoint.position);
+            
+            RaycastHit hit;
+            if (Physics.Raycast(firePoint.position, firePoint.up, out hit, bulletHitRange, layerMask)) {
+                lineRenderer.SetPosition(1, hit.point);
+            }
+            else {
+                lineRenderer.SetPosition(1, firePoint.position + firePoint.up * bulletHitRange);
+            }
         }
 
         Transform target = GameObject.Find("Player").transform;
+        Vector3 directDirection = (target.position - firePoint.position);
+        float distanceToPlayer = directDirection.magnitude;
 
         if (foundPlayer) {
-            // TODO: Smooth ramp this
+            if (distanceToPlayer > playerLoseRange) {
+                foundPlayer = false;
+                Vector3 fixAngles = barrelPivot.localEulerAngles;
+                fixAngles.x = 0;
+                barrelPivot.localEulerAngles = fixAngles;
+                return;
+            }
+
             Vector3 newTarget = Vector3.Normalize(target.position - transform.position);
             targetDirection = Vector3.SmoothDamp(targetDirection, newTarget, ref targetDirectionVelocity, trackingSpeed);
             Quaternion q = Quaternion.LookRotation(targetDirection, Vector3.up);
@@ -77,13 +100,7 @@ public class NpcTurret : MonoBehaviour {
                 dir = Quaternion.LookRotation(targetDirection) * dir;
 
                 RaycastHit hit;
-                if(Physics.Raycast(transform.position, dir, out hit, bulletHitRange)) {
-                    if (lineRenderer) {
-                        lineRenderer.enabled = true;
-                        lineRenderer.SetPosition(0, firePoint.position);
-                        lineRenderer.SetPosition(1, hit.point);
-                    }
-
+                if(Physics.Raycast(firePoint.position, dir, out hit, bulletHitRange, layerMask)) {
                     if (hit.collider.gameObject.layer == 20) {
                         if (hit.rigidbody) {
                             Vector3 force = Vector3.Normalize(dir) * bulletForce;
@@ -100,6 +117,43 @@ public class NpcTurret : MonoBehaviour {
                         float bulletDamage = Mathf.Lerp(minimumBulletDamage, maximumBulletDamage, t);
                         health.TakeDamage(bulletDamage);
 
+                    }
+                }
+            }
+        }
+        else {
+            Vector3 angles = turretBase.localEulerAngles;
+            if (shouldPingPong) {
+                if (isSpinningCW) {
+                    angles.y += turningIdleSpeed * Time.deltaTime;
+                    Debug.Log(angles.y + "   -   " + (180.0f + pingPongAngle));
+                    if (angles.y > 180.0f + pingPongAngle) {
+                        isSpinningCW = false;
+                    }
+                }
+                else {
+                    angles.y -= turningIdleSpeed * Time.deltaTime;
+                    Debug.Log(angles.y + "   -   " + (180.0f - pingPongAngle));
+                    if (angles.y < 180.0f - pingPongAngle) {
+                        isSpinningCW = true;
+                    }
+                }
+            }
+            else {
+                angles.y += turningIdleSpeed * Time.deltaTime;
+            }
+            turretBase.localEulerAngles = angles;
+
+
+            if (distanceToPlayer < playerDetectRange) {
+                Vector3 normdir = Vector3.Normalize(directDirection);
+                // TODO: Move the detect cone angle math to a private variable at start, when we're close to shipping
+                if (Vector3.Dot(normdir, firePoint.up) > Mathf.Cos(Mathf.Deg2Rad * detectConeAngle)) {
+                    RaycastHit hit;
+                    if (Physics.Raycast(firePoint.position, normdir, out hit, Mathf.Infinity, layerMask)) {
+                        if (hit.collider.transform == target) {
+                            foundPlayer = true;
+                        }
                     }
                 }
             }

@@ -10061,6 +10061,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maximumHealth: 100
   currentHealth: 100
+  isDead: 0
   timeToRecover: 2
   healthRecoverPerSec: 5
   recoverAnimation:
@@ -10244,6 +10245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   color: {r: 0.349, g: 0.725, b: 0.7, a: 0.9}
   decal: {fileID: 1756463669931715762, guid: 36556a719d607244d99c31092c1015eb, type: 3}
+  bulletDamage: 40
   forceAmount: 30
 --- !u!114 &3576744802192327412
 MonoBehaviour:

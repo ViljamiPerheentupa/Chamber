@@ -3017,7 +3017,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 628354816}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3025,7 +3025,7 @@ Transform:
   - {fileID: 1590085666}
   m_Father: {fileID: 1345099695}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1001 &650771316
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8001,9 +8001,9 @@ MonoBehaviour:
   bulletForce: 2
   playerDetectRange: 10
   playerLoseRange: 12
-  playerDetectTime: 1
+  detectConeAngle: 10
   playerForgetTime: 0
-  bulletHitRange: Infinity
+  bulletHitRange: 40
   minimumBulletDamage: 1
   maximumBulletDamage: 5
   minimumBulletDelay: 0.1
@@ -8042,6 +8042,12 @@ MonoBehaviour:
   turretBase: {fileID: 628354817}
   barrelPivot: {fileID: 1590085666}
   firePoint: {fileID: 1577244738}
+  turningIdleSpeed: 40
+  shouldPingPong: 1
+  pingPongAngle: 45
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 1061376
 --- !u!1 &1353898153
 GameObject:
   m_ObjectHideFlags: 0

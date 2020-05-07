@@ -23,10 +23,8 @@ public class AirShotgun : MonoBehaviour {
         Vector3 pos = Camera.main.transform.position;
         Vector3 fwd = Camera.main.transform.forward;
         if (Input.GetButtonDown("Fire2")) {
-            Debug.Log("Airshotgunn Fired!");
             Collider[] hitColliders = Physics.OverlapSphere(pos + fwd * forceRadius, forceRadius - 0.1f, targetHitLayers);
             for (int i = 0; i < hitColliders.Length; ++i) {
-                Debug.Log(hitColliders[i].gameObject.name);
                 if (hitColliders[i].GetComponent<IProp>() != null) {
                     Vector3 forceDir = hitColliders[i].transform.position - pos;
                     hitColliders[i].GetComponent<IProp>().PropForce(forceDir * forceAmount, ForceMode.Impulse);
