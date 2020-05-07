@@ -45,7 +45,7 @@ public class PlayerLifting : MonoBehaviour {
                 }
             }
         }
-        else if (Input.GetButtonDown("Fire1")) {
+        else if (prop && Input.GetButtonDown("Fire1")) {
             rigid.AddForce(transform.forward * throwStrength, ForceMode.Impulse);
             Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
             gunContainer.SetHolstering(false);

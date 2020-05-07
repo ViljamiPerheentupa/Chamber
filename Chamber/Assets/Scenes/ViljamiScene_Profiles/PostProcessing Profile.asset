@@ -216,7 +216,7 @@ MonoBehaviour:
     value: 180
   saturation:
     overrideState: 0
-    value: 0
+    value: 10
   brightness:
     overrideState: 0
     value: 0
@@ -246,13 +246,13 @@ MonoBehaviour:
     value: 0
   mixerBlueOutRedIn:
     overrideState: 0
-    value: 0
+    value: 100
   mixerBlueOutGreenIn:
     overrideState: 0
     value: 0
   mixerBlueOutBlueIn:
     overrideState: 0
-    value: 100
+    value: 0
   lift:
     overrideState: 0
     value: {x: 0.89013153, y: 0.88894355, z: 1, w: -0.17569545}
@@ -1040,7 +1040,7 @@ MonoBehaviour:
       - 0.5
       - 0.5
   hueVsSatCurve:
-    overrideState: 0
+    overrideState: 1
     value:
       curve:
         serializedVersion: 2

@@ -8,21 +8,24 @@ public class SceneManagerUtil : MonoBehaviour {
 
     private void Start() {
         foreach(string st in initialScenes) {
-            LoadScene(st);
+            SceneManager.LoadScene(st, LoadSceneMode.Additive);
         }
     }
 
-    public void LoadScene(string levelName) {
+    public AsyncOperation LoadScene(string levelName) {
         if (!SceneManager.GetSceneByName(levelName).isLoaded) {
             Debug.Log("Load: " + levelName);
-            SceneManager.LoadScene(levelName, LoadSceneMode.Additive);
+            return SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
         }
+
+        return null;
     }
 
     public void UnloadScene(string levelName) {
         if (SceneManager.GetSceneByName(levelName).isLoaded) {
             Debug.Log("Unload: " + levelName);
             SceneManager.UnloadSceneAsync(levelName);
+            Resources.UnloadUnusedAssets();
         }
     }
 }
