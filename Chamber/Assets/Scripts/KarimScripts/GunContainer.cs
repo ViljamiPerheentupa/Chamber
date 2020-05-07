@@ -42,6 +42,24 @@ public class GunContainer : MonoBehaviour {
         }
     }
 
+    public void StartReset() {
+        isHolstering = false;
+        isInReload = false;
+        rotationPrevSlot = 3;
+        targetAngle = 0.0f;
+        startAngle = 0.0f;
+        startRotateTime = 0.0f;
+        nextFire = 0.0f;
+        isHoldMode = false;
+        currentChamber = 0;
+        animator.Play("gun_endreload");
+
+        for (int i = 0; i < 3; ++i) {
+            chambers[i] = AmmoType.Empty;
+            reticleImage[i].color = emptyColor;
+        }
+    }
+
     void AddAmmoToChamber(AmmoType type) {
         animator.Play("gun_reloadinsert");
 

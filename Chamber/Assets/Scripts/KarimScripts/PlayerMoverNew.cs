@@ -53,6 +53,13 @@ public class PlayerMoverNew : MonoBehaviour {
         rigidBody = GetComponent<Rigidbody>();
     }
 
+    public void StartReset() {
+        rigidBody.velocity = new Vector3();
+        weaponSway = new Vector3();
+        isCrouching = false;
+        startCrouchTime = 0;
+    }
+
     bool isGrounded() {
         return Physics.CheckCapsule(c_collider.bounds.center,new Vector3(c_collider.bounds.center.x,c_collider.bounds.min.y-0.1f,c_collider.bounds.center.z),0.18f, floorMask);
     }

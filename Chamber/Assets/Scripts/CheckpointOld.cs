@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Checkpoint : MonoBehaviour {
+public class CheckpointOld : MonoBehaviour {
 
     public RestoreGroup restoreGroup;
-    CheckpointManager cm;
+    CheckpointManagerOld cm;
 
     private void Start() {
-        cm = FindObjectOfType<CheckpointManager>();
+        cm = FindObjectOfType<CheckpointManagerOld>();
     }
     private void OnTriggerEnter(Collider other) {
         if(other.CompareTag("Player")) {

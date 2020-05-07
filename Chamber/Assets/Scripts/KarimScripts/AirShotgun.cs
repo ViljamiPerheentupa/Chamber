@@ -23,6 +23,8 @@ public class AirShotgun : MonoBehaviour {
         Vector3 pos = Camera.main.transform.position;
         Vector3 fwd = Camera.main.transform.forward;
         if (Input.GetButtonDown("Fire2")) {
+            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitAir", transform.position);
+            
             Collider[] hitColliders = Physics.OverlapSphere(pos + fwd * forceRadius, forceRadius - 0.1f, targetHitLayers);
             for (int i = 0; i < hitColliders.Length; ++i) {
                 if (hitColliders[i].GetComponent<IProp>() != null) {

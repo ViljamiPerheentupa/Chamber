@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CheckpointManager : MonoBehaviour {
-    public Checkpoint cp;
-    public void SetActiveCheckpoint(Checkpoint c) {
+public class CheckpointManagerOld : MonoBehaviour {
+    public CheckpointOld cp;
+    public void SetActiveCheckpoint(CheckpointOld c) {
         cp = c;
     }
 

@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class ShockTrigger : BaseResetable {
-    public UnityEvent onTrigger;
-    public UnityEvent onReset;
+public class ResetableRigidbody : BaseResetable {
+    private Rigidbody rigidbody;
+    private Vector3 velocity;
 
     void Start() {
+        rigidbody = GetComponent<Rigidbody>();
+        velocity = rigidbody.velocity;
+        
         CheckpointManager cm = FindObjectOfType<CheckpointManager>();
         if (cm) {
             cm.RegisterResetable(this);
@@ -15,10 +17,6 @@ public class ShockTrigger : BaseResetable {
     }
 
     public override void StartReset() {
-        onReset.Invoke();
-    }
-
-    public void OnTrigger() {
-        onTrigger.Invoke();
+        rigidbody.velocity = velocity;
     }
 }

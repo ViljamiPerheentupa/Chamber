@@ -13,6 +13,13 @@ public class MouseLook : MonoBehaviour
     void Start() {
         Cursor.lockState = CursorLockMode.Locked; //Lock the cursor (Makes it invisible, and so it can't escape the game window)
     }
+
+    public void StartReset(float xangle) {
+        mouseX = xangle;
+        mouseY = 0.0f;
+        xRotation = 0.0f;
+    }
+
     void Update() {
         if (!GameObject.Find("GameManager").GetComponent<GameManager>().paused) {
             mouseX += Input.GetAxisRaw("Mouse X") * mouseSensitivity; //Get the mouse X and Y axis'

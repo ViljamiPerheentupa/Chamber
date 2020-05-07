@@ -9,6 +9,10 @@ public class GunMagnet : GunAmmoBase {
     private Rigidbody magnetTarget;
     private Vector3 targetLocation;
 
+    public void StartReset() {
+        magnetTarget = null;
+    }
+
     public override void OnFire(Vector3 startPos, Vector3 forward) {
         if (magnetTarget) {        
             RaycastHit hit;

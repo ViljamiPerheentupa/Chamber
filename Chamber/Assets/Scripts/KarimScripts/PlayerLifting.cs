@@ -21,6 +21,11 @@ public class PlayerLifting : MonoBehaviour {
     private DynamicProp prop;
     private Rigidbody rigid;
 
+    public void StartReset() {
+        prop = null;
+        rigid = null;
+    }
+
     void Update() {
         if (Input.GetKeyDown("e")) {
             if (prop) {
