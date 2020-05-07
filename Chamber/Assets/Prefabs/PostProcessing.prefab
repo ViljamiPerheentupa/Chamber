@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6938084595850565502}
   - component: {fileID: 6938084595850565501}
+  - component: {fileID: 4669072802258226757}
   m_Layer: 10
   m_Name: PostProcessing
   m_TagString: Untagged
@@ -48,3 +49,18 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   priority: 1
+--- !u!114 &4669072802258226757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6938084595850565500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f03ca44b25253d48b3a5f769ba965b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deadVignetteIntensity: 0.45
+  deadVignetteColor: {r: 0.4716981, g: 0, b: 0, a: 1}
+  deadContrast: 30

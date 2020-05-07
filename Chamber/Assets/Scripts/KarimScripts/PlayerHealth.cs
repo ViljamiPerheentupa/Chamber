@@ -11,12 +11,10 @@ public class PlayerHealth : BaseHealth {
 
     public override void TakeDamage(float dmg) {
         base.TakeDamage(dmg);
-        Debug.Log("Damage: " + dmg + ", Health: " + currentHealth);
         startHealTime = Time.time + timeToRecover;
     }
 
     protected override void Die() {
-        Debug.Log("Dead");
     }
 
     void Update() {

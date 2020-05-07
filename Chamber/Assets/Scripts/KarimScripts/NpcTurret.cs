@@ -45,7 +45,7 @@ public class NpcTurret : MonoBehaviour {
         if (lineRenderer) {
             lineRenderer.enabled = false;
         }
-        
+
         Transform target = GameObject.Find("Player").transform;
 
         if (foundPlayer) {
@@ -86,7 +86,7 @@ public class NpcTurret : MonoBehaviour {
 
                     if (hit.collider.gameObject.layer == 20) {
                         if (hit.rigidbody) {
-                            Vector3 force = dir * bulletForce;
+                            Vector3 force = Vector3.Normalize(dir) * bulletForce;
                             hit.rigidbody.AddForceAtPosition(force, hit.point, ForceMode.Impulse);
                         }
                     }
