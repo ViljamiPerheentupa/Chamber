@@ -126,14 +126,12 @@ public class NpcTurret : MonoBehaviour {
             if (shouldPingPong) {
                 if (isSpinningCW) {
                     angles.y += turningIdleSpeed * Time.deltaTime;
-                    Debug.Log(angles.y + "   -   " + (180.0f + pingPongAngle));
                     if (angles.y > 180.0f + pingPongAngle) {
                         isSpinningCW = false;
                     }
                 }
                 else {
                     angles.y -= turningIdleSpeed * Time.deltaTime;
-                    Debug.Log(angles.y + "   -   " + (180.0f - pingPongAngle));
                     if (angles.y < 180.0f - pingPongAngle) {
                         isSpinningCW = true;
                     }

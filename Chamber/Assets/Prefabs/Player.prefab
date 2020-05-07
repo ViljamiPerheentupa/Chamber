@@ -10108,7 +10108,7 @@ MonoBehaviour:
   jumpImpulse: 8
   jumpContinuationForce: 0.6
   jumpContinuationTime: 0.2
-  fallMultiplier: 1.7
+  fallMultiplier: 1.5
   maintainAirSpeedCoefficient: 0.98
   maintainSpeedCoefficient: 0.8
   floorMask:
