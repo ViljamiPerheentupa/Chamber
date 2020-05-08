@@ -49,7 +49,7 @@ MonoBehaviour:
   bulletForce: 2
   playerDetectRange: 10
   playerLoseRange: 12
-  detectConeAngle: 10
+  detectConeAngle: 30
   playerForgetTime: 0
   bulletHitRange: 40
   minimumBulletDamage: 1

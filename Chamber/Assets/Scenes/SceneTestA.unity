@@ -3395,7 +3395,8 @@ MonoBehaviour:
   doorB: {fileID: 1958166060}
   elevatorCleared: 1
   minimumWaitTime: 1.5
-  oneWay: 1
+  oneWay: 0
+  shakeAmt: 0.3
 --- !u!65 &1074855615
 BoxCollider:
   m_ObjectHideFlags: 0
