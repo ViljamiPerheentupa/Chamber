@@ -88,7 +88,6 @@ MonoBehaviour:
   trackingSpeed: 0.3
   minBarrelPitch: -20
   maxBarrelPitch: 20
-  decal: {fileID: 1756463669931715762, guid: 2cdec33fd55d3b844bf453fe3e196493, type: 3}
   turretBase: {fileID: 4166972440118399740}
   barrelPivot: {fileID: 4166972439440176607}
   firePoint: {fileID: 4166972439435716031}
@@ -440,7 +439,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 047751c7dc7cc314199c68e4cf8af3d8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
