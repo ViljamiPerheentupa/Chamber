@@ -1,44 +1,56 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 
-public class DecalManager : MonoBehaviour
-{
+public class DecalManager : MonoBehaviour {
     public int decalLimit = 100;
-    public int decalAmount;
-    List<GameObject> particles = new List<GameObject>();
-    void Start()
-    {
-        decalLimit -= 1;
-        decalAmount = transform.childCount;
+    public GameObject decalTemplate;
+    List<GameObject> decals = new List<GameObject>();
+    public int decalIterator = 0;
+
+    void Start() {
+        Resize(decalLimit);
     }
 
-    // Update is called once per frame
-    //void Update()
-    //{
-    //    decalAmount = transform.childCount;
-    //}
-
+    public void Resize(int newLimit) {
+        decalLimit = newLimit;
+        if (newLimit > decals.Count) {
+            while (newLimit - decals.Count > 0) {
+                GameObject newDecal = Instantiate(decalTemplate, new Vector3(0,0,0), new Quaternion());
+                decals.Add(newDecal);
+            }
+        }    
+        else if (newLimit < decals.Count) {
+            while (decals.Count - newLimit > 0) {
+                GameObject decal = decals[decals.Count-1];
+                Destroy(decal);
+                decals.RemoveAt(decals.Count-1);
+            }
+        }
+    }
+    
     public void ClearAll() {
-        while (particles.Count > 0) {
-            GameObject decal = particles[0];
-            particles.Remove(decal);
-            Destroy(decal);
+        for (int i = 0; i < decals.Count; ++i) {
+            decals[i].SetActive(false);
         }
 
-        decalAmount = 0;
+        decalIterator = 0;
     }
 
-    public void NewDecal(GameObject decal) {
+    public void NewDecal(Vector3 position, Quaternion rotation, Vector3 size, Material material, Transform parent) {
         if (decalLimit == 0) {
             return;
-        } else if (decalAmount > decalLimit) {
-            var destroyDecal = particles[0];
-            particles.Remove(destroyDecal);
-            Destroy(destroyDecal);
-            decalAmount--;
         }
-        particles.Add(decal);
-        decalAmount++;
+        
+        GameObject d = decals[decalIterator];
+        d.transform.position = position;
+        d.transform.rotation = rotation;
+        d.transform.parent = parent;
+        DecalProjector dp = d.GetComponent<DecalProjector>();
+        dp.material = material;
+        dp.size = size;
+
+        decalIterator = (decalIterator + 1) % decalLimit;
     }
 }

@@ -5862,6 +5862,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8602592553679122820}
     m_Modifications:
+    - target: {fileID: 4531387159445490248, guid: 685a512730dc5824abd182eac149736d,
+        type: 3}
+      propertyPath: decalTemplate
+      value: 
+      objectReference: {fileID: 8612461033777178668, guid: 58d4f3dd39778e84e960765b0dd68a1f,
+        type: 3}
     - target: {fileID: 4531387159445490249, guid: 685a512730dc5824abd182eac149736d,
         type: 3}
       propertyPath: m_Name

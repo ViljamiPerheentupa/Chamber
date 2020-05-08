@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NpcTurret : BaseResetable {
+    public Vector3 decalSize;
+    public Material decalMaterial;
     public float bulletForce = 20.0f;
     public float playerDetectRange = 10.0f;
     public float playerLoseRange = 12.0f;
@@ -21,7 +23,6 @@ public class NpcTurret : BaseResetable {
     public float trackingSpeed = 0.3f;
     public float minBarrelPitch = -60.0f;
     public float maxBarrelPitch = 60.0f;
-    public GameObject decal;
     public Transform turretBase;
     public Transform barrelPivot;
     public Transform firePoint;
@@ -150,8 +151,7 @@ public class NpcTurret : BaseResetable {
                             }
                         }
                         else if (hit.collider.gameObject.layer == 12) {
-                            Vector3 decpos = hit.point - (dir * 0.001f);
-                            decalManager.NewDecal(Instantiate(decal, hit.point, Quaternion.LookRotation(hit.normal), decalManager.transform));
+                            decalManager.NewDecal(hit.point, Quaternion.LookRotation(hit.normal), decalSize, decalMaterial, hit.collider.transform);
                         }
 
                         BaseHealth health = hit.collider.GetComponent<BaseHealth>();
