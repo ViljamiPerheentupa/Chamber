@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6938084595850565502}
-  - component: {fileID: 6938084595850565501}
   - component: {fileID: 4669072802258226757}
+  - component: {fileID: 126404335903353086}
   m_Layer: 10
   m_Name: PostProcessing
   m_TagString: Untagged
@@ -32,23 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6938084595850565501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6938084595850565500}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sharedProfile: {fileID: 11400000, guid: ca0d3281afd4fc441a6f067f9676cb14, type: 2}
-  isGlobal: 1
-  blendDistance: 0
-  weight: 1
-  priority: 1
 --- !u!114 &4669072802258226757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,6 +44,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f03ca44b25253d48b3a5f769ba965b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deadVignetteIntensity: 0.45
+  deadVignetteIntensity: 0.6
   deadVignetteColor: {r: 0.4716981, g: 0, b: 0, a: 1}
   deadContrast: 30
+--- !u!114 &126404335903353086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6938084595850565500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 9e030fa1f09b4474593fe35b8a8787bd, type: 2}

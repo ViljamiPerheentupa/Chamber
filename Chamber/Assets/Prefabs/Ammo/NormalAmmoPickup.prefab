@@ -97,8 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff8d80812213794458c81a99885085da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  message: Press '3' during a reload to insert a time bullet. Hold the same button
-    to fill the cylinder.
+  message: Press '3' during a reload to insert a time bullet. Time bullets temporarily
+    stop objects and enemies.
   duration: 0
 --- !u!1 &4088349292411680041
 GameObject:
