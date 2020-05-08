@@ -2200,16 +2200,7 @@ MonoBehaviour:
   m_Script: {fileID: 799394290}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Entries:
-  - id: 0
-    category: 0
-    gameObject: {fileID: 693426236}
-  - id: 1
-    category: 0
-    gameObject: {fileID: 1589648479}
-  - id: 2
-    category: 0
-    gameObject: {fileID: 1554151239}
+  m_Entries: []
 --- !u!4 &324100561
 Transform:
   m_ObjectHideFlags: 19
@@ -3502,6 +3493,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4669072802258226757, guid: 61565d5d9c4b73541a2ba9c5159a3723,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6938084595850565500, guid: 61565d5d9c4b73541a2ba9c5159a3723,
         type: 3}
       propertyPath: m_Name
@@ -6571,29 +6567,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &993614120 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6938084595850565500, guid: 61565d5d9c4b73541a2ba9c5159a3723,
-    type: 3}
-  m_PrefabInstance: {fileID: 650771316}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &993614121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 993614120}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isGlobal: 1
-  priority: 0
-  blendDistance: 0
-  weight: 1
-  sharedProfile: {fileID: 11400000, guid: 9e030fa1f09b4474593fe35b8a8787bd, type: 2}
 --- !u!1 &995624671 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3576744801238916889, guid: ad82e878837850141823e80c8a613049,
@@ -6664,7 +6637,7 @@ MonoBehaviour:
   clearDepth: 1
   volumeLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 4294967295
   volumeAnchorOverride: {fileID: 0}
   antialiasing: 0
   SMAAQuality: 2
@@ -12978,9 +12951,9 @@ MonoBehaviour:
   clearDepth: 1
   volumeLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 4294967295
   volumeAnchorOverride: {fileID: 0}
-  antialiasing: 0
+  antialiasing: 2
   SMAAQuality: 2
   dithering: 0
   stopNaNs: 0
@@ -15838,11 +15811,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 3576744800330811303, guid: ad82e878837850141823e80c8a613049,
-        type: 3}
-      propertyPath: m_CullingMask.m_Bits
-      value: 4128567
       objectReference: {fileID: 0}
     - target: {fileID: 3576744800330811303, guid: ad82e878837850141823e80c8a613049,
         type: 3}
