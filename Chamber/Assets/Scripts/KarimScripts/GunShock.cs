@@ -4,7 +4,8 @@ using UnityEngine;
 using FMODUnity;
 
 public class GunShock : GunAmmoBase {
-    public GameObject decal;
+    public Vector3 decalSize;
+    public Material decalMaterial;
     public float bulletDamage = 40.0f;
     public float forceAmount = 30.0f;
 
@@ -25,7 +26,7 @@ public class GunShock : GunAmmoBase {
                 }
             }
             else if (hit.collider.gameObject.layer == 12) {
-                HitWall(hit.point, forward, hit.normal);
+                gunContainer.CreateDecal(hit.point, Quaternion.LookRotation(hit.normal), decalSize, decalMaterial, hit.collider.transform);
             }
 
             BaseHealth health = hit.collider.GetComponent<BaseHealth>();
@@ -40,10 +41,5 @@ public class GunShock : GunAmmoBase {
         gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
         gunContainer.SwapToNextChamber();
         gunContainer.WaitForNextShot();
-    }
-
-    void HitWall(Vector3 pos, Vector3 forward, Vector3 normal) {
-        Vector3 decpos = pos - (forward * 0.001f);
-        gunContainer.CreateDecal(decal, decpos, normal);
     }
 }

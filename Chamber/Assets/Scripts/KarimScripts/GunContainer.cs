@@ -213,8 +213,8 @@ public class GunContainer : MonoBehaviour {
         animator.Play("shoot_fire" + i);
     }
 
-    public void CreateDecal(GameObject decal, Vector3 pos, Vector3 normal) {
-        decalManager.NewDecal(Instantiate(decal, pos, Quaternion.LookRotation(normal), decalManager.transform));
+    public void CreateDecal(Vector3 position, Quaternion rotation, Vector3 size, Material material, Transform parent) {
+        decalManager.NewDecal(position, rotation, size, material, parent);
     }
 
     public void SetHoldMode(bool holdMode) {

@@ -46,6 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d1ab99aa528924fac37fd4467f7e1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  decalSize: {x: 0.17, y: 0.17, z: 0.04}
+  decalMaterial: {fileID: 2100000, guid: b15cac1ab9bab944a9211ea310c1d7ef, type: 2}
   bulletForce: 2
   playerDetectRange: 10
   playerLoseRange: 12

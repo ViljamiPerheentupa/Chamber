@@ -139,7 +139,7 @@ public class Gun : MonoBehaviour
                 //Instantiate(bulletholeDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform);
                 if (type == AmmoType.eShock) {
                     // GameObject.Find("Decals").GetComponent<DecalManager>().NewDecal(Instantiate(bulletholeDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform));
-                    GameObject.Find("Decals").GetComponent<DecalManager>().NewDecal(Instantiate(bulletmarkDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform));
+                    // GameObject.Find("Decals").GetComponent<DecalManager>().NewDecal(Instantiate(bulletmarkDecalPrefab, hit.point - ((hit.point - GameObject.FindGameObjectWithTag("PlayerObject").transform.position) * 0.001f), Quaternion.LookRotation(hit.normal), GameObject.Find("Decals").transform));
                 }
                 var gParticles = Instantiate(genericParticlesPrefab, hit.point + hit.normal * 0.05f, Quaternion.LookRotation(hit.normal));
                 Destroy(gParticles, 15);
