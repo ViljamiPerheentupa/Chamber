@@ -17,7 +17,7 @@ public class DecalManager : MonoBehaviour {
         decalLimit = newLimit;
         if (newLimit > decals.Count) {
             while (newLimit - decals.Count > 0) {
-                GameObject newDecal = Instantiate(decalTemplate, new Vector3(0,0,0), new Quaternion());
+                GameObject newDecal = Instantiate(decalTemplate, new Vector3(0,0,0), new Quaternion(), transform);
                 decals.Add(newDecal);
             }
         }    
