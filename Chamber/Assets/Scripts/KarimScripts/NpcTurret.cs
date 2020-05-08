@@ -98,6 +98,13 @@ public class NpcTurret : BaseResetable {
             float distanceToPlayer = directDirection.magnitude;
 
             if (foundPlayer) {
+                PlayerHealth playerHealth = target.GetComponent<PlayerHealth>();
+                if (playerHealth) {
+                    if (playerHealth.isDead) {
+                        return;
+                    }
+                }
+                
                 if (distanceToPlayer > playerLoseRange) {
                     foundPlayer = false;
                     Vector3 fixAngles = barrelPivot.localEulerAngles;

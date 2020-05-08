@@ -15,6 +15,10 @@ public class AirShotgun : MonoBehaviour {
     }
 
     void Update() {
+        if (GetComponent<PlayerHealth>().isDead) {
+            return;
+        }
+        
         // In cooldown
         if (nextFire > Time.time) {
             return;

@@ -44,7 +44,6 @@ public class GunContainer : MonoBehaviour {
 
     public void StartReset() {
         isHolstering = false;
-        isInReload = false;
         rotationPrevSlot = 3;
         targetAngle = 0.0f;
         startAngle = 0.0f;
@@ -52,7 +51,10 @@ public class GunContainer : MonoBehaviour {
         nextFire = 0.0f;
         isHoldMode = false;
         currentChamber = 0;
-        animator.Play("gun_endreload");
+        if (isInReload) {
+            isInReload = false;
+            animator.Play("gun_endreload");
+        }
 
         for (int i = 0; i < 3; ++i) {
             chambers[i] = AmmoType.Empty;
@@ -94,6 +96,10 @@ public class GunContainer : MonoBehaviour {
     }
 
     void Update() {
+        if (GetComponent<PlayerHealth>().isDead) {
+            return;
+        }
+
         // Calculate crosshair position
         float ang = (Time.time - startRotateTime) / chamberUiRotateDuration;
         ang = Mathf.Clamp(ang, 0.0f, 1.0f);

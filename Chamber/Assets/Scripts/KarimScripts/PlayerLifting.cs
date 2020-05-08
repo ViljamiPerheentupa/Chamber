@@ -27,6 +27,10 @@ public class PlayerLifting : MonoBehaviour {
     }
 
     void Update() {
+        if (GetComponent<PlayerHealth>().isDead) {
+            return;
+        }
+        
         if (Input.GetKeyDown("e")) {
             if (prop) {
                 Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);

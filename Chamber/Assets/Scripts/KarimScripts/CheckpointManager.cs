@@ -7,12 +7,6 @@ public class CheckpointManager : MonoBehaviour {
     List<BaseResetable> resetables = new List<BaseResetable>();
     public Checkpoint checkpoint;
 
-    void Update() {
-        if (Input.GetKeyDown("p")) {
-            StartReset();
-        }
-    }
-
     public void SetCheckpoint(Checkpoint cp) {
         checkpoint = cp;
     }
@@ -21,7 +15,7 @@ public class CheckpointManager : MonoBehaviour {
         resetables.Add(resetable);
     }
 
-    void StartReset() {
+    public void StartReset() {
         Debug.Log("Resetting");
         if (checkpoint) {
             checkpoint.StartReset();

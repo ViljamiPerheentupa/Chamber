@@ -82,6 +82,10 @@ public class PlayerMoverNew : MonoBehaviour {
     }
     
     void Update() {
+        if (GetComponent<PlayerHealth>().isDead) {
+            return;
+        }
+
         CalculateBob();
 
         if (Input.GetButtonDown("Jump")) {
@@ -136,6 +140,10 @@ public class PlayerMoverNew : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        if (GetComponent<PlayerHealth>().isDead) {
+            return;
+        }
+        
         HandleCrouch();
 
         bool isSprinting = Input.GetButton("Sprint");
