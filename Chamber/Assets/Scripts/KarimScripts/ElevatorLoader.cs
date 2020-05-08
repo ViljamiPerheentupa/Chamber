@@ -15,6 +15,7 @@ public class ElevatorLoader : MonoBehaviour {
     public float minimumWaitTime = 1.0f;
     [Tooltip("If checked, you can only go from A to B")]
     public bool oneWay;
+    public float shakeAmt = 0.3f;
 
     private SceneManagerUtil sceneManager;
     private float openDoorTime;
@@ -31,13 +32,21 @@ public class ElevatorLoader : MonoBehaviour {
     }
 
     void UnloadSceneA() {
-        if (sceneManager)
-            sceneManager.UnloadScene(sceneNameA);
+        MouseLook ml = GameObject.FindObjectOfType<MouseLook>();
+        if (ml) {
+            ml.screenShake = new Vector3(shakeAmt, shakeAmt, shakeAmt);
+        }
+        
+        sceneManager.UnloadScene(sceneNameA);
     }
 
     void UnloadSceneB() {
-        if (sceneManager)
-            sceneManager.UnloadScene(sceneNameB);
+        MouseLook ml = GameObject.FindObjectOfType<MouseLook>();
+        if (ml) {
+            ml.screenShake = new Vector3(shakeAmt, shakeAmt, shakeAmt);
+        }
+
+        sceneManager.UnloadScene(sceneNameB);
     }
 
     IEnumerator WaitToOpen(AsyncOperation asyncOperation, DoorSlider slider) {
@@ -45,14 +54,18 @@ public class ElevatorLoader : MonoBehaviour {
             yield return null;
         }
 
+        MouseLook ml = GameObject.FindObjectOfType<MouseLook>();
+        if (ml) {
+            ml.screenShake = new Vector3(0, 0, 0);
+        }
+
         slider.Open();
     }
 
     private void OnTriggerEnter(Collider other) {
         if (elevatorCleared) {
-            elevatorCleared = false;
-
             if (sceneManager) {
+                elevatorCleared = false;
                 if (SceneManager.GetSceneByName(sceneNameA).isLoaded) {
                     AsyncOperation asyncOperation = sceneManager.LoadScene(sceneNameB);
                     if (asyncOperation != null) {
@@ -64,6 +77,9 @@ public class ElevatorLoader : MonoBehaviour {
 
                         // Do this on loadscene complete
                         StartCoroutine(WaitToOpen(asyncOperation, doorB));
+                    }
+                    else {
+                        Debug.LogError("Unable to load scene: " + sceneNameB);
                     }
                 }
                 else if (!oneWay) {
@@ -77,6 +93,9 @@ public class ElevatorLoader : MonoBehaviour {
                         
                         // Do this on loadscene complete
                         StartCoroutine(WaitToOpen(asyncOperation, doorA));
+                    }
+                    else {
+                        Debug.LogError("Unable to load scene: " + sceneNameA);
                     }
                 }
             }
