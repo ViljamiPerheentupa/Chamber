@@ -27,10 +27,12 @@ public class PlayerLifting : MonoBehaviour {
     }
 
     void Update() {
-        if (GetComponent<PlayerHealth>().isDead) {
+        if (transform.parent.GetComponent<PlayerHealth>().isDead) {
+            prop = null;
+            rigid = null;
             return;
         }
-        
+
         if (Input.GetKeyDown("e")) {
             if (prop) {
                 Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
