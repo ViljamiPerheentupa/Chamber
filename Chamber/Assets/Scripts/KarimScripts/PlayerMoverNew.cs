@@ -82,7 +82,7 @@ public class PlayerMoverNew : MonoBehaviour {
     }
     
     void Update() {
-        if (GetComponent<PlayerHealth>().isDead) {
+        if (GameObject.Find("GameManager").GetComponent<GameManager>().paused || GetComponent<PlayerHealth>().isDead || GetComponent<GunMagnet>().isPulling) {
             return;
         }
 
@@ -140,7 +140,7 @@ public class PlayerMoverNew : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        if (GetComponent<PlayerHealth>().isDead) {
+        if (GameObject.Find("GameManager").GetComponent<GameManager>().paused || GetComponent<PlayerHealth>().isDead || GetComponent<GunMagnet>().isPulling) {
             return;
         }
         
