@@ -86,8 +86,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff8d80812213794458c81a99885085da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  message: Press '1' during a reload to insert a shock round. Hold the same button
-    to fill the cylinder.
+  message: Press '1' during a reload to insert a shock round. Use your bullets to
+    shoot enemies' weakpoints and trigger buttons.
   duration: 0
 --- !u!1 &4792296744796190964
 GameObject:

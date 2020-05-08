@@ -97,8 +97,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff8d80812213794458c81a99885085da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  message: Press '2' during a reload to insert an magnet round. Hold the same button
-    to fill the cylinder.
+  message: 'Press ''2'' during a reload to insert a magnet round. You must fire twice:
+    once to select an object, and once to choose a point to make the object fly towards.
+    Hold the mouse button the second time.'
   duration: 0
 --- !u!1 &8007044850489120768
 GameObject:
