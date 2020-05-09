@@ -13,11 +13,17 @@ public class PlayerHealth : BaseHealth {
 
     private float startHealTime = 0.0f;
     private float fadeTime;
-    
+    public Transform canvas;
+    public Transform damagePrefab;
 
-    public override void TakeDamage(float dmg) {
-        base.TakeDamage(dmg);
+    public override void TakeDamage(float dmg, Vector3 incomingDirection) {
+        base.TakeDamage(dmg, incomingDirection);
         startHealTime = Time.time + timeToRecover;
+        RectTransform d = Instantiate(damagePrefab, new Vector3(0,0,0), new Quaternion(), canvas) as RectTransform;
+        d.anchoredPosition = new Vector2(0,0);
+        Vector2 fwd = new Vector2(transform.forward.x, transform.forward.z);
+        Vector2 dir = new Vector2(-incomingDirection.x, -incomingDirection.z);
+        d.eulerAngles = new Vector3(0.0f, 0.0f, Vector2.SignedAngle(fwd, dir));
     }
 
     protected override void Die() {
@@ -58,7 +64,7 @@ public class PlayerHealth : BaseHealth {
         }
         
         if (Input.GetKeyDown("p")) {
-            TakeDamage(maximumHealth);
+            TakeDamage(maximumHealth, Vector3.down);
         }
     }
 }

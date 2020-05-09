@@ -25,12 +25,13 @@ public class PlayerMoverNew : MonoBehaviour {
     public AnimationCurve crouchCurve;
     public Transform cameraTransform;
     public Transform gunTransform;
-    private float weaponBobFactorChange;
+    private float weaponBobSpeedChange;
+    private float weaponBobAmountChange;
     public float weaponBobFactorChangeSpeed = 0.2f;
-    private float weaponBobFactor = 0.0f;
+    private float weaponBobSpeed = 0.0f;
+    private float weaponBobAmount = 0.0f;
     private float weaponBobTime = 0.0f;
-    public float weaponBobSpeed = 4f;
-    public Vector2 weaponBobAmount = new Vector2(2.0f, 2.0f);
+    public Vector2 weaponBobStretch = new Vector2(2.0f, 1.0f);
     public Vector2 weaponSwayAmount;
     private Vector2 weaponSwayKick;
     private Vector2 weaponSwayKickVelocity;
@@ -41,9 +42,16 @@ public class PlayerMoverNew : MonoBehaviour {
     public float crouchToStandWeaponSway = 80.0f;
     public float jumpSway = 100.0f;
     public float landSwayMultiplier = 10.0f;
+    public float couchBobSpeed = 2.0f;
+    public float runBobSpeed = 1.0f;
+    public float sprintBobSpeed = 2.0f;
+    public float couchBobAmount = 2.0f;
+    public float runBobAmount = 1.0f;
+    public float sprintBobAmount = 2.0f;
 
     private float previousVelocityY;
     private float endOfJumpTime = 0.0f;
+    private bool needFootstep = false;
 
     Rigidbody rigidBody;
     Collider c_collider;
@@ -71,13 +79,25 @@ public class PlayerMoverNew : MonoBehaviour {
     }
     
     void CalculateBob() {
-        weaponBobTime += weaponBobFactor * Time.deltaTime;
-        float t = weaponBobTime * weaponBobSpeed;
+        weaponBobTime += weaponBobSpeed * Time.deltaTime;
+        float t = weaponBobTime;
         weaponSwayKick = Vector2.SmoothDamp(weaponSwayKick, new Vector2(0,0), ref weaponSwayKickVelocity, weaponSwayRecoverSpeed);
         weaponSway = Vector3.SmoothDamp(weaponSway, new Vector3(0,0,0), ref weaponSwayVelocity, weaponSwayRecoverSpeed);
         weaponSway.x -= (weaponSwayKick.y + Input.GetAxisRaw("Mouse Y") * weaponSwayAmount.y) * Time.deltaTime;
         weaponSway.y -= (weaponSwayKick.x + Input.GetAxisRaw("Mouse X") * weaponSwayAmount.x) * Time.deltaTime;
-        Vector3 weaponBob = weaponBobFactor * new Vector3(weaponBobAmount.y * Mathf.Sin(2 * t), weaponBobAmount.x * Mathf.Sin(t + Mathf.PI / 2.0f), 0);
+
+        float sint = Mathf.Sin(2 * t);
+        if (sint < -0.9) {
+            if (needFootstep) {
+                PlayFootstep();
+                needFootstep = false;
+            }
+        }
+        else {
+            needFootstep = true;
+        }
+
+        Vector3 weaponBob = weaponBobAmount * new Vector3(weaponBobStretch.y * sint, weaponBobStretch.x * Mathf.Sin(t + Mathf.PI / 2.0f), 0);
         gunTransform.localEulerAngles = weaponSway + weaponBob;
     }
     
@@ -139,6 +159,10 @@ public class PlayerMoverNew : MonoBehaviour {
         cameraTransform.localPosition = new Vector3(0.0f, currentCameraHeight, 0.0f);
     }
 
+    public void PlayFootstep() {
+        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/PFootstep");
+    }
+
     void FixedUpdate() {
         if (GameObject.Find("GameManager").GetComponent<GameManager>().paused || GetComponent<PlayerHealth>().isDead || GetComponent<GunMagnet>().isPulling) {
             return;
@@ -148,6 +172,8 @@ public class PlayerMoverNew : MonoBehaviour {
 
         bool isSprinting = Input.GetButton("Sprint");
         float moveSpeed = 0.0f;
+        float targetBobSpeed = 0.0f;
+        float targetBobAmount = 0.0f;
 
         Vector3 velocity;
         Vector3 newVelocity = new Vector3();
@@ -155,6 +181,10 @@ public class PlayerMoverNew : MonoBehaviour {
         
         if (previousVelocityY < -0.05f) {
             if (rigidBody.velocity.y > -0.05f) {
+                float vol = Mathf.Clamp(previousVelocityY * previousVelocityY / 128.0f, 0.0f, 3.0f);
+                if (vol > 0.2f) {
+                    FMODUnity.RuntimeManager.PlayOneShotAtVolume("event:/SFX/Pland", vol);
+                }
                 weaponSwayKick.y += landSwayMultiplier * -previousVelocityY;
             }
         }
@@ -167,12 +197,19 @@ public class PlayerMoverNew : MonoBehaviour {
 
             if (isCrouching) {
                 moveSpeed = crouchMoveSpeed;
+                targetBobSpeed = couchBobSpeed;
+                targetBobAmount = couchBobAmount;
             }
             else if (isSprinting) {
                 moveSpeed = sprintSpeed;
+                targetBobSpeed = sprintBobSpeed;
+                targetBobAmount = sprintBobAmount;
             }
             else {
                 moveSpeed = runSpeed;
+                targetBobSpeed = runBobSpeed;
+                targetBobSpeed = runBobSpeed;
+                targetBobAmount = runBobAmount;
             }
         }
         else {
@@ -194,12 +231,18 @@ public class PlayerMoverNew : MonoBehaviour {
         float vert = Input.GetAxisRaw("Vertical");
         float horz = Input.GetAxisRaw("Horizontal");
 
+        if (vert == 0f && horz == 0f) {
+            targetBobSpeed = 0f;
+            targetBobAmount = 0f;
+        }
+
         newVelocity = transform.forward * vert + transform.right * horz;
         newVelocity *= moveSpeed;
 
         float speed = Vector3.Magnitude(newVelocity);
         speed = Mathf.Min(speed, maxSpeed);
-        weaponBobFactor = Mathf.SmoothDamp(weaponBobFactor, speed / sprintSpeed, ref weaponBobFactorChange, weaponBobFactorChangeSpeed);
+        weaponBobSpeed = Mathf.SmoothDamp(weaponBobSpeed, targetBobSpeed, ref weaponBobSpeedChange, weaponBobFactorChangeSpeed);
+        weaponBobAmount = Mathf.SmoothDamp(weaponBobAmount, targetBobAmount, ref weaponBobAmountChange, weaponBobFactorChangeSpeed);
 
         velocity += Vector3.Normalize(newVelocity) * speed;
 

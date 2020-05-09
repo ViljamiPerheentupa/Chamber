@@ -56,8 +56,8 @@ MonoBehaviour:
   bulletHitRange: 40
   minimumBulletDamage: 1
   maximumBulletDamage: 5
-  minimumBulletDelay: 0.1
-  maximumBulletDelay: 0.05
+  minimumBulletDelay: 0.3
+  maximumBulletDelay: 0.1
   minimumBulletSpread: 30
   maximumBulletSpread: 5
   timeToMaximum: 2

@@ -142,7 +142,7 @@ public class NpcTurret : BaseResetable {
 
                     RaycastHit hit;
                     if(Physics.Raycast(firePoint.position, dir, out hit, bulletHitRange, layerMask)) {
-                        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitGeneric", hit.point);
+                        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/EShoot", transform.position);
 
                         if (hit.collider.gameObject.layer == 20) {
                             if (hit.rigidbody) {
@@ -157,7 +157,7 @@ public class NpcTurret : BaseResetable {
                         BaseHealth health = hit.collider.GetComponent<BaseHealth>();
                         if (health) {
                             float bulletDamage = Mathf.Lerp(minimumBulletDamage, maximumBulletDamage, t);
-                            health.TakeDamage(bulletDamage);
+                            health.TakeDamage(bulletDamage, dir);
 
                         }
                     }

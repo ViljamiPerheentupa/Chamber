@@ -10034,6 +10034,9 @@ MonoBehaviour:
   fadeToBlackTime: 2
   blackToWhiteTime: 0.2
   fadeFromWhiteTime: 1
+  canvas: {fileID: 0}
+  damagePrefab: {fileID: 8190560268275631281, guid: 524fcdfd6dbdb3a419910f8b23daf0af,
+    type: 3}
 --- !u!114 &3576744802192327406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10093,14 +10096,19 @@ MonoBehaviour:
   cameraTransform: {fileID: 3576744800330811291}
   gunTransform: {fileID: 3576744800625245244}
   weaponBobFactorChangeSpeed: 0.2
-  weaponBobSpeed: 6
-  weaponBobAmount: {x: 2, y: 1}
+  weaponBobStretch: {x: 2, y: 1}
   weaponSwayAmount: {x: 15, y: 15}
   weaponSwayRecoverSpeed: 0.2
   standToCrouchWeaponSway: 80
   crouchToStandWeaponSway: 80
   jumpSway: 100
   landSwayMultiplier: 5
+  couchBobSpeed: 6
+  runBobSpeed: 8
+  sprintBobSpeed: 12
+  couchBobAmount: 2
+  runBobAmount: 1
+  sprintBobAmount: 2
 --- !u!54 &3576744802192327401
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10207,7 +10215,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0.9921, g: 0.4196, b: 0.1686, a: 0.9}
-  moveStrength: 30
+  magnetizeEventPath: 
+  grappleEventPath: 
+  moveStrength: 50
   movePlayerStrength: 20
   holdColor: {r: 0.7735849, g: 0.14361048, b: 0, a: 1}
   magnetableLayers:

@@ -17,6 +17,7 @@ public class DoorSlider : MonoBehaviour {
     }
     
     public void Open() {
+        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/DoorOpen", transform.position);
         float t = timeToMove - (Time.time - startMoveTime);
         t = Mathf.Clamp(t, 0.0f, timeToMove);
 
@@ -27,6 +28,7 @@ public class DoorSlider : MonoBehaviour {
     }
 
     public void Close() {
+        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/DoorClose", transform.position);
         float t = timeToMove - (Time.time - startMoveTime);
         t = Mathf.Clamp(t, 0.0f, timeToMove);
 

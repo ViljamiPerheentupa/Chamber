@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ResetableRigidbody : BaseResetable {
-    private Rigidbody rigidbody;
+    private Rigidbody rb;
     private Vector3 velocity;
 
     void Start() {
-        rigidbody = GetComponent<Rigidbody>();
-        velocity = rigidbody.velocity;
+        rb = GetComponent<Rigidbody>();
+        velocity = rb.velocity;
         
         CheckpointManager cm = FindObjectOfType<CheckpointManager>();
         if (cm) {
@@ -17,6 +17,6 @@ public class ResetableRigidbody : BaseResetable {
     }
 
     public override void StartReset() {
-        rigidbody.velocity = velocity;
+        rb.velocity = velocity;
     }
 }

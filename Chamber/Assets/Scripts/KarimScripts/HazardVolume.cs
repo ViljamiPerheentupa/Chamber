@@ -8,7 +8,7 @@ public class HazardVolume : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
         PlayerHealth health = other.GetComponent<PlayerHealth>();
         if (health) {
-            health.TakeDamage(damage);
+            health.TakeDamage(damage, Vector3.up);
         }
     }
 }

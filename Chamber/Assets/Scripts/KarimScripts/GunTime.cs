@@ -6,7 +6,7 @@ public class GunTime : GunAmmoBase {
 
     public LayerMask layerMask;
     public override void OnFire(Vector3 startPos, Vector3 forward) {
-        Debug.Log("Time!");
+        FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitElectric", startPos);
 
         RaycastHit hit;
         if (Physics.Raycast(startPos, forward, out hit, Mathf.Infinity, layerMask)) {

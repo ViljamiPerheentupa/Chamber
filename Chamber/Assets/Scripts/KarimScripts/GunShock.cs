@@ -12,7 +12,7 @@ public class GunShock : GunAmmoBase {
     public override void OnFire(Vector3 startPos, Vector3 forward) {
         RaycastHit hit;
         if(Physics.Raycast(startPos, forward, out hit, Mathf.Infinity)) {
-            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitElectric", hit.point);
+            FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitGeneric", hit.point);
         
             ShockTrigger st = hit.collider.GetComponent<ShockTrigger>();
             if (st) {
@@ -31,7 +31,7 @@ public class GunShock : GunAmmoBase {
 
             BaseHealth health = hit.collider.GetComponent<BaseHealth>();
             if (health) {
-                health.TakeDamage(bulletDamage);
+                health.TakeDamage(bulletDamage, forward);
 
             }
         }
