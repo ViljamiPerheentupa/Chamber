@@ -8,6 +8,7 @@ public class MouseLook : MonoBehaviour
     float mouseX;
     float mouseY;
     float xRotation = 0f;
+    public Vector2 lookAxis;
     public bool inverted = false;
     public Vector3 mouseKick;
     public Vector3 screenShake;
@@ -33,10 +34,9 @@ public class MouseLook : MonoBehaviour
         }
 
         if (!GameObject.Find("GameManager").GetComponent<GameManager>().paused) {
-            mouseX += Input.GetAxisRaw("Mouse X") * mouseSensitivity; //Get the mouse X and Y axis'
-            if (inverted) {
-                mouseY = -Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
-            } else mouseY = Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
+            mouseX += lookAxis.x * mouseSensitivity * Time.deltaTime; //Get the mouse X and Y axis'
+            mouseY = lookAxis.y * mouseSensitivity * Time.deltaTime;
+            if (inverted) mouseY *= 1;
 
             xRotation -= mouseY;
             xRotation = Mathf.Clamp(xRotation, -90, 90); //Don't let the player do a 360 in a Y axis, so they can't look behind them

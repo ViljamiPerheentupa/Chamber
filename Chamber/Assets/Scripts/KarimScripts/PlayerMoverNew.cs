@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class PlayerMoverNew : MonoBehaviour {
@@ -25,6 +26,10 @@ public class PlayerMoverNew : MonoBehaviour {
     public AnimationCurve crouchCurve;
     public Transform cameraTransform;
     public Transform gunTransform;
+
+    // Private
+    private bool isSprinting;
+    private Vector2 moveAxis;
     private float weaponBobSpeedChange;
     private float weaponBobAmountChange;
     public float weaponBobFactorChangeSpeed = 0.2f;
@@ -79,6 +84,7 @@ public class PlayerMoverNew : MonoBehaviour {
     }
     
     void CalculateBob() {
+        /*
         weaponBobTime += weaponBobSpeed * Time.deltaTime;
         float t = weaponBobTime;
         weaponSwayKick = Vector2.SmoothDamp(weaponSwayKick, new Vector2(0,0), ref weaponSwayKickVelocity, weaponSwayRecoverSpeed);
@@ -99,26 +105,34 @@ public class PlayerMoverNew : MonoBehaviour {
 
         Vector3 weaponBob = weaponBobAmount * new Vector3(weaponBobStretch.y * sint, weaponBobStretch.x * Mathf.Sin(t + Mathf.PI / 2.0f), 0);
         gunTransform.localEulerAngles = weaponSway + weaponBob;
+        */
     }
-    
-    void Update() {
-        if (GameObject.Find("GameManager").GetComponent<GameManager>().paused || GetComponent<PlayerHealth>().isDead || GetComponent<GunMagnet>().isPulling) {
-            return;
-        }
 
-        CalculateBob();
+    void OnMove(InputValue value) {
+        moveAxis = value.Get<Vector2>();
+    }
 
-        if (Input.GetButtonDown("Jump")) {
-            if (isGrounded()) {
-                weaponSwayKick.y -= jumpSway;
-                rigidBody.AddForce(new Vector3(0, jumpImpulse, 0), ForceMode.Impulse);
-                endOfJumpTime = Time.time + jumpContinuationTime;
-            }
+    void OnLook(InputValue value) {
+        //look = value.Get<Vector2>();
+        cameraTransform.GetComponent<MouseLook>().lookAxis = value.Get<Vector2>();
+    }
+
+    void OnJump() {
+        if (isGrounded()) {
+            weaponSwayKick.y -= jumpSway;
+            rigidBody.AddForce(new Vector3(0, jumpImpulse, 0), ForceMode.Impulse);
+            endOfJumpTime = Time.time + jumpContinuationTime;
         }
-        
+    }
+
+    void OnSprint(InputValue value) {
+        isSprinting = value.isPressed;
+    }
+
+    void OnCrouch(InputValue value) {
         float t = crouchDelay - (Time.time - startCrouchTime);
         t = Mathf.Clamp(t, 0.0f, crouchDelay);
-        if (Input.GetButton("Crouch")) {
+        if (value.isPressed) {
             if (!isCrouching) {
                 weaponSwayKick.y += standToCrouchWeaponSway;
                 isCrouching = true;
@@ -134,6 +148,14 @@ public class PlayerMoverNew : MonoBehaviour {
                 }
             }
         }
+    }
+    
+    void Update() {
+        if (GameObject.Find("GameManager").GetComponent<GameManager>().paused || GetComponent<PlayerHealth>().isDead || GetComponent<GunMagnet>().isPulling) {
+            return;
+        }
+
+        CalculateBob();
     }
 
     void HandleCrouch() {
@@ -170,7 +192,6 @@ public class PlayerMoverNew : MonoBehaviour {
         
         HandleCrouch();
 
-        bool isSprinting = Input.GetButton("Sprint");
         float moveSpeed = 0.0f;
         float targetBobSpeed = 0.0f;
         float targetBobAmount = 0.0f;
@@ -228,15 +249,12 @@ public class PlayerMoverNew : MonoBehaviour {
             }
         }
 
-        float vert = Input.GetAxisRaw("Vertical");
-        float horz = Input.GetAxisRaw("Horizontal");
-
-        if (vert == 0f && horz == 0f) {
+        if (moveAxis.x == 0f && moveAxis.y == 0f) {
             targetBobSpeed = 0f;
             targetBobAmount = 0f;
         }
 
-        newVelocity = transform.forward * vert + transform.right * horz;
+        newVelocity = transform.forward * moveAxis.y + transform.right * moveAxis.x;
         newVelocity *= moveSpeed;
 
         float speed = Vector3.Magnitude(newVelocity);

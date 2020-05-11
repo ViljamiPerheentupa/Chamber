@@ -23,7 +23,16 @@ public class GunMagnet : GunAmmoBase {
         magnetTarget = null;
     }
 
-    public override void OnFire(Vector3 startPos, Vector3 forward) {
+    void Update() {
+        if (isPulling) {
+            transform.position = Vector3.MoveTowards(transform.position, targetLocation, movePlayerStrength * Time.deltaTime);
+        }
+        else if (magnetTarget) {
+            magnetTarget.AddForce(moveStrength * Vector3.Normalize(targetLocation - magnetTarget.transform.position), ForceMode.Force);
+        }
+    }
+
+    public override void FirePress(Vector3 startPos, Vector3 forward) {
         
         if (magnetTarget) {        
             RaycastHit hit;
@@ -67,17 +76,8 @@ public class GunMagnet : GunAmmoBase {
             }
         }
     }
-    
-    public override void OnFireHold(Vector3 startPos, Vector3 forward) {
-        if (isPulling) {
-            transform.position = Vector3.MoveTowards(transform.position, targetLocation, movePlayerStrength * Time.deltaTime);
-        }
-        else if (magnetTarget) {
-            magnetTarget.AddForce(moveStrength * Vector3.Normalize(targetLocation - magnetTarget.transform.position), ForceMode.Force);
-        }
-    }
 
-    public override void OnFireRelease(Vector3 startPos, Vector3 forward) {
+    public override void FireRelease(Vector3 startPos, Vector3 forward) {
         if (isPulling) {
             grappleEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
             grappleEvent.release();

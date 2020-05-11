@@ -16952,7 +16952,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh40528
+  m_Name: pb_Mesh20710
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -28740,9 +28740,9 @@ MeshCollider:
   m_GameObject: {fileID: 930996021}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
-  m_Convex: 1
+  m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 491362534}
 --- !u!114 &930996023
@@ -32030,7 +32030,7 @@ BoxCollider:
   m_GameObject: {fileID: 930996021}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 182.5004, y: 5.0001, z: 210.0004}
   m_Center: {x: 60.250103, y: -1.98, z: -8.5}

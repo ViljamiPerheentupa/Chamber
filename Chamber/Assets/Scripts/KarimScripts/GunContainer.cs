@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using FMODUnity;
 
 public class GunContainer : MonoBehaviour {
@@ -32,6 +33,7 @@ public class GunContainer : MonoBehaviour {
     private AmmoType[] chambers = new AmmoType[3];
     private uint currentChamber = 0;
     private bool isHoldMode = false;
+    private bool isHoldingFire = false;
 
     void Start() {
         cam = Camera.main;
@@ -95,62 +97,23 @@ public class GunContainer : MonoBehaviour {
         // Do animations
     }
 
-    void Update() {
-        if (GetComponent<PlayerHealth>().isDead) {
-            return;
-        }
+    void ExitReload() {
+        isInReload = false;
+        currentChamber = 0;
+        animator.Play("gun_endreload");
+        SetTargetAngle(0);
+    }
 
-        // Calculate crosshair position
-        float ang = (Time.time - startRotateTime) / chamberUiRotateDuration;
-        ang = Mathf.Clamp(ang, 0.0f, 1.0f);
-        ang = Mathf.Lerp(startAngle, targetAngle, ang);
-        SetCrosshairToAngle(ang);
+    void OnFire(InputValue value) {
 
-        if (isHolstering) {
-            return;
-        }
-
-        // In cooldown
-        if (nextFire > Time.time) {
-            return;
-        }
-
+        isHoldingFire = value.isPressed;
 
         if (isInReload) {
-            if (Input.GetButtonDown("Reload") || Input.GetButtonDown("Fire1")) {
-                isInReload = false;
-                currentChamber = 0;
-                animator.Play("gun_endreload");
-                SetTargetAngle(0);
-            }
-            else if (Input.GetButtonDown("AmmoSlot1") && enabledAmmoTypes[0]) {
-                AddAmmoToChamber(AmmoType.eShock);
-            }
-            else if (Input.GetButtonDown("AmmoSlot2") && enabledAmmoTypes[1]) {
-                AddAmmoToChamber(AmmoType.Magnet);
-            }
-            else if (Input.GetButtonDown("AmmoSlot3") && enabledAmmoTypes[2]) {
-                AddAmmoToChamber(AmmoType.Time);
-            }
+            ExitReload();
         }
         else {
-            if (Input.GetButtonDown("Reload")) {
-                isInReload = true;
-                currentChamber = 0;
-                animator.SetTrigger("Reloading");
-                SetTargetAngle(0);
-
-                // Empty Chambers
-                for (int i = 0; i < 3; ++i) {
-                    chambers[i] = AmmoType.Empty;
-                    reticleImage[i].color = emptyColor;
-                }
-            }
-
-            
-            
             if (chambers[currentChamber] == AmmoType.Empty) {
-                if (Input.GetButtonDown("Fire1")) {
+                if (canDoActionAndNoHolster()) {
                     // Empty Fire
                     animator.Play("shoot_empty");
 
@@ -170,19 +133,68 @@ public class GunContainer : MonoBehaviour {
                 int currentChamberType = (int)chambers[currentChamber] - 1;
 
                 // If starting to fire
-                if (Input.GetButtonDown("Fire1")) {
-                    ammoTypes[currentChamberType].OnFire(pos, fwd);
+                if (value.isPressed && canDoActionAndNoHolster()) {
+                    ammoTypes[currentChamberType].FirePress(pos, fwd);
                 }
                 else if (isHoldMode) {
-                    if (Input.GetButton("Fire1")) {
-                        ammoTypes[currentChamberType].OnFireHold(pos, fwd);
-                    }
-                    else if (Input.GetButtonUp("Fire1")) {
-                        ammoTypes[currentChamberType].OnFireRelease(pos, fwd);
-                    }
+                    ammoTypes[currentChamberType].FireRelease(pos, fwd);
                 }
             }
         }
+    }
+
+    bool canDoAction() {
+        return (!GameObject.Find("GameManager").GetComponent<GameManager>().paused && !GetComponent<PlayerHealth>().isDead && (nextFire < Time.time));
+    }
+
+    bool canDoActionAndNoHolster() {
+        return (canDoAction() && !isHolstering);
+    }
+
+    void OnReload() {
+        if (isHoldingFire || !canDoActionAndNoHolster()) return;
+
+        if (isInReload) {
+            ExitReload();
+        }
+        else {
+            isInReload = true;
+            currentChamber = 0;
+            animator.SetTrigger("Reloading");
+            SetTargetAngle(0);
+
+            // Empty Chambers
+            for (int i = 0; i < 3; ++i) {
+                chambers[i] = AmmoType.Empty;
+                reticleImage[i].color = emptyColor;
+            }
+        }
+    }
+
+    void OnAmmo1() {
+        if (isInReload && enabledAmmoTypes[0] && canDoActionAndNoHolster()) {
+            AddAmmoToChamber(AmmoType.eShock);
+        }
+    }
+
+    void OnAmmo2() {
+        if (isInReload && enabledAmmoTypes[1] && canDoActionAndNoHolster()) {
+            AddAmmoToChamber(AmmoType.Magnet);
+        }
+    }
+
+    void OnAmmo3() {
+        if (isInReload && enabledAmmoTypes[2] && canDoActionAndNoHolster()) {
+            AddAmmoToChamber(AmmoType.Time);
+        }
+    }
+
+    void Update() {
+        // Calculate crosshair position
+        float ang = (Time.time - startRotateTime) / chamberUiRotateDuration;
+        ang = Mathf.Clamp(ang, 0.0f, 1.0f);
+        ang = Mathf.Lerp(startAngle, targetAngle, ang);
+        SetCrosshairToAngle(ang);
     }
 
     private void SetTargetAngle(uint targetSlot) {

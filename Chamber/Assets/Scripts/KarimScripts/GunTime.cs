@@ -5,7 +5,7 @@ using UnityEngine;
 public class GunTime : GunAmmoBase {
 
     public LayerMask layerMask;
-    public override void OnFire(Vector3 startPos, Vector3 forward) {
+    public override void FirePress(Vector3 startPos, Vector3 forward) {
         FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitElectric", startPos);
 
         RaycastHit hit;

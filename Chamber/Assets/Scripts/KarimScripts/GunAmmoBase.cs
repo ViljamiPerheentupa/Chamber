@@ -11,7 +11,7 @@ public class GunAmmoBase : MonoBehaviour {
     }
 
     // To be implemented by the ammo types
-    public virtual void OnFire(Vector3 startPos, Vector3 forward) {}
-    public virtual void OnFireHold(Vector3 startPos, Vector3 forward) {}
-    public virtual void OnFireRelease(Vector3 startPos, Vector3 forward) {}
+    public virtual void FirePress(Vector3 startPos, Vector3 forward) {}
+    public virtual void FireHold(Vector3 startPos, Vector3 forward) {}
+    public virtual void FireRelease(Vector3 startPos, Vector3 forward) {}
 }

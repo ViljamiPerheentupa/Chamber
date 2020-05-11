@@ -9,7 +9,7 @@ public class GunShock : GunAmmoBase {
     public float bulletDamage = 40.0f;
     public float forceAmount = 30.0f;
 
-    public override void OnFire(Vector3 startPos, Vector3 forward) {
+    public override void FirePress(Vector3 startPos, Vector3 forward) {
         RaycastHit hit;
         if(Physics.Raycast(startPos, forward, out hit, Mathf.Infinity)) {
             FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitGeneric", hit.point);
