@@ -15,6 +15,7 @@ public class GunMagnet : GunAmmoBase {
     private Vector3 targetLocation;
     [HideInInspector]
     public bool isPulling = false;
+    private bool isMovingMagnetTarget = false;
 
     private FMOD.Studio.EventInstance magnetizeEvent;
     private FMOD.Studio.EventInstance grappleEvent;
@@ -27,7 +28,7 @@ public class GunMagnet : GunAmmoBase {
         if (isPulling) {
             transform.position = Vector3.MoveTowards(transform.position, targetLocation, movePlayerStrength * Time.deltaTime);
         }
-        else if (magnetTarget) {
+        else if (magnetTarget && isMovingMagnetTarget) {
             magnetTarget.AddForce(moveStrength * Vector3.Normalize(targetLocation - magnetTarget.transform.position), ForceMode.Force);
         }
     }
@@ -37,6 +38,7 @@ public class GunMagnet : GunAmmoBase {
         if (magnetTarget) {        
             RaycastHit hit;
             if(Physics.Raycast(startPos, forward, out hit, Mathf.Infinity)) {
+                isMovingMagnetTarget = true;
                 targetLocation = hit.point;
                 magnetTarget.AddForce(moveStrength * Vector3.Normalize(hit.point - magnetTarget.transform.position), ForceMode.Force);
                 gunContainer.SetHoldMode(true);
@@ -91,6 +93,7 @@ public class GunMagnet : GunAmmoBase {
         else if (magnetTarget) {
             magnetizeEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
             magnetizeEvent.release();
+            isMovingMagnetTarget = false;
             magnetTarget = null;
             gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
             gunContainer.SetHoldMode(false);

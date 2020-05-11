@@ -40,11 +40,51 @@ public class OptionsManager : MonoBehaviour {
     private FullScreenMode fullscreenMode;
     #endregion
 
+    #region Defaults
+        const bool defaultMouseInverted = false;
+        const int defaultMouseSensitivity = 20;
+        const int defaultMasterVolume = 100;
+        const int defaultMusicVolume = 100;
+        const int defaultSfxVolume = 100;
+        const bool defaultSubtitlesEnabled = true;
+        const int defaultDecalNum = 200;
+        const int defaultFov = 90;
+        const int defaultResolution = 0;
+        const int defaultFullscreen = 0;
+        const int defaultQuality = 5;
+    #endregion
+
     void Awake() {
         AddAudio();
         AddVideo();
         AddGameplay();
         AddControls();
+    }
+
+    public void LoadPrefs() {
+        invertMouseCallback((PlayerPrefs.GetInt("mouse-invert", defaultMouseInverted ? 1 : 0) != 0));
+        mouseSensitivityCallback(PlayerPrefs.GetInt("mouse-sensitivity", defaultMouseSensitivity));
+        masterVolumeCallback(PlayerPrefs.GetInt("volume-master", defaultMasterVolume));
+        musicVolumeCallback(PlayerPrefs.GetInt("volume-music", defaultMusicVolume));
+        //narrationVolumeCallback(PlayerPrefs.GetInt("mouse-sensitivity", defaultMusicVolume));
+        sfxVolumeCallback(PlayerPrefs.GetInt("volume-sfx", defaultSfxVolume));
+        subtitlesEnableCallback((PlayerPrefs.GetInt("subtitle-enable", (defaultSubtitlesEnabled ? 1 : 0)) != 0));
+        decalCallback(PlayerPrefs.GetInt("decal-num", defaultDecalNum));
+        fovCallback(PlayerPrefs.GetInt("fov", defaultFov));
+        fullscreenCallback(PlayerPrefs.GetInt("fullscreen", defaultFullscreen));
+        graphicsQualityCallback(PlayerPrefs.GetInt("quality", defaultQuality));
+
+        Resolution curres = Screen.currentResolution;
+        int curres_index = Screen.resolutions.Length - 1;
+        for(int i = 0; i < Screen.resolutions.Length; ++i) {
+            Resolution res = Screen.resolutions[i];
+            if (res.width == curres.width && res.height == curres.height) {
+                curres_index = i;
+            }
+        }
+        curres_index = Screen.resolutions.Length - 1 - curres_index;
+
+        resolutionCallback(PlayerPrefs.GetInt("resolution", curres_index));
     }
 
     public void SwapToSubcategory(int subcat) {
@@ -211,12 +251,12 @@ public class OptionsManager : MonoBehaviour {
     void AddAudio() {
         category = audioContent;
         CreateSubcategory("Volume");
-        CreateSliderInt("Master Volume", "volume-master"        , 0, 100, 100, masterVolumeCallback);
-        CreateSliderInt("Music Volume", "volume-music"          , 0, 100, 100, musicVolumeCallback);
+        CreateSliderInt("Master Volume", "volume-master"        , 0, 100, defaultMasterVolume, masterVolumeCallback);
+        CreateSliderInt("Music Volume", "volume-music"          , 0, 100, defaultMusicVolume, musicVolumeCallback);
         // CreateSliderInt("Narration Volume", "volume-narration"  , 0, 100, 100, narrationVolumeCallback);
-        CreateSliderInt("SFX Volume", "volume-sfx"              , 0, 100, 100, sfxVolumeCallback);
+        CreateSliderInt("SFX Volume", "volume-sfx"              , 0, 100, defaultSfxVolume, sfxVolumeCallback);
         CreateSubcategory("Subtitles");
-        CreateToggle("Subtitles Enabled", "subtitle-enable",    true, subtitlesEnableCallback);
+        CreateToggle("Subtitles Enabled", "subtitle-enable",    defaultSubtitlesEnabled, subtitlesEnableCallback);
         FinishCategory();
     }
 
@@ -263,7 +303,7 @@ public class OptionsManager : MonoBehaviour {
         qualities.Add("Ultra");
         CreateDropDownList("Graphics Quality", "quality", qualities, QualitySettings.GetQualityLevel(), graphicsQualityCallback);
         CreateSliderInt("Number of Decals", "decal-num"        , 0, 1000, 100, decalCallback);
-        CreateSliderInt("Field of View", "fov"                 , 45, 120, 60, fovCallback);
+        CreateSliderInt("Field of View", "fov"                 , 60, 120, 60, fovCallback);
         FinishCategory();
     }
 
@@ -274,11 +314,27 @@ public class OptionsManager : MonoBehaviour {
 
     void AddControls() {
         category = controlContent;
+        CreateSliderInt("Mouse Sensitivity", "mouse-sensitivity",       0, 100, 100, mouseSensitivityCallback);
+        CreateToggle("Mouse Invert", "mouse-invert",                    false, invertMouseCallback);
         FinishCategory();
     }
     #endregion
 
     #region Setting Callbacks
+    void invertMouseCallback(bool val) {
+        MouseLook ml = GameObject.FindObjectOfType<MouseLook>();
+        if (ml) {
+            ml.inverted = val;
+        }
+    }
+
+    void mouseSensitivityCallback(int sensitivity) {
+        MouseLook ml = GameObject.FindObjectOfType<MouseLook>();
+        if (ml) {
+            ml.mouseSensitivity = Mathf.Lerp(1.0f, 10.0f, sensitivity / 100.0f);
+        }
+    }
+
     void masterVolumeCallback(int v) {
         FMODUnity.RuntimeManager.GetVCA("VCA:/Master").setVolume(v / 100.0f);
         FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitGeneric");
@@ -305,6 +361,22 @@ public class OptionsManager : MonoBehaviour {
     }
 
     void fovCallback(int fov) {
+        GameObject player = GameObject.Find("Player");
+        GameObject guncam = GameObject.Find("Gun Camera");
+
+        if (player) {
+            Camera cam = player.transform.GetChild(0).GetComponent<Camera>();
+            if (cam) {
+                cam.fieldOfView = fov;
+            }
+        }
+
+        if (guncam) {
+            Camera cam = guncam.GetComponent<Camera>();
+            if (cam) {
+                cam.fieldOfView = fov;
+            }
+        }
     }
 
     void resolutionCallback(int r) {

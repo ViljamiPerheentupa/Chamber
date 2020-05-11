@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public GameObject optionsMenu;
     public GameObject pauseMenu;
     public GameObject inGameUI;
     public bool paused;
@@ -15,6 +16,13 @@ public class GameManager : MonoBehaviour
         }
     }
     private void Start() {
+        if (optionsMenu) {
+            OptionsManager om = optionsMenu.GetComponent<OptionsManager>();
+            if (om) {
+                om.LoadPrefs();
+            }
+        }
+        
         pauseMenu.gameObject.SetActive(false);
         inGameUI.gameObject.SetActive(true);
         Cursor.visible = false;
@@ -29,6 +37,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = paused ? 1 : 0;
         Cursor.lockState = paused ? CursorLockMode.Locked : CursorLockMode.Confined;
         Cursor.visible = paused ? false : true;
+        optionsMenu.SetActive(false);
         pauseMenu.SetActive(!paused);
         inGameUI.SetActive(paused);
         paused = !paused;
