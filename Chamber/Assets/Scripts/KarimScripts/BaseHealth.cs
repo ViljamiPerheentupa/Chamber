@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class BaseHealth : BaseResetable {
     public float maximumHealth = 100.0f;
     public float currentHealth = 100.0f;
     public bool isDead = false;
+    public UnityEvent onDie;
 
     private float startHealth;
 
@@ -31,6 +33,6 @@ public class BaseHealth : BaseResetable {
     }
 
     protected virtual void Die() {
-
+        onDie.Invoke();
     }
 }

@@ -10006,6 +10006,9 @@ MonoBehaviour:
   maximumHealth: 100
   currentHealth: 100
   isDead: 0
+  onDie:
+    m_PersistentCalls:
+      m_Calls: []
   timeToRecover: 2
   healthRecoverPerSec: 5
   recoverAnimation:
@@ -10064,7 +10067,7 @@ MonoBehaviour:
   maintainSpeedCoefficient: 0.8
   floorMask:
     serializedVersion: 2
-    m_Bits: 2096439
+    m_Bits: 4193591
   cameraHeight: -0.25
   standCapsuleHeight: 2
   crouchCapsuleHeight: 1.25

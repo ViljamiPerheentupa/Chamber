@@ -47,6 +47,7 @@ public class NpcTurret : BaseResetable {
     private bool isEnabledDefault;
     private Quaternion defaultRotation;
     private Quaternion defaultBaseRotation;
+    private bool isDead;
 
     void Start() {
         decalManager = GameObject.Find("Decals").GetComponent<DecalManager>();
@@ -69,6 +70,7 @@ public class NpcTurret : BaseResetable {
         transform.rotation = defaultRotation;
         turretBase.rotation = defaultBaseRotation;
         barrelPivot.rotation = new Quaternion();
+        isDead = false;
     }
 
     public void SetState(bool state) {
@@ -80,8 +82,14 @@ public class NpcTurret : BaseResetable {
         }
     }
 
+    public void SetDead(bool state) {
+        isDead = state;
+    }
+
     void Update() {
-        if (isEnabled) {
+        lineRenderer.enabled = isEnabled && !isDead;
+        
+        if (isEnabled && !isDead) {
             if (lineRenderer) {
                 lineRenderer.SetPosition(0, firePoint.position);
                 
