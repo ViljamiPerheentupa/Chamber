@@ -2584,6 +2584,12 @@ MonoBehaviour:
   color: {r: 1, g: 0.9339623, b: 0.5990566, a: 1}
   fadeDuration: 1
   showSubtitles: 0
+  subtitleEnglishJsonFile: {fileID: 4900000, guid: 44ed9fcfaef1e87438e094757c6f09d4,
+    type: 3}
+  subtitleFinnishJsonFile: {fileID: 4900000, guid: 61ead0f6b8ccb3144900246c95373d77,
+    type: 3}
+  subtitleGermanJsonFile: {fileID: 4900000, guid: 37c7c3a5b820e1e4b9a1634648777896,
+    type: 3}
 --- !u!1 &3731486403134208365
 GameObject:
   m_ObjectHideFlags: 0

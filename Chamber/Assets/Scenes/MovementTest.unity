@@ -2639,21 +2639,6 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8003941955596330351, guid: 6cb8bfe5a4418e841af0fa772981e34f,
-        type: 3}
-      propertyPath: color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8003941955596330351, guid: 6cb8bfe5a4418e841af0fa772981e34f,
-        type: 3}
-      propertyPath: color.g
-      value: 0.9339623
-      objectReference: {fileID: 0}
-    - target: {fileID: 8003941955596330351, guid: 6cb8bfe5a4418e841af0fa772981e34f,
-        type: 3}
-      propertyPath: color.b
-      value: 0.5990566
-      objectReference: {fileID: 0}
     - target: {fileID: 8066149896034291955, guid: 6cb8bfe5a4418e841af0fa772981e34f,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -10423,7 +10408,7 @@ PrefabInstance:
     - target: {fileID: 8924540185342852859, guid: 1be18616bdcc94548ae2ee66dee445ac,
         type: 3}
       propertyPath: onEnter.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_StringArgument
-      value: Why do we all have to wear these RIDICULOUS ties?
+      value: s0-ridiculous-ties
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1be18616bdcc94548ae2ee66dee445ac, type: 3}
