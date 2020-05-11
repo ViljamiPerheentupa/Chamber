@@ -350,7 +350,10 @@ public class OptionsManager : MonoBehaviour {
     }
     
     void subtitlesEnableCallback(bool e) {
-
+        SubtitleManager sm = GameObject.FindObjectOfType<SubtitleManager>();
+        if (sm) {
+            sm.showSubtitles = e;
+        }
     }
 
     void decalCallback(int d) {
