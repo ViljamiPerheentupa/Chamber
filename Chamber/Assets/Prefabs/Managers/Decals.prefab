@@ -44,4 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   decalLimit: 100
-  decalAmount: 0
+  decalTemplate: {fileID: 8612461033777178668, guid: 58d4f3dd39778e84e960765b0dd68a1f,
+    type: 3}
+  decalIterator: 0

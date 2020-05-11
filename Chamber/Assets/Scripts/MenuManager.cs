@@ -33,10 +33,8 @@ public class MenuManager : MonoBehaviour
     public GameObject devGG;
 
     private void Awake() {
-        masterVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/Master");
-        musicVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/Music");
-        sfxVolume = FMODUnity.RuntimeManager.GetVCA("VCA:/SFX");
-        if (PlayerPrefs.GetInt("HasSettings") != 1) {
+        
+        /*if (PlayerPrefs.GetInt("HasSettings") != 1) {
             print("Creating settings");
             volumeMaster = GameObject.Find("MasterVolume").GetComponent<Slider>().value;
             volumeMusic = GameObject.Find("MusicVolume").GetComponent<Slider>().value;
@@ -65,7 +63,7 @@ public class MenuManager : MonoBehaviour
                 GameObject.Find("InvertMouse").GetComponent<Toggle>().isOn = false;
                 mInverse = false;
             }
-        }
+        }*/
     }
     private void Start() {
         if (menu) {
@@ -78,7 +76,7 @@ public class MenuManager : MonoBehaviour
     }
 
     private void Update() {
-        if (GameObject.Find("MouseSensitivity").GetComponent<Slider>().value != mouseSensitivity) GameObject.Find("MouseSensitivity").GetComponent<Slider>().value = mouseSensitivity;
+        /*if (GameObject.Find("MouseSensitivity").GetComponent<Slider>().value != mouseSensitivity) GameObject.Find("MouseSensitivity").GetComponent<Slider>().value = mouseSensitivity;
         if (GameObject.Find("DecalLimit").GetComponent<Slider>().value != decalLimit) GameObject.Find("DecalLimit").GetComponent<Slider>().value = decalLimit;
         if (GameObject.Find("MasterVolume").GetComponent<Slider>().value != volumeMaster) GameObject.Find("MasterVolume").GetComponent<Slider>().value = volumeMaster;
         if (GameObject.Find("MusicVolume").GetComponent<Slider>().value != volumeMusic) GameObject.Find("MusicVolume").GetComponent<Slider>().value = volumeMusic;
@@ -99,8 +97,9 @@ public class MenuManager : MonoBehaviour
         }
         if (!GameObject.Find("MenuManager").GetComponent<MenuManager>().menu) {
             GameObject.Find("DecalLimit").GetComponent<Slider>().interactable = false;
-        } else GameObject.Find("DecalLimit").GetComponent<Slider>().interactable = true;
+        } else GameObject.Find("DecalLimit").GetComponent<Slider>().interactable = true;*/
     }
+
     public void StartGame() {
         outroGoing = true;
         bgAnim.Play("MenuOutro");
@@ -111,28 +110,6 @@ public class MenuManager : MonoBehaviour
             button.FadeOut();
         }
     }
-
-    public void OptionsMenu() {
-        opAnim.Play("OptionsPopIn");
-        if (menu) {
-            foreach (MenuButtonEnabler button in buttons) {
-                button.GetComponent<Button>().interactable = false;
-            }
-        }
-        opMenuCloser.gameObject.SetActive(true);
-    }
-
-    public void OptionsMenuClose() {
-        opAnim.Play("OptionsPopOut");
-        if (menu) {
-            foreach (MenuButtonEnabler button in buttons) {
-                button.GetComponent<Button>().interactable = true;
-            }
-        }
-        PlayerPrefs.Save();
-        opMenuCloser.gameObject.SetActive(false);
-    }
-
 
     public void QuitGame() {
         Application.Quit();
@@ -148,52 +125,5 @@ public class MenuManager : MonoBehaviour
         FMOD.Studio.EventInstance clickSound = FMODUnity.RuntimeManager.CreateInstance("event:/SFX/UIClick");
         clickSound.start();
         clickSound.release();
-    }
-
-    public void UpdateMSensitivity() {
-        mouseSensitivity = GameObject.Find("MouseSensitivity").GetComponent<Slider>().value;
-        PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
-    }
-
-    public void UpdateVolumeMaster() {
-        volumeMaster = GameObject.Find("MasterVolume").GetComponent<Slider>().value;
-        PlayerPrefs.SetFloat("vMaster", volumeMaster);
-    }
-
-    public void UpdateVolumeMusic() {
-        volumeMusic = GameObject.Find("MusicVolume").GetComponent<Slider>().value;
-        PlayerPrefs.SetFloat("vMusic", volumeMusic);
-    }
-
-    public void UpdateVolumeSFX() {
-        volumeSFX = GameObject.Find("SFXVolume").GetComponent<Slider>().value;
-        PlayerPrefs.SetFloat("vSFX", volumeSFX);
-    }
-
-    public void UpdateDecalLimit() {
-        decalLimit = GameObject.Find("DecalLimit").GetComponent<Slider>().value;
-        PlayerPrefs.SetFloat("dLimit", decalLimit);
-    }
-
-    public void UpdateMouseInvert() {
-        if (mInverse) {
-            PlayerPrefs.SetInt("mInverse", 0);
-            print("Mouse Invert disabled " + PlayerPrefs.GetInt("mInverse"));
-            mInverse = false;
-        } else {
-            PlayerPrefs.SetInt("mInverse", 1);
-            print("Mouse Invert enabled " + PlayerPrefs.GetInt("mInverse"));
-            mInverse = true;
-        }
-    }
-
-    public void DevTimelock() {
-        devGG.SetActive(false);
-        devTL.SetActive(true);
-    }
-
-    public void DevGrabGrapple() {
-        devTL.SetActive(false);
-        devGG.SetActive(true);
     }
 }

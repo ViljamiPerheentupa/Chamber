@@ -213,7 +213,7 @@ public class OptionsManager : MonoBehaviour {
         CreateSubcategory("Volume");
         CreateSliderInt("Master Volume", "volume-master"        , 0, 100, 100, masterVolumeCallback);
         CreateSliderInt("Music Volume", "volume-music"          , 0, 100, 100, musicVolumeCallback);
-        CreateSliderInt("Narration Volume", "volume-narration"  , 0, 100, 100, narrationVolumeCallback);
+        // CreateSliderInt("Narration Volume", "volume-narration"  , 0, 100, 100, narrationVolumeCallback);
         CreateSliderInt("SFX Volume", "volume-sfx"              , 0, 100, 100, sfxVolumeCallback);
         CreateSubcategory("Subtitles");
         CreateToggle("Subtitles Enabled", "subtitle-enable",    true, subtitlesEnableCallback);
@@ -280,18 +280,17 @@ public class OptionsManager : MonoBehaviour {
 
     #region Setting Callbacks
     void masterVolumeCallback(int v) {
-        FMOD.Studio.Bus bus = FMODUnity.RuntimeManager.GetBus("bus:/Master");
-        bus.setVolume(v / 100.0f);
+        FMODUnity.RuntimeManager.GetVCA("VCA:/Master").setVolume(v / 100.0f);
         FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitGeneric");
     }
     void musicVolumeCallback(int v) {
-
+        FMODUnity.RuntimeManager.GetVCA("VCA:/Music").setVolume(v / 100.0f);
     }
     void narrationVolumeCallback(int v) {
 
     }
     void sfxVolumeCallback(int v) {
-
+        FMODUnity.RuntimeManager.GetVCA("VCA:/SFX").setVolume(v / 100.0f);
     }
     
     void subtitlesEnableCallback(bool e) {

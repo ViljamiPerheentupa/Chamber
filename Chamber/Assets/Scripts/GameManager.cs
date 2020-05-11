@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    GameObject pauseMenu;
-    GameObject inGameUI;
+    public GameObject pauseMenu;
+    public GameObject inGameUI;
     public bool paused;
     FMOD.Studio.EventInstance pausefilter;
     private void Update() {
@@ -15,9 +15,8 @@ public class GameManager : MonoBehaviour
         }
     }
     private void Start() {
-        pauseMenu = GameObject.Find("PauseMenu");
-        inGameUI = GameObject.Find("InGameUI");
         pauseMenu.gameObject.SetActive(false);
+        inGameUI.gameObject.SetActive(true);
         Cursor.visible = false;
     }
     public void Pause() {
