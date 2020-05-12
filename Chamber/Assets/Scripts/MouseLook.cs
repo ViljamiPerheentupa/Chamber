@@ -8,10 +8,16 @@ public class MouseLook : MonoBehaviour
     float mouseX;
     float mouseY;
     float xRotation = 0f;
+    float yRotation = 0f;
     public Vector2 lookAxis;
     public bool inverted = false;
     public Vector3 mouseKick;
     public Vector3 screenShake;
+    public bool limitX;
+    public float yLiminMin = -90f;
+    public float yLiminMax = 90f;
+    public float xLiminMin = -60f;
+    public float xLiminMax = 60f;
     private float nextScreenShake;
 
     void Start() {
@@ -34,15 +40,19 @@ public class MouseLook : MonoBehaviour
         }
 
         if (!GameObject.Find("GameManager").GetComponent<GameManager>().paused) {
-            mouseX += lookAxis.x * mouseSensitivity * Time.deltaTime; //Get the mouse X and Y axis'
+            mouseX = lookAxis.x * mouseSensitivity * Time.deltaTime; //Get the mouse X and Y axis'
             mouseY = lookAxis.y * mouseSensitivity * Time.deltaTime;
             if (inverted) mouseY *= 1;
 
-            xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, -90, 90); //Don't let the player do a 360 in a Y axis, so they can't look behind them
+            xRotation += mouseX;
+            if (limitX) {
+                xRotation = Mathf.Clamp(xRotation, xLiminMin, xLiminMax);
+            }
+            yRotation -= mouseY;
+            yRotation = Mathf.Clamp(yRotation, yLiminMin, yLiminMax); //Don't let the player do a 360 in a Y axis, so they can't look behind them
 
-            transform.localRotation = Quaternion.Euler(mouseKick.y + xRotation, 0, mouseKick.z);
-            transform.parent.rotation = Quaternion.Euler(0, mouseKick.x + mouseX, 0);
+            transform.localRotation = Quaternion.Euler(mouseKick.y + yRotation, 0, mouseKick.z);
+            transform.parent.rotation = Quaternion.Euler(0, mouseKick.x + xRotation, 0);
             //transform.rotation = Quaternion.Euler(xRotation, mouseX, 0); //Rotate the player based on input
         }
     }

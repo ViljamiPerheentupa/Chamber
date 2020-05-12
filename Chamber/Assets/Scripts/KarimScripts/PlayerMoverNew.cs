@@ -118,26 +118,18 @@ public class PlayerMoverNew : MonoBehaviour {
 
     void OnForward(InputValue value) {
         forwardPressed = value.isPressed;
-
-        moveAxis.y = (forwardPressed ? 1 : 0) + (backwardPressed ? -1 : 0);
     }
 
     void OnBackward(InputValue value) {
         backwardPressed = value.isPressed;
-
-        moveAxis.y = (forwardPressed ? 1 : 0) + (backwardPressed ? -1 : 0);
     }
 
     void OnLeft(InputValue value) {
         leftPressed = value.isPressed;
-
-        moveAxis.x = (leftPressed ? -1 : 0) + (rightPressed ? 1 : 0);
     }
 
     void OnRight(InputValue value) {
         rightPressed = value.isPressed;
-
-        moveAxis.x = (leftPressed ? -1 : 0) + (rightPressed ? 1 : 0);
     }
 
     void OnLook(InputValue value) {
@@ -221,6 +213,9 @@ public class PlayerMoverNew : MonoBehaviour {
         if (GetComponent<PlayerHealth>().isDead) {
             rigidBody.velocity = new Vector3();
         }
+
+        moveAxis.x = (leftPressed ? -1 : 0) + (rightPressed ? 1 : 0);
+        moveAxis.y = (forwardPressed ? 1 : 0) + (backwardPressed ? -1 : 0);
         
         HandleCrouch();
 

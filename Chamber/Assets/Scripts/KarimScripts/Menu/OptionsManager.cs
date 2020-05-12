@@ -62,10 +62,6 @@ public class OptionsManager : MonoBehaviour {
     #endregion
 
     void Awake() {
-        string destination = Application.persistentDataPath + "/input.json";
-        string inputData = File.ReadAllText( destination );
-        inputActionAsset.LoadFromJson(inputData);
-
         AddAudio();
         AddVideo();
         AddGameplay();
@@ -74,6 +70,13 @@ public class OptionsManager : MonoBehaviour {
     }
 
     public void LoadPrefs() {
+        /*
+        Controller Data
+        string destination = Application.persistentDataPath + "/input.json";
+        string inputData = File.ReadAllText( destination );
+        inputActionAsset.LoadFromJson(inputData);
+        */
+
         invertMouseCallback((PlayerPrefs.GetInt("mouse-invert", defaultMouseInverted ? 1 : 0) != 0));
         mouseSensitivityCallback(PlayerPrefs.GetInt("mouse-sensitivity", defaultMouseSensitivity));
         masterVolumeCallback(PlayerPrefs.GetInt("volume-master", defaultMasterVolume));
