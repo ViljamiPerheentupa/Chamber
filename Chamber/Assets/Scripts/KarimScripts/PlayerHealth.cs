@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerHealth : BaseHealth {
     public float timeToRecover = 2.0f;
@@ -10,20 +11,36 @@ public class PlayerHealth : BaseHealth {
     public float fadeToBlackTime = 2.0f;
     public float blackToWhiteTime = 0.5f;
     public float fadeFromWhiteTime = 1.0f;
+    public float damageIndicatorFadeOutTime = 0.5f;
 
     private float startHealTime = 0.0f;
     private float fadeTime;
+    private List<DamageIndicatorFadeOut> damageIndicators = new List<DamageIndicatorFadeOut>();
     public Transform canvas;
     public Transform damagePrefab;
 
-    public override void TakeDamage(float dmg, Vector3 incomingDirection) {
-        base.TakeDamage(dmg, incomingDirection);
+    public override void TakeDamage(float dmg, Transform source) {
+        base.TakeDamage(dmg, source);
         startHealTime = Time.time + timeToRecover;
-        RectTransform d = Instantiate(damagePrefab, new Vector3(0,0,0), new Quaternion(), canvas) as RectTransform;
-        d.anchoredPosition = new Vector2(0,0);
-        Vector2 fwd = new Vector2(transform.forward.x, transform.forward.z);
-        Vector2 dir = new Vector2(-incomingDirection.x, -incomingDirection.z);
-        d.eulerAngles = new Vector3(0.0f, 0.0f, Vector2.SignedAngle(fwd, dir));
+
+        if (source) {
+            foreach (DamageIndicatorFadeOut indicator in damageIndicators) {
+                if (indicator.source == source) {
+                    indicator.lastHitTime = Time.time;
+                    return;
+                }
+            }
+
+            RectTransform d = Instantiate(damagePrefab, new Vector3(0,0,0), new Quaternion(), canvas) as RectTransform;
+            d.anchoredPosition = new Vector2(0,0);
+            Vector2 fwd = new Vector2(transform.forward.x, transform.forward.z);
+            Vector2 dir = new Vector2(source.position.x - transform.position.x, source.position.z - transform.position.z);
+            d.eulerAngles = new Vector3(0.0f, 0.0f, Vector2.SignedAngle(fwd, dir));
+            DamageIndicatorFadeOut newIndicator = d.GetComponent<DamageIndicatorFadeOut>();
+            newIndicator.lastHitTime = Time.time;
+            newIndicator.source = source;
+            damageIndicators.Add(newIndicator);
+        }
     }
 
     protected override void Die() {
@@ -64,7 +81,22 @@ public class PlayerHealth : BaseHealth {
         }
         
         if (Input.GetKeyDown("p")) {
-            TakeDamage(maximumHealth, Vector3.down);
+            TakeDamage(maximumHealth, null);
+        }
+
+        Vector2 fwd = new Vector2(transform.forward.x, transform.forward.z);
+        for (int i = damageIndicators.Count - 1; i >= 0; --i) {
+            DamageIndicatorFadeOut indicator = damageIndicators[i];
+
+            if (indicator.lastHitTime + damageIndicatorFadeOutTime < Time.time) {
+                damageIndicators.RemoveAt(i);
+                Destroy(indicator.gameObject);
+            }
+            else {
+                Vector2 dir = new Vector2(indicator.source.position.x - transform.position.x, indicator.source.position.z - transform.position.z);
+                ((RectTransform)indicator.transform).eulerAngles = new Vector3(0.0f, 0.0f, Vector2.SignedAngle(fwd, dir));
+                indicator.transform.GetChild(0).GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f - (Time.time - indicator.lastHitTime) / damageIndicatorFadeOutTime);
+            }
         }
     }
 }

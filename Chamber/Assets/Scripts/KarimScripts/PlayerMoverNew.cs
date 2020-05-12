@@ -57,6 +57,10 @@ public class PlayerMoverNew : MonoBehaviour {
     private float previousVelocityY;
     private float endOfJumpTime = 0.0f;
     private bool needFootstep = false;
+    private bool forwardPressed;
+    private bool backwardPressed;
+    private bool leftPressed;
+    private bool rightPressed;
 
     Rigidbody rigidBody;
     Collider c_collider;
@@ -110,6 +114,30 @@ public class PlayerMoverNew : MonoBehaviour {
 
     void OnMove(InputValue value) {
         moveAxis = value.Get<Vector2>();
+    }
+
+    void OnForward(InputValue value) {
+        forwardPressed = value.isPressed;
+
+        moveAxis.y = (forwardPressed ? 1 : 0) + (backwardPressed ? -1 : 0);
+    }
+
+    void OnBackward(InputValue value) {
+        backwardPressed = value.isPressed;
+
+        moveAxis.y = (forwardPressed ? 1 : 0) + (backwardPressed ? -1 : 0);
+    }
+
+    void OnLeft(InputValue value) {
+        leftPressed = value.isPressed;
+
+        moveAxis.x = (leftPressed ? -1 : 0) + (rightPressed ? 1 : 0);
+    }
+
+    void OnRight(InputValue value) {
+        rightPressed = value.isPressed;
+
+        moveAxis.x = (leftPressed ? -1 : 0) + (rightPressed ? 1 : 0);
     }
 
     void OnLook(InputValue value) {
@@ -186,8 +214,12 @@ public class PlayerMoverNew : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        if (GameObject.Find("GameManager").GetComponent<GameManager>().paused || GetComponent<PlayerHealth>().isDead || GetComponent<GunMagnet>().isPulling) {
+        if (GameObject.Find("GameManager").GetComponent<GameManager>().paused || GetComponent<GunMagnet>().isPulling) {
             return;
+        }
+
+        if (GetComponent<PlayerHealth>().isDead) {
+            rigidBody.velocity = new Vector3();
         }
         
         HandleCrouch();

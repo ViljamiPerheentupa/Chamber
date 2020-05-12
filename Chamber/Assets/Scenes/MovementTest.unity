@@ -9274,6 +9274,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2d1ab99aa528924fac37fd4467f7e1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1353762864 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6909060912542612323, guid: 171cea5f5094bd44f962a137120b7022,
+    type: 3}
+  m_PrefabInstance: {fileID: 2959176482857921720}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1353762869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1353762864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9727bb975dc8c2745ab4fd7ee6716db2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onTrigger:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2082661276}
+        m_MethodName: OnShootShield
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onReset:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1353898153
 GameObject:
   m_ObjectHideFlags: 0
@@ -15985,66 +16020,19 @@ Transform:
   m_Father: {fileID: 1027405103}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2082661269 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5974857232684832320, guid: 171cea5f5094bd44f962a137120b7022,
-    type: 3}
-  m_PrefabInstance: {fileID: 2959176482857921720}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2082661270 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7350508852097350791, guid: 171cea5f5094bd44f962a137120b7022,
     type: 3}
   m_PrefabInstance: {fileID: 2959176482857921720}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2082661271
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2082661269}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d521c34fd214984eb820bcbe214e1a7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maximumHealth: 100
-  currentHealth: 100
-  isDead: 0
-  onDie:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2082661276}
-        m_MethodName: Die
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &2082661272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2082661269}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca52108456e61ef439b690caef31fe42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2082661276 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5872613626111430237, guid: 171cea5f5094bd44f962a137120b7022,
     type: 3}
   m_PrefabInstance: {fileID: 2959176482857921720}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2082661269}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb4fbd61e5205fa4ba523e0b3ef70498, type: 3}
@@ -16419,17 +16407,17 @@ PrefabInstance:
     - target: {fileID: 7350508852097350791, guid: 171cea5f5094bd44f962a137120b7022,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.31
+      value: 17.22
       objectReference: {fileID: 0}
     - target: {fileID: 7350508852097350791, guid: 171cea5f5094bd44f962a137120b7022,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1.89
       objectReference: {fileID: 0}
     - target: {fileID: 7350508852097350791, guid: 171cea5f5094bd44f962a137120b7022,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.09
+      value: 3.11
       objectReference: {fileID: 0}
     - target: {fileID: 7350508852097350791, guid: 171cea5f5094bd44f962a137120b7022,
         type: 3}
@@ -16777,7 +16765,7 @@ PrefabInstance:
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -11.94
+      value: -13.189
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
