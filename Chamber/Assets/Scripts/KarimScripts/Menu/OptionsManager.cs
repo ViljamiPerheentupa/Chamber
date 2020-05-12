@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using FMODUnity;
+using System.IO;
+
 public class OptionsManager : MonoBehaviour {
 
     [System.Serializable]
@@ -18,6 +21,7 @@ public class OptionsManager : MonoBehaviour {
     public Transform sliderOptionTemplate;
     public Transform toggleOptionTemplate;
     public Transform dropdownOptionTemplate;
+    public Transform buttonOptionTemplate;
     #endregion
 
     #region Viewports
@@ -33,6 +37,8 @@ public class OptionsManager : MonoBehaviour {
 
     public float subcategoryHeight = 64.0f;
     public float fieldHeight = 56.0f;
+    public InputActionAsset inputActionAsset;
+    public GameObject rebindingCover;
 
     #region Private
     private Transform category;
@@ -60,9 +66,17 @@ public class OptionsManager : MonoBehaviour {
         AddVideo();
         AddGameplay();
         AddControls();
+        SwapToSubcategory(3);
     }
 
     public void LoadPrefs() {
+        /*
+        Controller Data
+        string destination = Application.persistentDataPath + "/input.json";
+        string inputData = File.ReadAllText( destination );
+        inputActionAsset.LoadFromJson(inputData);
+        */
+
         invertMouseCallback((PlayerPrefs.GetInt("mouse-invert", defaultMouseInverted ? 1 : 0) != 0));
         mouseSensitivityCallback(PlayerPrefs.GetInt("mouse-sensitivity", defaultMouseSensitivity));
         masterVolumeCallback(PlayerPrefs.GetInt("volume-master", defaultMasterVolume));
@@ -247,6 +261,36 @@ public class OptionsManager : MonoBehaviour {
 
         ypos += fieldHeight;
     }
+
+    void RebindCompleted(Button button, InputAction action, InputActionRebindingExtensions.RebindingOperation operation) {
+        rebindingCover.SetActive(false);
+        operation.Dispose();
+        button.transform.GetChild(0).GetComponent<Text>().text = InputControlPath.ToHumanReadableString(operation.action.bindings[0].overridePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
+
+        action = operation.action;
+        string inputAction = inputActionAsset.ToJson();
+
+        string destination = Application.persistentDataPath + "/input.json";
+        
+        File.WriteAllText( destination , inputAction );
+    }
+
+    void SetInput(Button button, InputAction action) {
+        rebindingCover.SetActive(true);
+        var rebindOperation = action.PerformInteractiveRebinding().WithControlsExcluding("<Mouse>/position").WithControlsExcluding("<Mouse>/delta").OnMatchWaitForAnother(0.1f).OnComplete(operation => RebindCompleted(button, action, operation)).Start();
+    }
+
+    void CreateInputActionBinding(InputAction action) {
+        RectTransform t = Instantiate(buttonOptionTemplate, category) as RectTransform;
+        t.anchoredPosition = new Vector2(t.anchoredPosition.x, -ypos);
+        t.GetChild(0).GetComponent<Text>().text = action.name;
+        Button button = t.GetChild(1).GetComponent<Button>();
+        button.onClick.AddListener(delegate {SetInput(button, action);});
+        Text buttonText = t.GetChild(1).GetChild(0).GetComponent<Text>();
+        buttonText.text = InputControlPath.ToHumanReadableString(action.bindings[0].effectivePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
+
+        ypos += fieldHeight;
+    }
     #endregion
 
     #region Categories
@@ -321,8 +365,17 @@ public class OptionsManager : MonoBehaviour {
 
     void AddControls() {
         category = controlContent;
+        CreateSubcategory("Mouse");
         CreateSliderInt("Mouse Sensitivity", "mouse-sensitivity",       0, 100, 100, mouseSensitivityCallback);
         CreateToggle("Mouse Invert", "mouse-invert",                    false, invertMouseCallback);
+        CreateSubcategory("Keyboard");
+        foreach (InputActionMap inputActionMap in inputActionAsset.actionMaps) {
+            foreach (InputAction binding in inputActionMap.actions) {
+                if (binding.name != "Look")
+                    CreateInputActionBinding(binding);
+            }
+        }
+        //buttonOptionTemplate
         FinishCategory();
     }
     #endregion

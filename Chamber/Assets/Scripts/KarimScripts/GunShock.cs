@@ -31,7 +31,7 @@ public class GunShock : GunAmmoBase {
 
             BaseHealth health = hit.collider.GetComponent<BaseHealth>();
             if (health) {
-                health.TakeDamage(bulletDamage, forward);
+                health.TakeDamage(bulletDamage, transform);
 
             }
         }

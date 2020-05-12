@@ -165,7 +165,7 @@ public class NpcTurret : BaseResetable {
                         BaseHealth health = hit.collider.GetComponent<BaseHealth>();
                         if (health) {
                             float bulletDamage = Mathf.Lerp(minimumBulletDamage, maximumBulletDamage, t);
-                            health.TakeDamage(bulletDamage, dir);
+                            health.TakeDamage(bulletDamage, transform);
 
                         }
                     }

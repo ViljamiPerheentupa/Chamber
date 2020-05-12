@@ -24,7 +24,7 @@ public class BaseHealth : BaseResetable {
         isDead = (currentHealth == 0.0f);
     }
 
-    public virtual void TakeDamage(float dmg, Vector3 incomingDirection) {
+    public virtual void TakeDamage(float dmg, Transform source) {
         currentHealth = Mathf.Max(0.0f, currentHealth - dmg);
         if (currentHealth == 0.0f && !isDead) {
             isDead = true;

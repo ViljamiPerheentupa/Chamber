@@ -10039,6 +10039,7 @@ MonoBehaviour:
   fadeToBlackTime: 2
   blackToWhiteTime: 0.2
   fadeFromWhiteTime: 1
+  damageIndicatorFadeOutTime: 1.5
   canvas: {fileID: 0}
   damagePrefab: {fileID: 8190560268275631281, guid: 524fcdfd6dbdb3a419910f8b23daf0af,
     type: 3}
