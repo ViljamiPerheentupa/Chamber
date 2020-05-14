@@ -1,60 +1,28 @@
 {
-    "name": "",
+    "name": "PlayerControls",
     "maps": [
         {
             "name": "PlayerActionMap",
             "id": "26c8b3ff-4635-436e-837f-335f152e5570",
             "actions": [
                 {
-                    "name": "Forward",
+                    "name": "Move",
                     "type": "Value",
-                    "id": "002a05cc-26a4-426c-bb0c-33b900098eae",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Backward",
-                    "type": "Value",
-                    "id": "8267629d-7592-492b-a038-eca90dd72ba0",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Left",
-                    "type": "Value",
-                    "id": "c8e5e21d-2569-47c9-829f-313887f78df9",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Right",
-                    "type": "Value",
-                    "id": "afa281d8-306c-4988-8b58-3b6591ac7727",
-                    "expectedControlType": "",
+                    "id": "bde79835-92b8-43db-b411-f1176ca973d6",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
                 },
                 {
                     "name": "Look",
                     "type": "PassThrough",
-                    "id": "bde79835-92b8-43db-b411-f1176ca973d6",
-                    "expectedControlType": "",
+                    "id": "2e769362-dc88-4372-a208-29ec97796c48",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
                 },
                 {
                     "name": "Jump",
-                    "type": "Value",
-                    "id": "2e769362-dc88-4372-a208-29ec97796c48",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Crouch",
                     "type": "Value",
                     "id": "3aa7005c-f16c-43ef-959d-98a1f3b133a6",
                     "expectedControlType": "",
@@ -62,25 +30,33 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Fire",
-                    "type": "PassThrough",
+                    "name": "Crouch",
+                    "type": "Value",
                     "id": "6197ac64-f368-4b44-9a7f-2fb92841d52d",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
                 },
                 {
-                    "name": "Air Shotgun",
-                    "type": "Button",
+                    "name": "Fire",
+                    "type": "PassThrough",
                     "id": "23e1a013-776f-40ab-8dac-1010bde9467a",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
                 },
                 {
-                    "name": "Use",
+                    "name": "AirShotgun",
                     "type": "Button",
                     "id": "61df2011-736e-49dd-a75e-1d68e4ef2cef",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "c7283261-ad15-4d52-a3b1-9d8ba6e9d521",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -88,7 +64,7 @@
                 {
                     "name": "Sprint",
                     "type": "Value",
-                    "id": "c7283261-ad15-4d52-a3b1-9d8ba6e9d521",
+                    "id": "883b2810-dce2-4d84-80a4-290bbb9d8f4b",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
@@ -96,21 +72,13 @@
                 {
                     "name": "Reload",
                     "type": "Button",
-                    "id": "883b2810-dce2-4d84-80a4-290bbb9d8f4b",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Ammo Shock",
-                    "type": "Button",
                     "id": "077943af-952d-4e39-b12c-7b78a82f0e0e",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
                 },
                 {
-                    "name": "Ammo Magnetise",
+                    "name": "AmmoShock",
                     "type": "Button",
                     "id": "3e02c024-e46f-4bdd-998c-c42ad05ee518",
                     "expectedControlType": "",
@@ -118,9 +86,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Ammo Time",
+                    "name": "AmmoMagnetise",
                     "type": "Button",
                     "id": "95b0b1e4-8729-4b02-9c74-2bdf251b95b9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "AmmoTime",
+                    "type": "Button",
+                    "id": "adf61161-cb84-4082-bdb7-fce89b238a25",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
@@ -167,7 +143,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MainScheme",
-                    "action": "Air Shotgun",
+                    "action": "AirShotgun",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -178,9 +154,64 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "MainScheme",
-                    "action": "Use",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "Keys",
+                    "id": "0d250819-0a29-4fed-8317-b9e491356b53",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "c9be6887-7e99-4c4b-8a79-333ae216bf1d",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "63141edc-219e-45ea-a81f-65beee896fe6",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "831070b2-0758-4dc2-9152-41fe0f97fee2",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "1f797f16-464d-4bac-83f4-d88d7e17773f",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -222,7 +253,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Ammo Shock",
+                    "action": "AmmoShock",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -233,7 +264,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Ammo Magnetise",
+                    "action": "AmmoMagnetise",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -244,53 +275,64 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Ammo Time",
+                    "action": "AmmoTime",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "f92655e0-e91b-4d84-9a49-003640f09893",
-                    "path": "<Keyboard>/d",
+                    "name": "Keys",
+                    "id": "4cc8eca2-354e-4a3a-9dab-ac739e31f0bd",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Right",
-                    "isComposite": false,
+                    "action": "Move",
+                    "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "e12cb459-5234-4b92-b219-3136ab9f1eaf",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Left",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "73b57631-e49a-4c16-aa8a-fac12133c2b6",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Backward",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "af4c93ee-5e4e-491c-a739-5f73cec3755c",
+                    "name": "up",
+                    "id": "9fffba4f-7657-42e4-998c-a4213d3862b1",
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Forward",
+                    "action": "Move",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "460ba6c5-4838-4e70-a0df-f502248a80c9",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "0526c1d9-46dc-4806-bb3f-12b702b61788",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "6d7538b0-fd25-4f45-9e99-88593f9fc82a",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

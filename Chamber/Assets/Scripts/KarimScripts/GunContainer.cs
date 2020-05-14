@@ -171,19 +171,19 @@ public class GunContainer : MonoBehaviour {
         }
     }
 
-    void OnAmmo1() {
+    void OnAmmoShock() {
         if (isInReload && enabledAmmoTypes[0] && canDoActionAndNoHolster()) {
             AddAmmoToChamber(AmmoType.eShock);
         }
     }
 
-    void OnAmmo2() {
+    void OnAmmoMagnetise() {
         if (isInReload && enabledAmmoTypes[1] && canDoActionAndNoHolster()) {
             AddAmmoToChamber(AmmoType.Magnet);
         }
     }
 
-    void OnAmmo3() {
+    void OnAmmoTime() {
         if (isInReload && enabledAmmoTypes[2] && canDoActionAndNoHolster()) {
             AddAmmoToChamber(AmmoType.Time);
         }
