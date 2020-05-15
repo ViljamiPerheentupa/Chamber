@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SceneTestC.unity
     guid: 548c3ee1e5968f3488c009218b6130ae
+  - enabled: 1
+    path: Assets/Scenes/New Scenes/TutorialFirst.unity
+    guid: 7e1f7e5240e5f324685d7e79ada0bd29
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: da851054f79f7814486ed1322225f33d,
       type: 2}

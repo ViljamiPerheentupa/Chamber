@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5259181975919451932}
   - component: {fileID: 7678307990215455377}
   m_Layer: 20
-  m_Name: Crate 2
+  m_Name: Crate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,6 +93,9 @@ MonoBehaviour:
   maximumHealth: 100
   currentHealth: 100
   isDead: 0
+  onDie:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5259181975919451932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,7 +204,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 5f8a86ab65ac8bf4bb4f396dd8174562, type: 2}
+      objectReference: {fileID: 2100000, guid: 77a699b6ac6cfc247871c7da48a13bec, type: 2}
     - target: {fileID: 4496734695893053935, guid: 3fac0968c4493c343a778f610adf3b9e,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
