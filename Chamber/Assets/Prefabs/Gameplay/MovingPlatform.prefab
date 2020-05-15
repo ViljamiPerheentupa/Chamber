@@ -169,15 +169,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 984aec85b42c52d4289b2e00c3c02b16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
+  moveSpeed: 3
   targetPoint: {fileID: 3896943598661152165}
   isEnabled: 1
   automaticMove: 0
-  isOrderedToMove: 0
-  isMovingToEnd: 0
-  startPosition: {x: 0, y: 0, z: 0}
-  endPosition: {x: 0, y: 0, z: 0}
-  targetPosition: {x: 0, y: 0, z: 0}
+  timeLockSpeed: 0.1
+  timeLockDuration: 10
 --- !u!65 &3896943599177265708
 BoxCollider:
   m_ObjectHideFlags: 0

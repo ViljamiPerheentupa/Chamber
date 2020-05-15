@@ -2614,6 +2614,7 @@ MonoBehaviour:
   m_Script: {fileID: 640809379}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Entries: []
 --- !u!4 &324100561
 Transform:
   m_ObjectHideFlags: 19
@@ -3176,7 +3177,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh26088
+  m_Name: pb_Mesh58062
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -17586,11 +17587,6 @@ PrefabInstance:
     - target: {fileID: 3896943599177265682, guid: 78685e05d3e17bf499519577f958b82c,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3896943599177265709, guid: 78685e05d3e17bf499519577f958b82c,
-        type: 3}
-      propertyPath: automaticMove
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3896943599177265711, guid: 78685e05d3e17bf499519577f958b82c,

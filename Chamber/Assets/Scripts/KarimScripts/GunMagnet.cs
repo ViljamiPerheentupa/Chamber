@@ -42,11 +42,17 @@ public class GunMagnet : GunAmmoBase {
                 targetLocation = hit.point;
                 magnetTarget.AddForce(moveStrength * Vector3.Normalize(hit.point - magnetTarget.transform.position), ForceMode.Force);
                 gunContainer.SetHoldMode(true);
-                gunContainer.PlayFireAnimation();
                 magnetizeEvent = FMODUnity.RuntimeManager.CreateInstance(magnetizeEventPath);
                 magnetizeEvent.setParameterByName("LockOn", 1.0f);
                 magnetizeEvent.start();
             }
+            else {
+                gunContainer.WaitForNextShot();
+                gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
+                gunContainer.SetHoldMode(false);
+                gunContainer.SwapToNextChamber();
+            }
+            gunContainer.PlayFireAnimation();
         }
         else {
             RaycastHit hit;
@@ -74,7 +80,11 @@ public class GunMagnet : GunAmmoBase {
                 }
             }
             else {
+                gunContainer.PlayFireAnimation();
                 gunContainer.WaitForNextShot();
+                gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
+                gunContainer.SetHoldMode(false);
+                gunContainer.SwapToNextChamber();
             }
         }
     }
