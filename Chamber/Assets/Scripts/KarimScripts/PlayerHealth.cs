@@ -12,9 +12,12 @@ public class PlayerHealth : BaseHealth {
     public float blackToWhiteTime = 0.5f;
     public float fadeFromWhiteTime = 1.0f;
     public float damageIndicatorFadeOutTime = 0.5f;
+    public float targetFov = 140.0f;
+    public AnimationCurve fovCurve;
 
     private float startHealTime = 0.0f;
     private float fadeTime;
+    private float originalFov;
     private List<DamageIndicatorFadeOut> damageIndicators = new List<DamageIndicatorFadeOut>();
     public Transform canvas;
     public Transform damagePrefab;
@@ -51,8 +54,13 @@ public class PlayerHealth : BaseHealth {
 
     IEnumerator Respawn() {
         fadeTime = Time.time + fadeToBlackTime;
+        originalFov = Camera.main.fieldOfView;
+
         while (Time.time < fadeTime) {
-            blackOut.GetComponent<Renderer>().material.color = new Color(0, 0, 0, 1.0f - ((fadeTime - Time.time) / fadeToBlackTime));
+            float t = 1.0f - (fadeTime - Time.time) / fadeToBlackTime;
+            blackOut.GetComponent<Image>().color = new Color(0, 0, 0, t);
+            t = fovCurve.Evaluate(t);
+            Camera.main.fieldOfView = Mathf.Lerp(originalFov, targetFov, t);
             yield return null;
         }
         
@@ -64,24 +72,29 @@ public class PlayerHealth : BaseHealth {
         fadeTime = Time.time + blackToWhiteTime;
         while (Time.time < fadeTime) {
             float t = 1.0f - ((fadeTime - Time.time) / blackToWhiteTime);
-            blackOut.GetComponent<Renderer>().material.color = new Color(t, t, t, 1.0f);
+            blackOut.GetComponent<Image>().color = new Color(t, t, t, 1.0f);
             yield return null;
         }
 
         fadeTime = Time.time + fadeFromWhiteTime;
         while (Time.time < fadeTime) {
-            blackOut.GetComponent<Renderer>().material.color = new Color(1f, 1f, 1f, (fadeTime - Time.time) / fadeFromWhiteTime);
+            float t = (fadeTime - Time.time) / fadeFromWhiteTime;
+            blackOut.GetComponent<Image>().color = new Color(1f, 1f, 1f, t);
+            t = fovCurve.Evaluate(t);
+            Camera.main.fieldOfView = Mathf.Lerp(originalFov, targetFov, t);
             yield return null;
         }
     }
 
     void Update() {
-        if (Time.time > startHealTime) {
-            currentHealth = Mathf.Min(maximumHealth, currentHealth + healthRecoverPerSec * Time.deltaTime * recoverAnimation.Evaluate(Time.time - startHealTime));
-        }
-        
-        if (Input.GetKeyDown("p")) {
-            TakeDamage(maximumHealth, null);
+        if (!isDead) {
+            if (Time.time > startHealTime) {
+                currentHealth = Mathf.Min(maximumHealth, currentHealth + healthRecoverPerSec * Time.deltaTime * recoverAnimation.Evaluate(Time.time - startHealTime));
+            }
+            
+            if (Input.GetKeyDown("p")) {
+                TakeDamage(maximumHealth, null);
+            }
         }
 
         Vector2 fwd = new Vector2(transform.forward.x, transform.forward.z);
