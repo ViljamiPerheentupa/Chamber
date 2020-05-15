@@ -410,6 +410,83 @@ MonoBehaviour:
       data1: 0
       data2: 0
   defaultFrameSettings: 0
+--- !u!1 &1292690623
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1292690625}
+  - component: {fileID: 1292690624}
+  m_Layer: 0
+  m_Name: Steam Audio Manager Settings
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1292690624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1292690623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4576053e6ac4964287500815ebc2f7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioEngine: 0
+  sofaFiles: []
+  currentSOFAFile: 0
+  materialPreset: 0
+  materialValue:
+    LowFreqAbsorption: 0.1
+    MidFreqAbsorption: 0.2
+    HighFreqAbsorption: 0.3
+    Scattering: 0.05
+    LowFreqTransmission: 0.1
+    MidFreqTransmission: 0.05
+    HighFreqTransmission: 0.03
+  simulationPreset: 0
+  simulationValue:
+    MaxOcclusionSamples: 128
+    RealtimeRays: 4096
+    RealtimeSecondaryRays: 1024
+    RealtimeBounces: 2
+    RealtimeThreadsPercentage: 5
+    BakeRays: 16384
+    BakeSecondaryRays: 4096
+    BakeBounces: 32
+    BakeThreadsPercentage: 5
+    Duration: 1
+    AmbisonicsOrder: 1
+    MaxSources: 32
+    IrradianceMinDistance: 1
+  updateComponents: 1
+  currentAudioListener: {fileID: 0}
+  showLoadTimeOptions: 0
+  showMassBakingOptions: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
+--- !u!4 &1292690625
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1292690623}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2101987058}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1341010916
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -565,6 +642,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialScenes:
   - TutorialFirst
+  - TutorialElevator
 --- !u!4 &1350973045
 Transform:
   m_ObjectHideFlags: 0
@@ -1606,3 +1684,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa191147fbb71b04ca20063c5c8908c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &2101987058 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8602592553679122820, guid: 6cb8bfe5a4418e841af0fa772981e34f,
+    type: 3}
+  m_PrefabInstance: {fileID: 2101987052}
+  m_PrefabAsset: {fileID: 0}
