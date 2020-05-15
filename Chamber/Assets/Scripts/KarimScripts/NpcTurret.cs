@@ -42,6 +42,7 @@ public class NpcTurret : BaseResetable {
     private DecalManager decalManager;
     private LineRenderer lineRenderer;
     private bool isSpinningCW;
+    public Transform shell;
 
     // Reset data
     private bool isEnabledDefault;
@@ -106,7 +107,25 @@ public class NpcTurret : BaseResetable {
             Vector3 directDirection = (target.position - firePoint.position);
             float distanceToPlayer = directDirection.magnitude;
 
-            if (foundPlayer) {
+            // TimeLock Enabled
+            bool timelocked = false;
+            if (timelocked) {
+                if (Time.time > nextShot) {
+                    // Calculate spread
+                    float deviation = Random.Range(0.0f, 0.01f);
+                    float angle = Random.Range(0.0f, 360.0f);
+                    Vector3 dir = Vector3.forward;
+                    dir = Quaternion.AngleAxis(deviation, Vector3.up) * dir;
+                    dir = Quaternion.AngleAxis(angle, Vector3.forward) * dir;
+                    dir = Quaternion.LookRotation(-firePoint.forward) * dir;
+
+                    Transform sh = Instantiate(shell, firePoint.position, Quaternion.LookRotation(dir));
+                    sh.GetComponent<BulletProjectile>().source = transform;
+                    
+                    nextShot = Time.time + 2.0f;
+                }
+            }
+            else if (foundPlayer) {
                 PlayerHealth playerHealth = target.GetComponent<PlayerHealth>();
                 if (playerHealth) {
                     if (playerHealth.isDead) {

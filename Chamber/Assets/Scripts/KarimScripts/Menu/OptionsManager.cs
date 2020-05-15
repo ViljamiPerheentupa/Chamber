@@ -41,9 +41,9 @@ public class OptionsManager : MonoBehaviour {
     public GameObject rebindingCover;
 
     #region Private
-    private Transform category;
-    private float ypos = 0.0f;
-    private FullScreenMode fullscreenMode;
+        private Transform category;
+        private float ypos = 0.0f;
+        private FullScreenMode fullscreenMode;
     #endregion
 
     #region Defaults
@@ -70,10 +70,11 @@ public class OptionsManager : MonoBehaviour {
     }
 
     public void LoadPrefs() {
-        /*
-        Controller Data
+        
+        // Controller Data
         string destination = Application.persistentDataPath + "/input.json";
-        string inputData = File.ReadAllText( destination );
+        Debug.Log(destination);
+        /*string inputData = File.ReadAllText( destination );
         inputActionAsset.LoadFromJson(inputData);
         */
 
@@ -262,32 +263,34 @@ public class OptionsManager : MonoBehaviour {
         ypos += fieldHeight;
     }
 
-    void RebindCompleted(Button button, InputAction action, InputActionRebindingExtensions.RebindingOperation operation) {
+    void RebindCompleted(Button button, InputAction action, InputActionRebindingExtensions.RebindingOperation operation, int bindingNum) {
         rebindingCover.SetActive(false);
+        action.Enable();
         operation.Dispose();
-        button.transform.GetChild(0).GetComponent<Text>().text = InputControlPath.ToHumanReadableString(operation.action.bindings[0].overridePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
+        button.transform.GetChild(0).GetComponent<Text>().text = InputControlPath.ToHumanReadableString(operation.action.bindings[bindingNum].overridePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
 
         action = operation.action;
-        string inputAction = inputActionAsset.ToJson();
+        string inputAction = action.actionMap.ToJson();
 
         string destination = Application.persistentDataPath + "/input.json";
         
         File.WriteAllText( destination , inputAction );
     }
 
-    void SetInput(Button button, InputAction action) {
+    void SetInput(Button button, InputAction action, int bindingNum) {
         rebindingCover.SetActive(true);
-        var rebindOperation = action.PerformInteractiveRebinding().WithControlsExcluding("<Mouse>/position").WithControlsExcluding("<Mouse>/delta").OnMatchWaitForAnother(0.1f).OnComplete(operation => RebindCompleted(button, action, operation)).Start();
+        action.Disable();
+        var rebindOperation = action.PerformInteractiveRebinding(bindingNum).WithControlsExcluding("<Mouse>/position").WithControlsExcluding("<Mouse>/delta").OnMatchWaitForAnother(0.1f).OnComplete(operation => RebindCompleted(button, action, operation, bindingNum)).Start();
     }
 
-    void CreateInputActionBinding(InputAction action) {
+    void CreateInputActionBinding(string name, InputAction action, int bindingNum) {
         RectTransform t = Instantiate(buttonOptionTemplate, category) as RectTransform;
         t.anchoredPosition = new Vector2(t.anchoredPosition.x, -ypos);
-        t.GetChild(0).GetComponent<Text>().text = action.name;
+        t.GetChild(0).GetComponent<Text>().text = name;
         Button button = t.GetChild(1).GetComponent<Button>();
-        button.onClick.AddListener(delegate {SetInput(button, action);});
+        button.onClick.AddListener(delegate {SetInput(button, action, bindingNum);});
         Text buttonText = t.GetChild(1).GetChild(0).GetComponent<Text>();
-        buttonText.text = InputControlPath.ToHumanReadableString(action.bindings[0].effectivePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
+        buttonText.text = InputControlPath.ToHumanReadableString(action.bindings[bindingNum].effectivePath, InputControlPath.HumanReadableStringOptions.OmitDevice);
 
         ypos += fieldHeight;
     }
@@ -368,13 +371,35 @@ public class OptionsManager : MonoBehaviour {
         CreateSubcategory("Mouse");
         CreateSliderInt("Mouse Sensitivity", "mouse-sensitivity",       0, 100, 100, mouseSensitivityCallback);
         CreateToggle("Mouse Invert", "mouse-invert",                    false, invertMouseCallback);
-        CreateSubcategory("Keyboard");
-        foreach (InputActionMap inputActionMap in inputActionAsset.actionMaps) {
-            foreach (InputAction binding in inputActionMap.actions) {
-                if (binding.name != "Look")
-                    CreateInputActionBinding(binding);
-            }
-        }
+
+        InputActionMap inputActionMap = inputActionAsset.actionMaps[0];
+
+        CreateSubcategory("Move");
+        InputAction inputActionMove = inputActionMap.FindAction("Move", true);
+        CreateInputActionBinding("Forward", inputActionMove, 1);
+        CreateInputActionBinding("Back", inputActionMove, 2);
+        CreateInputActionBinding("Strafe Left", inputActionMove, 3);
+        CreateInputActionBinding("Strafe Right", inputActionMove, 4);
+        InputAction inputActionLook = inputActionMap.FindAction("Look", true);
+        CreateInputActionBinding("Turn Upwards", inputActionLook, 1);
+        CreateInputActionBinding("Turn Downwards", inputActionLook, 2);
+        CreateInputActionBinding("Turn Left", inputActionLook, 3);
+        CreateInputActionBinding("Turn Right", inputActionLook, 4);
+        CreateInputActionBinding("Sprint", inputActionMap.FindAction("Sprint", true), 0);
+        CreateInputActionBinding("Jump", inputActionMap.FindAction("Jump", true), 0);
+        CreateInputActionBinding("Crouch", inputActionMap.FindAction("Crouch", true), 0);
+        
+        CreateSubcategory("Combat");
+        CreateInputActionBinding("Interact", inputActionMap.FindAction("Interact", true), 0);
+        CreateInputActionBinding("Fire", inputActionMap.FindAction("Fire", true), 0);
+        CreateInputActionBinding("Air Shotgun", inputActionMap.FindAction("AirShotgun", true), 0);
+        CreateInputActionBinding("Reload", inputActionMap.FindAction("Reload", true), 0);
+        CreateInputActionBinding("Ammo Shock", inputActionMap.FindAction("AmmoShock", true), 0);
+        CreateInputActionBinding("Ammo Magnetise", inputActionMap.FindAction("AmmoMagnetise", true), 0);
+        CreateInputActionBinding("Ammo Time", inputActionMap.FindAction("AmmoTime", true), 0);
+        
+        //CreateSubcategory(inputActionMove.bindings[1].ToDisplayString());
+        //InputAction inputActionLook = inputActionMap.FindAction("Move", true);
         //buttonOptionTemplate
         FinishCategory();
     }

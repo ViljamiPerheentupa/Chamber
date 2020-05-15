@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerLifting : MonoBehaviour {
     public GunContainer gunContainer;
@@ -26,14 +27,18 @@ public class PlayerLifting : MonoBehaviour {
         rigid = null;
     }
 
-    void Update() {
-        if (transform.parent.GetComponent<PlayerHealth>().isDead) {
+    void OnFire(InputValue value) {
+        if (!GetComponent<PlayerHealth>().isDead && prop) {
+            rigid.AddForce(Camera.main.transform.forward * throwStrength, ForceMode.Impulse);
+            Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
+            gunContainer.SetHolstering(false);
             prop = null;
             rigid = null;
-            return;
         }
+    }
 
-        if (Input.GetKeyDown("e")) {
+    void OnInteract(InputValue value) {
+        if (!GetComponent<PlayerHealth>().isDead) {
             if (prop) {
                 Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
                 gunContainer.SetHolstering(false);
@@ -42,7 +47,7 @@ public class PlayerLifting : MonoBehaviour {
             }
             else {
                 RaycastHit hit;
-                if(Physics.Raycast(transform.position, transform.forward, out hit, maxLiftDistance, rayTraceLayerMask)) {
+                if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxLiftDistance, rayTraceLayerMask)) {
                     if (hit.collider) {
                         DynamicProp liftable = hit.collider.GetComponent<DynamicProp>();
                         if (liftable && liftable.isLiftable) {
@@ -56,15 +61,17 @@ public class PlayerLifting : MonoBehaviour {
                 }
             }
         }
-        else if (prop && Input.GetButtonDown("Fire1")) {
-            rigid.AddForce(transform.forward * throwStrength, ForceMode.Impulse);
-            Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
-            gunContainer.SetHolstering(false);
+    }
+
+    void Update() {
+        if (GetComponent<PlayerHealth>().isDead) {
             prop = null;
             rigid = null;
+            return;
         }
-        else if (prop) {
-            Vector3 targetPos = transform.position + transform.forward * prop.liftDistance;
+
+        if (prop) {
+            Vector3 targetPos = Camera.main.transform.position + Camera.main.transform.forward * prop.liftDistance;
             Vector3 propMovementVector = targetPos - prop.transform.position;
             if (propMovementVector.magnitude < abandonDistance) {
                 rigid.velocity = liftForce * propMovementVector;

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3576744800330811291}
   - component: {fileID: 3576744800330811303}
-  - component: {fileID: 3576744800330811297}
   - component: {fileID: 3576744800330811302}
   - component: {fileID: 3576744800330811301}
   - component: {fileID: 3576744800330811300}
@@ -80,28 +79,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &3576744800330811297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3576744800330811290}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2406920ba45382f4f8328acbb6c38dfa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gunContainer: {fileID: 3576744802192327413}
-  maxLiftDistance: 4
-  abandonDistance: 5
-  liftForce: 20
-  rotateSpeed: 360
-  rayTraceLayerMask:
-    serializedVersion: 2
-    m_Bits: 2096439
-  characterTransform: {fileID: 3576744802192327400}
-  throwStrength: 10
 --- !u!81 &3576744800330811302
 AudioListener:
   m_ObjectHideFlags: 0
@@ -127,6 +104,11 @@ MonoBehaviour:
   inverted: 0
   mouseKick: {x: 0, y: 0, z: 0}
   screenShake: {x: 0, y: 0, z: 0}
+  limitX: 0
+  yLiminMin: -90
+  yLiminMax: 90
+  xLiminMin: -60
+  xLiminMax: 60
 --- !u!114 &3576744800330811300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9969,6 +9951,7 @@ GameObject:
   - component: {fileID: 3576744802192327412}
   - component: {fileID: 3576744802192327407}
   - component: {fileID: 4758526582298296893}
+  - component: {fileID: 1546166414702107130}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -10160,8 +10143,8 @@ MonoBehaviour:
   targetHitLayers:
     serializedVersion: 2
     m_Bits: 1048576
-  forceAmount: 5
-  forceRadius: 2
+  forceAmount: 10
+  forceRadius: 3
   selfForceAmount: 20
   fireCooldownTime: 1.5
 --- !u!114 &3576744802192327413
@@ -10277,6 +10260,28 @@ MonoBehaviour:
   m_DefaultActionMap: PlayerActionMap
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1546166414702107130
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3576744802192327405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2406920ba45382f4f8328acbb6c38dfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunContainer: {fileID: 3576744802192327413}
+  maxLiftDistance: 4
+  abandonDistance: 5
+  liftForce: 20
+  rotateSpeed: 360
+  rayTraceLayerMask:
+    serializedVersion: 2
+    m_Bits: 2096439
+  characterTransform: {fileID: 3576744802192327400}
+  throwStrength: 10
 --- !u!95 &3576744800941110569
 Animator:
   serializedVersion: 3

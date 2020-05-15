@@ -98,6 +98,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1061376
   isEnabled: 1
+  shell: {fileID: 5636624648856785263, guid: 169fdd0bae5a3124d89c35477a30419e, type: 3}
 --- !u!114 &6807248369935615444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -154,7 +155,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.1
+    widthMultiplier: 0.02
     widthCurve:
       serializedVersion: 2
       m_Curve:
