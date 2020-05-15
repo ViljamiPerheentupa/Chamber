@@ -10228,7 +10228,7 @@ MonoBehaviour:
   color: {r: 0.6901961, g: 0.34901962, b: 0.7254902, a: 0.9019608}
   layerMask:
     serializedVersion: 2
-    m_Bits: 1048576
+    m_Bits: 4190721
 --- !u!114 &4758526582298296893
 MonoBehaviour:
   m_ObjectHideFlags: 0

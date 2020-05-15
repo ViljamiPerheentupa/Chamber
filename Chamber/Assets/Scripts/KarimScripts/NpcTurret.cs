@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NpcTurret : BaseResetable {
+public class NpcTurret : BaseResetable, IProp {
     public Vector3 decalSize;
     public Material decalMaterial;
     public float bulletForce = 20.0f;
@@ -43,12 +43,17 @@ public class NpcTurret : BaseResetable {
     private LineRenderer lineRenderer;
     private bool isSpinningCW;
     public Transform shell;
+    public float timeLockDuration = 20.0f;
+    public float timeLockShootSpeed = 0.8f;
+    public float timeLockShootDeviation = 10.0f;
 
     // Reset data
     private bool isEnabledDefault;
     private Quaternion defaultRotation;
     private Quaternion defaultBaseRotation;
     private bool isDead;
+    private bool isTimeLocked = false;
+    private float releaseTimeLockTime;
 
     void Start() {
         decalManager = GameObject.Find("Decals").GetComponent<DecalManager>();
@@ -72,6 +77,8 @@ public class NpcTurret : BaseResetable {
         turretBase.rotation = defaultBaseRotation;
         barrelPivot.rotation = new Quaternion();
         isDead = false;
+        isTimeLocked = false;
+        releaseTimeLockTime = 0.0f;
     }
 
     public void SetState(bool state) {
@@ -85,6 +92,28 @@ public class NpcTurret : BaseResetable {
 
     public void SetDead(bool state) {
         isDead = state;
+    }
+    public void TimeLock() {        //Applying the TimeLock effect
+        if (!isTimeLocked) {      //Making sure the TimeLock isn't applied on top of an earlier TimeLock
+            isTimeLocked = true;
+            
+            foundPlayer = true;
+            releaseTimeLockTime = Time.time + timeLockDuration;
+        } else {
+            releaseTimeLockTime = Time.time + timeLockDuration;
+        }
+    }
+
+    public void ReleaseTimeLock() {
+        isTimeLocked = false;
+    }
+
+    public void PropForce(Vector3 force, ForceMode forceMode) {
+
+    }
+
+    public void PropExplosiveForce(Vector3 location, float force, float radius) {
+
     }
 
     void Update() {
@@ -108,21 +137,26 @@ public class NpcTurret : BaseResetable {
             float distanceToPlayer = directDirection.magnitude;
 
             // TimeLock Enabled
-            bool timelocked = false;
-            if (timelocked) {
+            if (isTimeLocked) {
                 if (Time.time > nextShot) {
+                    FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/EShoot", transform.position);
+                    
                     // Calculate spread
-                    float deviation = Random.Range(0.0f, 0.01f);
+                    float deviation = Random.Range(0.0f, timeLockShootDeviation);
                     float angle = Random.Range(0.0f, 360.0f);
                     Vector3 dir = Vector3.forward;
                     dir = Quaternion.AngleAxis(deviation, Vector3.up) * dir;
                     dir = Quaternion.AngleAxis(angle, Vector3.forward) * dir;
-                    dir = Quaternion.LookRotation(-firePoint.forward) * dir;
+                    dir = Quaternion.LookRotation(-firePoint.up) * dir;
 
                     Transform sh = Instantiate(shell, firePoint.position, Quaternion.LookRotation(dir));
                     sh.GetComponent<BulletProjectile>().source = transform;
                     
-                    nextShot = Time.time + 2.0f;
+                    nextShot = Time.time + timeLockShootSpeed;
+                }
+
+                if (Time.time > releaseTimeLockTime) {
+                    ReleaseTimeLock();
                 }
             }
             else if (foundPlayer) {

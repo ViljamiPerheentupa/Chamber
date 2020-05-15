@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4166972439399950925}
   - component: {fileID: 6807248369935615444}
   - component: {fileID: 4166972439399950929}
+  - component: {fileID: 5080112225331855018}
   m_Layer: 13
   m_Name: NpcTurretAuto
   m_TagString: Untagged
@@ -98,7 +99,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1061376
   isEnabled: 1
-  shell: {fileID: 5636624648856785263, guid: 169fdd0bae5a3124d89c35477a30419e, type: 3}
+  shell: {fileID: 5636624648856785263, guid: 1dbeca1eca0fb7449bf574f7ba32592c, type: 3}
+  timeLockDuration: 20
+  timeLockShootSpeed: 0.8
+  timeLockShootDeviation: 10
 --- !u!114 &6807248369935615444
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,6 +212,20 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!136 &5080112225331855018
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4166972439399950934}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.2
+  m_Height: 1.8
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.7, z: 0}
 --- !u!1 &4166972439435716028
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,7 +411,6 @@ GameObject:
   - component: {fileID: 4166972440454273804}
   - component: {fileID: 4166972440454273800}
   - component: {fileID: 4166972440454273801}
-  - component: {fileID: 4166972440454273806}
   m_Layer: 13
   m_Name: BaseMesh
   m_TagString: Untagged
@@ -462,20 +479,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!136 &4166972440454273806
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4166972440454273805}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 1
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &6694371671468108014
 GameObject:
   m_ObjectHideFlags: 0

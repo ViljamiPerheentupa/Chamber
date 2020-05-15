@@ -62,7 +62,7 @@ public class DynamicProp : MonoBehaviour, IProp
             var y = Random.Range(-effect, effect);
             var z = Random.Range(-effect, effect);
             tlGraphic.transform.localPosition = new Vector3(x, y, z);
-        } else print("No graphic was found for TimeLock effect");
+        }
     }
 
     void TimeLockDuration() {       //This function counts down the time of the effect
@@ -89,6 +89,9 @@ public class DynamicProp : MonoBehaviour, IProp
             //rig.velocity = Vector3.zero;
             //rig.angularVelocity = Vector3.zero;
             hadGravity = rig.useGravity;
+            if (tlGraphic == null) {
+                print("No graphic was found for TimeLock effect");
+            }
             rig.useGravity = false;
         } else tlTimer = 0;     //Reset the TimeLock duration if a new one is applied before the old one ended
     }
