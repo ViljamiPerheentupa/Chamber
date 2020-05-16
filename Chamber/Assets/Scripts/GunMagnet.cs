@@ -49,6 +49,7 @@ public class GunMagnet : GunAmmoBase {
                 magnetizeEvent.start();
             }
             else {
+                gunContainer.FireLineRenderer(startPos + forward * 100.0f, 1);
                 gunContainer.WaitForNextShot();
                 gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
                 gunContainer.SetHoldMode(false);

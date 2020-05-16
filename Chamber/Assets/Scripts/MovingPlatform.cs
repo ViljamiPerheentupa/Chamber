@@ -8,6 +8,7 @@ public class MovingPlatform : BaseResetable, IProp {
     public Transform targetPoint;
     public bool isEnabled;
     public bool automaticMove;
+    public float activateDelayTime = 0.0f;
     public float timeLockSpeed = 0.1f;
 
     public float timeLockDuration = 10.0f;
@@ -22,6 +23,8 @@ public class MovingPlatform : BaseResetable, IProp {
     private Vector3 startPosition;
     private Vector3 endPosition;
     private Vector3 targetPosition;
+    private bool isWaitingToMove;
+    private float endWaitTime;
     #endregion
 
     void Start() {
@@ -29,6 +32,7 @@ public class MovingPlatform : BaseResetable, IProp {
         endPosition = targetPoint.position;
         targetPosition = endPosition;
         isDefaultEnabled = isEnabled;
+        isMovingToEnd = false;
     
         CheckpointManager cm = FindObjectOfType<CheckpointManager>();
         if (cm) {
@@ -43,18 +47,24 @@ public class MovingPlatform : BaseResetable, IProp {
         releaseTimeLockTime = 0.0f;
         targetPosition = startPosition;
         isOrderedToMove = false;
+        isWaitingToMove = false;
+        isMovingToEnd = false;
     }
 
     public void ToggleMove() {
         isOrderedToMove = true;
         isMovingToEnd = !isMovingToEnd;
         targetPosition = isMovingToEnd ? endPosition : startPosition;
+        isWaitingToMove = true;
+        endWaitTime = Time.time + activateDelayTime;
     }
 
     public void MoveTo(bool moveToEnd) {
         isOrderedToMove = true;
         isMovingToEnd = moveToEnd;
         targetPosition = isMovingToEnd ? endPosition : startPosition;
+        isWaitingToMove = true;
+        endWaitTime = Time.time + activateDelayTime;
     }
 
     public void TimeLock() {        //Applying the TimeLock effect
@@ -85,18 +95,28 @@ public class MovingPlatform : BaseResetable, IProp {
         }
         
         if (automaticMove || isOrderedToMove) {
-            if ((transform.position - targetPosition).magnitude < 0.01f) {
-                if (automaticMove) {
-                    isMovingToEnd = !isMovingToEnd;
-                    targetPosition = isMovingToEnd ? endPosition : startPosition;
-                }
-                else {
-                    isOrderedToMove = false;
+            if (isWaitingToMove) {
+                if (Time.time > endWaitTime) {
+                    isWaitingToMove = false;
+                    endWaitTime = 0.0f;
                 }
             }
-            
-            float currentMoveSpeed = isTimeLocked ? timeLockSpeed : moveSpeed;
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, currentMoveSpeed * Time.deltaTime);
+            else {
+                if ((transform.position - targetPosition).magnitude < 0.01f) {
+                    if (automaticMove) {
+                        isMovingToEnd = !isMovingToEnd;
+                        targetPosition = isMovingToEnd ? endPosition : startPosition;
+                        endWaitTime = Time.time + activateDelayTime;
+                        isWaitingToMove = true;
+                    }
+                    else {
+                        isOrderedToMove = false;
+                    }
+                }
+                
+                float currentMoveSpeed = isTimeLocked ? timeLockSpeed : moveSpeed;
+                transform.position = Vector3.MoveTowards(transform.position, targetPosition, currentMoveSpeed * Time.deltaTime);
+            }
         }
     }
 
