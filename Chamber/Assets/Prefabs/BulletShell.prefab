@@ -50,6 +50,8 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  decalSize: {x: 0.17, y: 0.17, z: 0.04}
+  decalMaterial: {fileID: 2100000, guid: b15cac1ab9bab944a9211ea310c1d7ef, type: 2}
 --- !u!1 &4309515043744853041
 GameObject:
   m_ObjectHideFlags: 0
