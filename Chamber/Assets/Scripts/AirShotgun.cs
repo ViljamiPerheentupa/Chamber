@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AirShotgun : MonoBehaviour {
+    public bool isActivated = true;
     public LayerMask targetHitLayers;
     public float forceAmount = 10.0f;
     public float forceRadius = 1.0f;
@@ -15,7 +16,7 @@ public class AirShotgun : MonoBehaviour {
     }
 
     void Update() {
-        if (GetComponent<PlayerHealth>().isDead) {
+        if (GetComponent<PlayerHealth>().isDead || !isActivated) {
             return;
         }
         
