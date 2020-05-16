@@ -372,7 +372,7 @@ GameObject:
   - component: {fileID: 8053264086864734661}
   - component: {fileID: 8053264086864734662}
   - component: {fileID: 8053264086864734663}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -577,7 +577,7 @@ GameObject:
   - component: {fileID: 8053264087150464372}
   - component: {fileID: 8053264087150464373}
   - component: {fileID: 3938840613300219249}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DoorTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
