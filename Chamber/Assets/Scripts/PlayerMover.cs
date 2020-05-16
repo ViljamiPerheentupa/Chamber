@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class PlayerMover : MonoBehaviour {
+    #region Public Variables
     public float crouchMoveSpeed = 0.5f;
     public float airSpeed = 2.0f;
     public float runSpeed = 3.0f;
@@ -22,27 +23,11 @@ public class PlayerMover : MonoBehaviour {
     public float crouchCapsuleHeight = 1.0f;
     public float startCrouchTime = 0.0f;
     public float crouchDelay = 0.5f;
-    public bool isCrouching = false;
     public AnimationCurve crouchCurve;
     public Transform cameraTransform;
-    public Transform gunTransform;
-
-    // Private
-    private bool isSprinting;
-    private Vector2 moveAxis;
-    private float weaponBobSpeedChange;
-    private float weaponBobAmountChange;
-    public float weaponBobFactorChangeSpeed = 0.2f;
-    private float weaponBobSpeed = 0.0f;
-    private float weaponBobAmount = 0.0f;
-    private float weaponBobTime = 0.0f;
     public Vector2 weaponBobStretch = new Vector2(2.0f, 1.0f);
     public Vector2 weaponSwayAmount;
-    private Vector2 weaponSwayKick;
-    private Vector2 weaponSwayKickVelocity;
     public float weaponSwayRecoverSpeed = 0.2f;
-    private Vector3 weaponSway;
-    private Vector3 weaponSwayVelocity;
     public float standToCrouchWeaponSway = 80.0f;
     public float crouchToStandWeaponSway = 80.0f;
     public float jumpSway = 100.0f;
@@ -53,10 +38,32 @@ public class PlayerMover : MonoBehaviour {
     public float couchBobAmount = 2.0f;
     public float runBobAmount = 1.0f;
     public float sprintBobAmount = 2.0f;
+    public float weaponBobFactorChangeSpeed = 0.2f;
+    public float noclipSpeed = 10.0f;
+    public float noclipSprintSpeed = 30.0f;
+    #endregion
 
+    #region Private Variables
+    private bool isCrouchPressed = false;
+    private bool isCrouching = false;
+    private bool isSprinting;
+    private Vector2 moveAxis;
+    private float weaponBobSpeedChange;
+    private float weaponBobAmountChange;
+    private float weaponBobSpeed = 0.0f;
+    private float weaponBobAmount = 0.0f;
+    private float weaponBobTime = 0.0f;
+    private Vector2 weaponSwayKick;
+    private Vector2 weaponSwayKickVelocity;
+    private Vector3 weaponSway;
+    private Vector3 weaponSwayVelocity;
+    private bool canExtendJump;
+    private bool isJumpPressed;
     private float previousVelocityY;
     private float endOfJumpTime = 0.0f;
     private bool needFootstep = false;
+    private bool isNoclipping;
+    #endregion
 
     Rigidbody rigidBody;
     Collider c_collider;
@@ -71,6 +78,7 @@ public class PlayerMover : MonoBehaviour {
         weaponSway = new Vector3();
         isCrouching = false;
         startCrouchTime = 0;
+        SetNoclip(false);
     }
 
     bool isGrounded() {
@@ -108,20 +116,55 @@ public class PlayerMover : MonoBehaviour {
         */
     }
 
+    public bool ToggleNoclip() {
+        SetNoclip(!isNoclipping);
+        return isNoclipping;
+    }
+
+    public void SetNoclip(bool status) {
+        if (status) {
+            if (!isNoclipping) {
+                isNoclipping = true;
+                GetComponent<Collider>().enabled = false;
+                rigidBody.detectCollisions = false;
+                rigidBody.useGravity = false;
+            }
+        }
+        else {
+            if (isNoclipping) {
+                isNoclipping = false;
+                GetComponent<Collider>().enabled = true;
+                rigidBody.detectCollisions = true;
+                rigidBody.useGravity = true;
+            }
+        }
+
+        rigidBody.velocity = new Vector3();
+    }
+
     void OnMove(InputValue value) {
         moveAxis = value.Get<Vector2>();
     }
 
     void OnLook(InputValue value) {
-        //look = value.Get<Vector2>();
         cameraTransform.GetComponent<MouseLook>().lookAxis = value.Get<Vector2>();
     }
 
-    void OnJump() {
-        if (isGrounded()) {
-            weaponSwayKick.y -= jumpSway;
-            rigidBody.AddForce(new Vector3(0, jumpImpulse, 0), ForceMode.Impulse);
-            endOfJumpTime = Time.time + jumpContinuationTime;
+    void OnJump(InputValue value) {
+        isJumpPressed = value.isPressed;
+
+        if (!isNoclipping) {
+            if (isJumpPressed) {
+                if (isGrounded()) {
+                    weaponSwayKick.y -= jumpSway;
+                    rigidBody.AddForce(new Vector3(0, jumpImpulse, 0), ForceMode.Impulse);
+                    endOfJumpTime = Time.time + jumpContinuationTime;
+                    canExtendJump = true;
+                }
+            }
+            else {
+                canExtendJump = false;
+            }
         }
     }
 
@@ -130,32 +173,15 @@ public class PlayerMover : MonoBehaviour {
     }
 
     void OnCrouch(InputValue value) {
-        float t = crouchDelay - (Time.time - startCrouchTime);
-        t = Mathf.Clamp(t, 0.0f, crouchDelay);
-        if (value.isPressed) {
-            if (!isCrouching) {
-                weaponSwayKick.y += standToCrouchWeaponSway;
-                isCrouching = true;
-                startCrouchTime = Time.time - t;
-            }
-        }
-        else {
-            if (isCrouching) {
-                if (CanStand()) {
-                    weaponSwayKick.y -= crouchToStandWeaponSway;
-                    isCrouching = false;
-                    startCrouchTime = Time.time - t;
-                }
-            }
-        }
-    }
-    
-    void Update() {
-        if (GameObject.Find("GameManager").GetComponent<GameManager>().paused || GetComponent<PlayerHealth>().isDead || GetComponent<GunMagnet>().isPulling) {
-            return;
-        }
+        isCrouchPressed = value.isPressed;
 
-        CalculateBob();
+        if (!isNoclipping && isCrouchPressed && !isCrouching) {
+            float t = crouchDelay - (Time.time - startCrouchTime);
+            t = Mathf.Clamp(t, 0.0f, crouchDelay);
+            weaponSwayKick.y += standToCrouchWeaponSway;
+            isCrouching = true;
+            startCrouchTime = Time.time - t;
+        }
     }
 
     void HandleCrouch() {
@@ -194,6 +220,28 @@ public class PlayerMover : MonoBehaviour {
             rigidBody.velocity = new Vector3();
             return;
         }
+
+        if (isNoclipping) {
+            float flySpeed = isSprinting ? noclipSprintSpeed : noclipSpeed;
+            transform.position += (cameraTransform.forward * moveAxis.y + cameraTransform.right * moveAxis.x) * flySpeed * Time.deltaTime;
+            transform.position += (cameraTransform.up * ((isJumpPressed ? 1f : 0f) - (isCrouchPressed ? 1f : 0f))) * flySpeed * Time.deltaTime;
+            return;
+        }
+
+        if (!isCrouchPressed) {
+            if (isCrouching) {
+                if (CanStand()) {
+                    float t = crouchDelay - (Time.time - startCrouchTime);
+                    t = Mathf.Clamp(t, 0.0f, crouchDelay);
+                    
+                    weaponSwayKick.y -= crouchToStandWeaponSway;
+                    isCrouching = false;
+                    startCrouchTime = Time.time - t;
+                }
+            }
+        }
+
+        CalculateBob();
         
         HandleCrouch();
 
@@ -249,7 +297,7 @@ public class PlayerMover : MonoBehaviour {
             if (velocity.y < 0) {
                 velocity.y += Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
             }
-            else if (Input.GetButton("Jump") && endOfJumpTime > Time.time) {
+            else if (isJumpPressed && canExtendJump && endOfJumpTime > Time.time) {
                 velocity.y -= Physics.gravity.y * (jumpContinuationForce) * Time.deltaTime;
             }
         }

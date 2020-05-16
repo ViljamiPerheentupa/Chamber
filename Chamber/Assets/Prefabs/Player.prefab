@@ -185,7 +185,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4128567
+    m_Bits: 4128311
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -10257,7 +10257,7 @@ MonoBehaviour:
   sprintSpeed: 2.5
   maxSpeed: 5
   jumpImpulse: 8
-  jumpContinuationForce: 0.6
+  jumpContinuationForce: 0.8
   jumpContinuationTime: 0.2
   fallMultiplier: 1.5
   maintainAirSpeedCoefficient: 0.98
@@ -10270,7 +10270,6 @@ MonoBehaviour:
   crouchCapsuleHeight: 1.25
   startCrouchTime: 0
   crouchDelay: 0.3
-  isCrouching: 0
   crouchCurve:
     serializedVersion: 2
     m_Curve:
@@ -10296,8 +10295,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraTransform: {fileID: 3576744800330811291}
-  gunTransform: {fileID: 3576744800625245244}
-  weaponBobFactorChangeSpeed: 0.2
   weaponBobStretch: {x: 2, y: 1}
   weaponSwayAmount: {x: 15, y: 15}
   weaponSwayRecoverSpeed: 0.2
@@ -10311,6 +10308,9 @@ MonoBehaviour:
   couchBobAmount: 2
   runBobAmount: 1
   sprintBobAmount: 2
+  weaponBobFactorChangeSpeed: 0.2
+  noclipSpeed: 10
+  noclipSprintSpeed: 30
 --- !u!54 &3576744802192327401
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -84,16 +84,15 @@ public class PlayerHealth : BaseHealth {
             Camera.main.fieldOfView = Mathf.Lerp(originalFov, targetFov, t);
             yield return null;
         }
+        
+        blackOut.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+        Camera.main.fieldOfView = originalFov;
     }
 
     void Update() {
         if (!isDead) {
             if (Time.time > startHealTime) {
                 currentHealth = Mathf.Min(maximumHealth, currentHealth + healthRecoverPerSec * Time.deltaTime * recoverAnimation.Evaluate(Time.time - startHealTime));
-            }
-            
-            if (Input.GetKeyDown("p")) {
-                TakeDamage(maximumHealth, null);
             }
         }
 

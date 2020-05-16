@@ -16,7 +16,6 @@ public class CheckpointManager : MonoBehaviour {
     }
 
     public void StartReset() {
-        Debug.Log("Resetting");
         if (checkpoint) {
             checkpoint.StartReset();
         }

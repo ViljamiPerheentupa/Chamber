@@ -27,8 +27,13 @@ public class GameManager : MonoBehaviour
         inGameUI.gameObject.SetActive(true);
         Cursor.visible = false;
     }
+
     public void Pause() {
         if (!paused) {
+            if (FindObjectOfType<PlayerHealth>().isDead) {
+                return;
+            }
+
             pausefilter = FMODUnity.RuntimeManager.CreateInstance("snapshot:/Pause");
             pausefilter.start();
             pausefilter.release();
@@ -42,6 +47,7 @@ public class GameManager : MonoBehaviour
         inGameUI.SetActive(paused);
         paused = !paused;
     }
+    
     public void LoadScene(int scene) {
         GameObject.Find("MusicManager").GetComponent<MusicManager>().StopMusic();
         SceneManager.LoadScene(scene);
