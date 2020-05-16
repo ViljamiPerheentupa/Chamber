@@ -16,6 +16,7 @@ public class GunMagnet : GunAmmoBase {
     [HideInInspector]
     public bool isPulling = false;
     private bool isMovingMagnetTarget = false;
+    public Transform missParticle;
 
     private FMOD.Studio.EventInstance magnetizeEvent;
     private FMOD.Studio.EventInstance grappleEvent;
@@ -79,10 +80,19 @@ public class GunMagnet : GunAmmoBase {
                     gunContainer.WaitForNextShot();
                     gunContainer.SetCurrentChamberColor(holdColor);
                 }
+                else {
+                    Instantiate(missParticle, hit.point, Quaternion.LookRotation(hit.normal));
+                    gunContainer.PlayFireAnimation();
+                    gunContainer.WaitForNextShot();
+                    gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
+                    gunContainer.SetHoldMode(false);
+                    gunContainer.SwapToNextChamber();
+                }
                 
                 gunContainer.FireLineRenderer(hit.point, 1);
             }
             else {
+                gunContainer.FireLineRenderer(startPos + forward * 100.0f, 1);
                 gunContainer.PlayFireAnimation();
                 gunContainer.WaitForNextShot();
                 gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);

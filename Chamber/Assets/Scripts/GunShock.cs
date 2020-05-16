@@ -4,6 +4,7 @@ using UnityEngine;
 using FMODUnity;
 
 public class GunShock : GunAmmoBase {
+    public Transform shockParticle;
     public Vector3 decalSize;
     public Material decalMaterial;
     public float bulletDamage = 40.0f;
@@ -35,6 +36,7 @@ public class GunShock : GunAmmoBase {
 
             }
 
+            Instantiate(shockParticle, hit.point, Quaternion.LookRotation(hit.normal));
             gunContainer.FireLineRenderer(hit.point, 0);
         }
 
