@@ -522,17 +522,17 @@ PrefabInstance:
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6
+      value: 47.25
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5
+      value: 7.75
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.5
+      value: 47.25
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
@@ -578,6 +578,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 3576744802192327406, guid: ad82e878837850141823e80c8a613049,
+        type: 3}
+      propertyPath: jumpImpulse
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3576744802192327406, guid: ad82e878837850141823e80c8a613049,
+        type: 3}
+      propertyPath: fallMultiplier
+      value: 1.6
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327413, guid: ad82e878837850141823e80c8a613049,
         type: 3}
@@ -641,7 +651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialScenes:
-  - TutorialFirst
+  - TutorialGround
   - TutorialElevator
 --- !u!4 &1350973045
 Transform:
