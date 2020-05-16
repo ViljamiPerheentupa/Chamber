@@ -37,6 +37,9 @@ public class GunContainer : MonoBehaviour {
     private uint currentChamber = 0;
     private bool isHoldMode = false;
     private bool isHoldingFire = false;
+    private bool trailActive = false;
+    private Color oldTrailColor;
+    private float startTrailFade = 0;
 
     void Start() {
         cam = Camera.main;
@@ -200,6 +203,12 @@ public class GunContainer : MonoBehaviour {
         ang = Mathf.Clamp(ang, 0.0f, 1.0f);
         ang = Mathf.Lerp(startAngle, targetAngle, ang);
         SetCrosshairToAngle(ang);
+
+        // Trail fadeout
+        if (trailActive) {
+            var a = (Time.time - startTrailFade) / fireCooldownTime;
+            lineRenderer.material.color = new Color(oldTrailColor.r, oldTrailColor.g, oldTrailColor.b, 1 - a);
+        }
     }
 
     private void SetTargetAngle(uint targetSlot) {
@@ -256,12 +265,16 @@ public class GunContainer : MonoBehaviour {
         lineRenderer.material = lineRendererMats[i];
         lineRenderer.SetPosition(0, muzzleTransform.position);
         lineRenderer.SetPosition(1, targetPos);
+        trailActive = true;
+        startTrailFade = Time.time;
+        oldTrailColor = lineRenderer.material.color;
 
-        Invoke("RemoveLine", 0.1f);
+        Invoke("RemoveLine", fireCooldownTime);
     }
 
     void RemoveLine() {
         lineRenderer.enabled = false;
+        trailActive = false;
     }
 
     public void SwapToNextChamber() {
