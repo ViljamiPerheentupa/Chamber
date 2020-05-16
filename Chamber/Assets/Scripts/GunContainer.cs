@@ -21,7 +21,8 @@ public class GunContainer : MonoBehaviour {
     public float chamberUiRotateDuration = 0.5f;
     public Animator animator;
     public Transform muzzleTransform;
-    public Material[] lineRendererMats = new Material[3];
+    public Color[] lineRendererColors = new Color[3];
+    public float tracerFadeDuration = 0.8f;
 
     // Private
     private LineRenderer lineRenderer;
@@ -37,9 +38,8 @@ public class GunContainer : MonoBehaviour {
     private uint currentChamber = 0;
     private bool isHoldMode = false;
     private bool isHoldingFire = false;
-    private bool trailActive = false;
-    private Color oldTrailColor;
-    private float startTrailFade = 0;
+    private float startTracerTime;
+    private Color currentTracerColor;
 
     void Start() {
         cam = Camera.main;
@@ -204,11 +204,9 @@ public class GunContainer : MonoBehaviour {
         ang = Mathf.Lerp(startAngle, targetAngle, ang);
         SetCrosshairToAngle(ang);
 
-        // Trail fadeout
-        if (trailActive) {
-            var a = (Time.time - startTrailFade) / fireCooldownTime;
-            lineRenderer.material.color = new Color(oldTrailColor.r, oldTrailColor.g, oldTrailColor.b, 1 - a);
-        }
+        // Handle Tracer
+        float a = 1f - (Time.time - startTracerTime) / tracerFadeDuration;
+        lineRenderer.material.SetColor("_TintColor", new Color(currentTracerColor.r, currentTracerColor.g, currentTracerColor.b, a));
     }
 
     private void SetTargetAngle(uint targetSlot) {
@@ -262,19 +260,16 @@ public class GunContainer : MonoBehaviour {
 
     public void FireLineRenderer(Vector3 targetPos, int i) {
         lineRenderer.enabled = true;
-        lineRenderer.material = lineRendererMats[i];
+        currentTracerColor = lineRendererColors[i];
         lineRenderer.SetPosition(0, muzzleTransform.position);
         lineRenderer.SetPosition(1, targetPos);
-        trailActive = true;
-        startTrailFade = Time.time;
-        oldTrailColor = lineRenderer.material.color;
 
-        Invoke("RemoveLine", fireCooldownTime);
+        startTracerTime = Time.time;
+        Invoke("RemoveLine", tracerFadeDuration);
     }
 
     void RemoveLine() {
         lineRenderer.enabled = false;
-        trailActive = false;
     }
 
     public void SwapToNextChamber() {

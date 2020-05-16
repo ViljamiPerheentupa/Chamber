@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1788033988384031787}
   - component: {fileID: 1788033988384031784}
   - component: {fileID: 1788033988384031785}
+  - component: {fileID: 106608320276478163}
   m_Layer: 0
   m_Name: ShockParticles
   m_TagString: Untagged
@@ -40,7 +41,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1788033988384031790}
   serializedVersion: 6
-  lengthInSec: 0.1
+  lengthInSec: 0.05
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -4812,3 +4813,16 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &106608320276478163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1788033988384031790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f0447deb1d65bd4a84f7c89e6c80778, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deleteTime: 1
