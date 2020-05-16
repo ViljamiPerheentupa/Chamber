@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = paused ? CursorLockMode.Locked : CursorLockMode.Confined;
         Cursor.visible = paused ? false : true;
         optionsMenu.SetActive(false);
-        pauseMenu.SetActive(!paused);
+        pauseMenu.GetComponent<PauseMenuAnimHandler>().StartFade(!paused);
         inGameUI.SetActive(paused);
         paused = !paused;
     }

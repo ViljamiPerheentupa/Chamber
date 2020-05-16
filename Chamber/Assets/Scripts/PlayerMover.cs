@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
-public class PlayerMoverNew : MonoBehaviour {
+public class PlayerMover : MonoBehaviour {
     public float crouchMoveSpeed = 0.5f;
     public float airSpeed = 2.0f;
     public float runSpeed = 3.0f;
@@ -192,6 +192,7 @@ public class PlayerMoverNew : MonoBehaviour {
 
         if (GetComponent<PlayerHealth>().isDead) {
             rigidBody.velocity = new Vector3();
+            return;
         }
         
         HandleCrouch();

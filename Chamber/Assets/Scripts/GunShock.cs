@@ -34,6 +34,8 @@ public class GunShock : GunAmmoBase {
                 health.TakeDamage(bulletDamage, transform);
 
             }
+
+            gunContainer.FireLineRenderer(hit.point, 0);
         }
 
         FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/Gunshot", startPos);

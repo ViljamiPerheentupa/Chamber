@@ -20,8 +20,11 @@ public class GunContainer : MonoBehaviour {
     public Color emptyColor;
     public float chamberUiRotateDuration = 0.5f;
     public Animator animator;
+    public Transform muzzleTransform;
+    public Material[] lineRendererMats = new Material[3];
 
     // Private
+    private LineRenderer lineRenderer;
     private bool isHolstering = false;
     private uint rotationPrevSlot = 3;
     private float targetAngle = 0.0f;
@@ -37,6 +40,8 @@ public class GunContainer : MonoBehaviour {
 
     void Start() {
         cam = Camera.main;
+
+        lineRenderer = GetComponent<LineRenderer>();
 
         for (int i = 0; i < 3; ++i) {
             chambers[i] = AmmoType.Empty;
@@ -244,6 +249,19 @@ public class GunContainer : MonoBehaviour {
 
     public void WaitForNextShot() {
         nextFire = Time.time + fireCooldownTime;
+    }
+
+    public void FireLineRenderer(Vector3 targetPos, int i) {
+        lineRenderer.enabled = true;
+        lineRenderer.material = lineRendererMats[i];
+        lineRenderer.SetPosition(0, muzzleTransform.position);
+        lineRenderer.SetPosition(1, targetPos);
+
+        Invoke("RemoveLine", 0.1f);
+    }
+
+    void RemoveLine() {
+        lineRenderer.enabled = false;
     }
 
     public void SwapToNextChamber() {

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GunMagnet : GunAmmoBase {
-    [FMODUnity.EventRef]
+    //[FMODUnity.EventRef]
+    //[FMODUnity.EventRef]
     public string magnetizeEventPath;
-    [FMODUnity.EventRef]
     public string grappleEventPath;
     public float moveStrength = 30.0f;
     public float movePlayerStrength = 30.0f;
@@ -40,6 +40,7 @@ public class GunMagnet : GunAmmoBase {
             if(Physics.Raycast(startPos, forward, out hit, Mathf.Infinity)) {
                 isMovingMagnetTarget = true;
                 targetLocation = hit.point;
+                gunContainer.FireLineRenderer(hit.point, 1);
                 magnetTarget.AddForce(moveStrength * Vector3.Normalize(hit.point - magnetTarget.transform.position), ForceMode.Force);
                 gunContainer.SetHoldMode(true);
                 magnetizeEvent = FMODUnity.RuntimeManager.CreateInstance(magnetizeEventPath);
@@ -78,6 +79,8 @@ public class GunMagnet : GunAmmoBase {
                     gunContainer.WaitForNextShot();
                     gunContainer.SetCurrentChamberColor(holdColor);
                 }
+                
+                gunContainer.FireLineRenderer(hit.point, 1);
             }
             else {
                 gunContainer.PlayFireAnimation();

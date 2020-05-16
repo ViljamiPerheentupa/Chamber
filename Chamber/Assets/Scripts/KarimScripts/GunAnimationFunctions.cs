@@ -3,33 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GunAnimationFunctions : MonoBehaviour {
-    private Gun gun;
+    private GunContainer gun;
 
     void Start() {
-        GameObject gunReticle = GameObject.Find("Gunvas");
+        /*GameObject gunReticle = GameObject.Find("Gunvas");
         
         if (gunReticle)
-            gun = gunReticle.GetComponent<Gun>();
+            gun = gunReticle.GetComponent<GunContainer>();*/
     }
 
     public void Shoot() {
-        if (gun)
-            gun.PullTrigger();
+        //if (gun)
+        //    gun.PullTrigger();
     }
 
     public void Disabled() {
-        if (gun)
-            gun.GetComponent<Gun>().enabled = false;
+        //if (gun)
+        //    gun.enabled = false;
     }
 
     public void Enabled() {
-        if (gun)
-            gun.GetComponent<Gun>().enabled = true;
+        Debug.Log("Enabled");
+        //if (gun)
+        //    gun.enabled = true;
     }
 
     public void Reload() {
-        if (gun)
-            gun.GetComponent<Gun>().StartReloading();
+        //if (gun)
+        //    gun();
     }
 
     public void SFXRelease() {

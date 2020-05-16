@@ -30,7 +30,7 @@ public class Checkpoint : MonoBehaviour {
             gc.StartReset();
         }
 
-        PlayerMoverNew pm = FindObjectOfType<PlayerMoverNew>();
+        PlayerMover pm = FindObjectOfType<PlayerMover>();
         if (pm) {
             pm.StartReset();
         }
