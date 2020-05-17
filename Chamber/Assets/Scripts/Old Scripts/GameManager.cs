@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
-{
+public class GameManager : MonoBehaviour {
+    public Canvas menuCanvas;
+    public Canvas guiCanvas;
     public GameObject optionsMenu;
     public GameObject pauseMenu;
     public GameObject inGameUI;
@@ -21,7 +22,12 @@ public class GameManager : MonoBehaviour
             if (om) {
                 om.LoadPrefs();
             }
+
+            optionsMenu.SetActive(false);
         }
+
+        menuCanvas.gameObject.SetActive(true);
+        guiCanvas.gameObject.SetActive(true);
         
         pauseMenu.gameObject.SetActive(false);
         inGameUI.gameObject.SetActive(true);
