@@ -102,7 +102,14 @@ public class MovingPlatform : BaseResetable, IProp {
                 }
             }
             else {
-                if ((transform.position - targetPosition).magnitude < 0.01f) {
+                float distance = (transform.position - targetPosition).magnitude;
+                
+                float currentMoveSpeed = isTimeLocked ? timeLockSpeed : moveSpeed;
+                currentMoveSpeed = currentMoveSpeed * Time.deltaTime;
+
+                if (distance < currentMoveSpeed) {
+                    transform.position = targetPosition;
+                    currentMoveSpeed = distance;
                     if (automaticMove) {
                         isMovingToEnd = !isMovingToEnd;
                         targetPosition = isMovingToEnd ? endPosition : startPosition;
@@ -113,9 +120,9 @@ public class MovingPlatform : BaseResetable, IProp {
                         isOrderedToMove = false;
                     }
                 }
-                
-                float currentMoveSpeed = isTimeLocked ? timeLockSpeed : moveSpeed;
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, currentMoveSpeed * Time.deltaTime);
+                else {
+                    transform.position = Vector3.MoveTowards(transform.position, targetPosition, currentMoveSpeed);
+                }
             }
         }
     }
