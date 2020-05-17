@@ -439,12 +439,18 @@ public class OptionsManager : MonoBehaviour {
         if (sm) {
             sm.showSubtitles = e;
         }
+        else {
+            Debug.Log("Could not get SubtitleManager.");
+        }
     }
     
     void subtitleLanguageCallback(int language) {
         SubtitleManager sm = GameObject.FindObjectOfType<SubtitleManager>();
         if (sm) {
             sm.LoadSubtitles((SubtitleManager.SubtitleLanguage)language);
+        }
+        else {
+            Debug.Log("Could not get SubtitleManager.");
         }
     }
 

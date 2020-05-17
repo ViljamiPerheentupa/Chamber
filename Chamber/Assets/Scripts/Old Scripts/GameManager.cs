@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour {
         }
     }
     private void Start() {
+        guiCanvas.gameObject.SetActive(true);
+        menuCanvas.gameObject.SetActive(true);
+
         if (optionsMenu) {
             OptionsManager om = optionsMenu.GetComponent<OptionsManager>();
             if (om) {
@@ -25,9 +28,6 @@ public class GameManager : MonoBehaviour {
 
             optionsMenu.SetActive(false);
         }
-
-        menuCanvas.gameObject.SetActive(true);
-        guiCanvas.gameObject.SetActive(true);
         
         pauseMenu.gameObject.SetActive(false);
         inGameUI.gameObject.SetActive(true);
