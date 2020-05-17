@@ -10,7 +10,7 @@ public class MovingPlatform : BaseResetable, IProp {
     public bool automaticMove;
     public float activateDelayTime = 0.0f;
     public float timeLockSpeed = 0.1f;
-
+    public bool isTimelockable = true;
     public float timeLockDuration = 10.0f;
     #endregion
 
@@ -68,12 +68,14 @@ public class MovingPlatform : BaseResetable, IProp {
     }
 
     public void TimeLock() {        //Applying the TimeLock effect
-        if (!isTimeLocked) {      //Making sure the TimeLock isn't applied on top of an earlier TimeLock
-            isTimeLocked = true;
-            
-            releaseTimeLockTime = Time.time + timeLockDuration;
-        } else {
-            releaseTimeLockTime = Time.time + timeLockDuration;
+        if (isTimelockable) {
+            if (!isTimeLocked) {      //Making sure the TimeLock isn't applied on top of an earlier TimeLock
+                isTimeLocked = true;
+                
+                releaseTimeLockTime = Time.time + timeLockDuration;
+            } else {
+                releaseTimeLockTime = Time.time + timeLockDuration;
+            }
         }
     }
 

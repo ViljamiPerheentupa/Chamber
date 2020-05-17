@@ -3256,6 +3256,11 @@ PrefabInstance:
       propertyPath: activateDelayTime
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3896943599177265709, guid: 78685e05d3e17bf499519577f958b82c,
+        type: 3}
+      propertyPath: isTimelockable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3896943599177265711, guid: 78685e05d3e17bf499519577f958b82c,
         type: 3}
       propertyPath: m_Name
