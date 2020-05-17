@@ -6,7 +6,7 @@ public class Func_Rotate : MonoBehaviour {
     public Vector3 rotateAxis;
     public float rotateSpeed;
 
-    void SetRotationSpeed(float speed) {
+    public void SetRotationSpeed(float speed) {
         rotateSpeed = speed;
     }
 

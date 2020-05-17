@@ -74,6 +74,9 @@ public class GunMagnet : GunAmmoBase {
                     gunContainer.SetHoldMode(true);
                     gunContainer.SetCurrentChamberColor(holdColor);
                 }
+                else if (hit.collider.GetComponent<ShootTrigger>()) {
+                    hit.collider.GetComponent<ShootTrigger>().OnMagnetTrigger();
+                }
                 else if (hit.rigidbody) {
                     FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitElectric", startPos);
                     magnetTarget = hit.rigidbody;

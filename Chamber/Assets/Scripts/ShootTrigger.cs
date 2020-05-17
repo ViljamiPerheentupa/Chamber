@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class ShockTrigger : BaseResetable {
-    public UnityEvent onTrigger;
+public class ShootTrigger : BaseResetable {
+    public UnityEvent onShockTrigger;
+    public UnityEvent onMagnetTrigger;
+    public UnityEvent onTimeTrigger;
     public UnityEvent onReset;
 
     void Start() {
@@ -18,7 +20,15 @@ public class ShockTrigger : BaseResetable {
         onReset.Invoke();
     }
 
-    public void OnTrigger() {
-        onTrigger.Invoke();
+    public void OnShockTrigger() {
+        onShockTrigger.Invoke();
+    }
+
+    public void OnMagnetTrigger() {
+        onMagnetTrigger.Invoke();
+    }
+
+    public void OnTimeTrigger() {
+        onTimeTrigger.Invoke();
     }
 }

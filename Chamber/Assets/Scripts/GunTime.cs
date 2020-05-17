@@ -8,14 +8,17 @@ public class GunTime : GunAmmoBase {
     public override void FirePress(Vector3 startPos, Vector3 forward) {
         RaycastHit hit;
         if (Physics.Raycast(startPos, forward, out hit, Mathf.Infinity, layerMask)) {
-            
             if (hit.collider.GetComponent<IProp>() != null) {
                 FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitElectric", startPos);
                 hit.collider.GetComponent<IProp>().TimeLock();
             } else if (hit.collider.GetComponentInParent<IProp>() != null) {
                 FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitElectric", startPos);
                 hit.collider.GetComponentInParent<IProp>().TimeLock();
-            } else {
+            }
+            else if (hit.collider.GetComponent<ShootTrigger>()) {
+                hit.collider.GetComponent<ShootTrigger>().OnTimeTrigger();
+            }
+            else {
                 // Hit invalid object
                 Instantiate(missParticle, hit.point, Quaternion.LookRotation(hit.normal));
             };

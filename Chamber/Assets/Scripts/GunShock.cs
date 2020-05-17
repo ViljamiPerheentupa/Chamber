@@ -14,12 +14,12 @@ public class GunShock : GunAmmoBase {
         RaycastHit hit;
         if(Physics.Raycast(startPos, forward, out hit, Mathf.Infinity)) {
             FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitGeneric", hit.point);
-        
-            ShockTrigger st = hit.collider.GetComponent<ShockTrigger>();
-            if (st) {
-                st.OnTrigger();
-            }
 
+            ShootTrigger st = hit.collider.GetComponent<ShootTrigger>();
+            if (st) {
+                st.OnShockTrigger();
+            }
+            
             if (hit.collider.gameObject.layer == 20) {
                 if (hit.rigidbody) {
                     Vector3 force = forward * forceAmount;

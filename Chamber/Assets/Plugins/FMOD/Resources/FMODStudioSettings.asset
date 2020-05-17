@@ -85,5 +85,6 @@ MonoBehaviour:
   - Master
   - Master
   - Master
+  - Master
   BanksToLoad: []
   LiveUpdatePort: 9264
