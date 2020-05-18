@@ -218,7 +218,7 @@ MonoBehaviour:
     supportRuntimeDebugDisplay: 1
     supportDitheringCrossFade: 1
     supportTerrainHole: 0
-    supportRayTracing: 0
+    supportRayTracing: 1
     supportedRaytracingTier: 2
     lightLoopSettings:
       cookieSize: 128
@@ -268,7 +268,7 @@ MonoBehaviour:
       maxDirectionalShadowMapResolution: 2048
       maxPunctualShadowMapResolution: 2048
       maxAreaShadowMapResolution: 2048
-      supportScreenSpaceShadows: 0
+      supportScreenSpaceShadows: 1
       maxScreenSpaceShadows: 2
     decalSettings:
       drawDistance: 1000
@@ -341,7 +341,8 @@ MonoBehaviour:
   m_DefaultMaterialQualityLevel: 4
   diffusionProfileSettings: {fileID: 0}
   diffusionProfileSettingsList:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 3c7ce75dfbcac7e4cbefd6cf006680bf, type: 2}
+  - {fileID: 11400000, guid: 508528892a58bee43a31e94556cf111e, type: 2}
   beforeTransparentCustomPostProcesses: []
   beforePostProcessCustomPostProcesses: []
   afterPostProcessCustomPostProcesses: []

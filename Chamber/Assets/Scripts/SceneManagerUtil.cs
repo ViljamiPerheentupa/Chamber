@@ -7,12 +7,9 @@ public class SceneManagerUtil : MonoBehaviour {
     public List<string> initialScenes = new List<string>();
 
     private void Start() {
-        foreach(string st in initialScenes) {
-            SceneManager.LoadScene(st, LoadSceneMode.Additive);
-        }
         foreach (string st in initialScenes) {
             UnloadScene(st);
-            SceneManager.LoadScene(st, LoadSceneMode.Additive);
+            LoadScene(st);
         }
     }
 
