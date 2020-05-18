@@ -11,6 +11,7 @@ public class GunMagnet : GunAmmoBase {
     public float movePlayerStrength = 30.0f;
     public Color holdColor;
     public LayerMask magnetableLayers;
+    public LayerMask magnetSurfaceLayers;
     private Rigidbody magnetTarget;
     private Vector3 targetLocation;
     [HideInInspector]
@@ -38,7 +39,7 @@ public class GunMagnet : GunAmmoBase {
         
         if (magnetTarget) {        
             RaycastHit hit;
-            if(Physics.Raycast(startPos, forward, out hit, Mathf.Infinity)) {
+            if(Physics.Raycast(startPos, forward, out hit, Mathf.Infinity, magnetSurfaceLayers)) {
                 isMovingMagnetTarget = true;
                 targetLocation = hit.point;
                 gunContainer.FireLineRenderer(hit.point, 1);

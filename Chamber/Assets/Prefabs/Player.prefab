@@ -185,7 +185,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4128311
+    m_Bits: 20905527
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -10435,6 +10435,9 @@ MonoBehaviour:
   magnetableLayers:
     serializedVersion: 2
     m_Bits: 4190209
+  magnetSurfaceLayers:
+    serializedVersion: 2
+    m_Bits: 0
   isPulling: 0
   missParticle: {fileID: 5561028442748360280, guid: 8a11ade4554b8b74388f8c9c2892ad37,
     type: 3}

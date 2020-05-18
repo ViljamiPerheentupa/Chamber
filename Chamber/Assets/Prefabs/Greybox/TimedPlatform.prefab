@@ -353,13 +353,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 984aec85b42c52d4289b2e00c3c02b16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 15
+  moveSpeed: 40
   targetPoint: {fileID: 2385235179888620922}
   isEnabled: 1
   automaticMove: 1
-  activateDelayTime: 3
-  timeLockSpeed: 0.1
-  timeLockDuration: 10
+  activateDelayTime: 0.5
+  timeLockSpeed: 0.05
+  timeLockDuration: 5
 --- !u!1 &2385235180541226573
 GameObject:
   m_ObjectHideFlags: 0

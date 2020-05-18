@@ -38,10 +38,10 @@ TagManager:
   - Debris
   - Interactable
   - Shield
-  - 
-  - 
-  - 
-  - 
+  - Triggers
+  - SliderLimiter
+  - Slider
+  - InteractableBlocker
   - 
   - 
   - 

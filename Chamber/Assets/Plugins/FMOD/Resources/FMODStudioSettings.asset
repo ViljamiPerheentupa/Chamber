@@ -15,7 +15,7 @@ MonoBehaviour:
   SwitchSettingsMigration: 1
   HasSourceProject: 0
   HasPlatforms: 0
-  sourceProjectPath: ../ChamberFMOD/ChamberFMOD.fspro
+  sourceProjectPath: 
   sourceBankPath: ../ChamberFMOD/FMODBuild
   SourceBankPathUnformatted: 
   AutomaticEventLoading: 1
@@ -58,9 +58,7 @@ MonoBehaviour:
     Value: 0
   - Platform: 20
     Value: 0
-  BankDirectorySettings:
-  - Platform: 2
-    Value: Desktop
+  BankDirectorySettings: []
   VirtualChannelSettings:
   - Platform: 1
     Value: 1024
@@ -75,17 +73,10 @@ MonoBehaviour:
     Value: 32
   - Platform: 20
     Value: 32
-  Plugins: []
+  Plugins:
+  - phonon_fmod
   MasterBanks:
   - Master
-  Banks:
-  - Master
-  - Master
-  - Master
-  - Master
-  - Master
-  - Master
-  - Master
-  - Master
+  Banks: []
   BanksToLoad: []
   LiveUpdatePort: 9264

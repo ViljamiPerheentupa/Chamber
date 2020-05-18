@@ -10,7 +10,12 @@ public class SceneManagerUtil : MonoBehaviour {
         foreach(string st in initialScenes) {
             SceneManager.LoadScene(st, LoadSceneMode.Additive);
         }
+        foreach (string st in initialScenes) {
+            UnloadScene(st);
+            SceneManager.LoadScene(st, LoadSceneMode.Additive);
+        }
     }
+
 
     public AsyncOperation LoadScene(string levelName) {
         if (!SceneManager.GetSceneByName(levelName).isLoaded) {

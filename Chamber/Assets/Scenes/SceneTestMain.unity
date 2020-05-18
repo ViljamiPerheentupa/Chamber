@@ -439,7 +439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4576053e6ac4964287500815ebc2f7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioEngine: 0
+  audioEngine: 1
   sofaFiles: []
   currentSOFAFile: 0
   materialPreset: 0
@@ -522,17 +522,17 @@ PrefabInstance:
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 47.25
+      value: 6.75
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.75
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 47.25
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
@@ -582,7 +582,7 @@ PrefabInstance:
     - target: {fileID: 3576744802192327406, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: jumpImpulse
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327406, guid: ad82e878837850141823e80c8a613049,
         type: 3}
@@ -651,7 +651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialScenes:
-  - TutorialGround
+  - TutorialFirst
   - TutorialElevator
 --- !u!4 &1350973045
 Transform:

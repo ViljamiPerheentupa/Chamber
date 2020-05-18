@@ -98,6 +98,7 @@ public class DynamicProp : MonoBehaviour, IProp
 
     public void ReleaseTimeLock() {         //Ending the TimeLock
         print("Released prop");
+        timeLocked = false;
         rig.velocity = lockedDirection;
         rig.angularVelocity = lockedRotation;
         rig.useGravity = hadGravity;
