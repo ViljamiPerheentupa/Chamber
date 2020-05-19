@@ -10360,8 +10360,8 @@ MonoBehaviour:
     m_Bits: 1048576
   forceAmount: 10
   forceRadius: 3
-  selfForceAmount: 20
-  fireCooldownTime: 1.5
+  selfForceAmount: 12
+  fireCooldownTime: 3
 --- !u!114 &3576744802192327413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10434,10 +10434,10 @@ MonoBehaviour:
   holdColor: {r: 0.7735849, g: 0.14361048, b: 0, a: 1}
   magnetableLayers:
     serializedVersion: 2
-    m_Bits: 4190209
+    m_Bits: 20967425
   magnetSurfaceLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 17862657
   isPulling: 0
   missParticle: {fileID: 5561028442748360280, guid: 8a11ade4554b8b74388f8c9c2892ad37,
     type: 3}
