@@ -73,8 +73,7 @@ MonoBehaviour:
     Value: 32
   - Platform: 20
     Value: 32
-  Plugins:
-  - phonon_fmod
+  Plugins: []
   MasterBanks:
   - Master
   Banks: []

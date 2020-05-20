@@ -10257,15 +10257,15 @@ MonoBehaviour:
   runSpeed: 1.5
   sprintSpeed: 2.5
   maxSpeed: 5
-  jumpImpulse: 8
+  jumpImpulse: 6
   jumpContinuationForce: 0.8
   jumpContinuationTime: 0.2
-  fallMultiplier: 1.5
+  fallMultiplier: 1.6
   maintainAirSpeedCoefficient: 0.98
   maintainSpeedCoefficient: 0.8
   floorMask:
     serializedVersion: 2
-    m_Bits: 4193591
+    m_Bits: 54525239
   cameraHeight: -0.25
   standCapsuleHeight: 2
   crouchCapsuleHeight: 1.25
