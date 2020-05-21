@@ -153,7 +153,8 @@ public class PlayerMover : MonoBehaviour {
     void OnJump(InputValue value) {
         isJumpPressed = value.isPressed;
 
-        if (!isNoclipping) {
+        GameManager gm = FindObjectOfType<GameManager>();
+        if (!(gm && gm.paused) && !isNoclipping) {
             if (isJumpPressed) {
                 if (isGrounded()) {
                     weaponSwayKick.y -= jumpSway;
@@ -175,7 +176,8 @@ public class PlayerMover : MonoBehaviour {
     void OnCrouch(InputValue value) {
         isCrouchPressed = value.isPressed;
 
-        if (!isNoclipping && isCrouchPressed && !isCrouching) {
+        GameManager gm = GameObject.FindObjectOfType<GameManager>();
+        if (!(gm && gm.paused) && !isNoclipping && isCrouchPressed && !isCrouching) {
             float t = crouchDelay - (Time.time - startCrouchTime);
             t = Mathf.Clamp(t, 0.0f, crouchDelay);
             weaponSwayKick.y += standToCrouchWeaponSway;
@@ -195,7 +197,6 @@ public class PlayerMover : MonoBehaviour {
 
         float t = (Time.time - startCrouchTime) / crouchDelay;
         if (isCrouching) t = 1 - t;
-
         t = crouchCurve.Evaluate(t);
 
         float currentCapsuleHeight = Mathf.Lerp(crouchCapsuleHeight, standCapsuleHeight, t);
@@ -212,7 +213,8 @@ public class PlayerMover : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        if (GameObject.Find("GameManager").GetComponent<GameManager>().paused || GetComponent<GunMagnet>().isPulling) {
+        GameManager gm = GameObject.FindObjectOfType<GameManager>();
+        if ((gm && gm.paused) || GetComponent<GunMagnet>().isPulling) {
             return;
         }
 

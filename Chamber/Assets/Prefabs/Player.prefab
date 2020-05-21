@@ -10277,7 +10277,25 @@ MonoBehaviour:
   targetFov: 140
   fovCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.28715524
+      outSlope: 0.28715524
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.027683616
+    - serializedVersion: 3
+      time: 1.0006653
+      value: 0.99434793
+      inSlope: 2.6247797
+      outSlope: 2.6247797
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.023163855
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -10301,15 +10319,15 @@ MonoBehaviour:
   runSpeed: 1.5
   sprintSpeed: 2.5
   maxSpeed: 5
-  jumpImpulse: 8
+  jumpImpulse: 6
   jumpContinuationForce: 0.8
   jumpContinuationTime: 0.2
-  fallMultiplier: 1.5
+  fallMultiplier: 1.6
   maintainAirSpeedCoefficient: 0.98
   maintainSpeedCoefficient: 0.8
   floorMask:
     serializedVersion: 2
-    m_Bits: 4193591
+    m_Bits: 54525239
   cameraHeight: -0.25
   standCapsuleHeight: 2
   crouchCapsuleHeight: 1.25

@@ -28,7 +28,8 @@ public class PlayerLifting : MonoBehaviour {
     }
 
     void OnFire(InputValue value) {
-        if (!GetComponent<PlayerHealth>().isDead && prop) {
+        GameManager gm = FindObjectOfType<GameManager>();
+        if (!(gm && gm.paused) && !GetComponent<PlayerHealth>().isDead && prop) {
             rigid.AddForce(Camera.main.transform.forward * throwStrength, ForceMode.Impulse);
             Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
             gunContainer.SetHolstering(false);
@@ -38,7 +39,8 @@ public class PlayerLifting : MonoBehaviour {
     }
 
     void OnInteract(InputValue value) {
-        if (!GetComponent<PlayerHealth>().isDead) {
+        GameManager gm = FindObjectOfType<GameManager>();
+        if (!(gm && gm.paused) && !GetComponent<PlayerHealth>().isDead) {
             if (prop) {
                 Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
                 gunContainer.SetHolstering(false);

@@ -16,7 +16,8 @@ public class AirShotgun : MonoBehaviour {
     }
 
     void Update() {
-        if (GetComponent<PlayerHealth>().isDead || !isActivated) {
+        GameManager gm = FindObjectOfType<GameManager>();
+        if ((gm && gm.paused) || GetComponent<PlayerHealth>().isDead || !isActivated) {
             return;
         }
         
@@ -39,7 +40,8 @@ public class AirShotgun : MonoBehaviour {
             }
 
             if (rb) {
-                rb.AddForce(-fwd * selfForceAmount, ForceMode.Impulse);
+                float speed = Mathf.Max(rb.velocity.magnitude, selfForceAmount);
+                rb.velocity = -fwd * speed;
             }
             
             nextFire = Time.time + fireCooldownTime;
