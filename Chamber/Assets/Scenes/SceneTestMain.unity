@@ -433,16 +433,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3576744802192327406, guid: ad82e878837850141823e80c8a613049,
-        type: 3}
-      propertyPath: jumpImpulse
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 3576744802192327406, guid: ad82e878837850141823e80c8a613049,
-        type: 3}
-      propertyPath: fallMultiplier
-      value: 1.6
-      objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327413, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: decalManager

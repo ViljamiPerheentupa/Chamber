@@ -39,7 +39,8 @@ public class AirShotgun : MonoBehaviour {
             }
 
             if (rb) {
-                rb.AddForce(-fwd * selfForceAmount, ForceMode.Impulse);
+                float speed = Mathf.Max(rb.velocity.magnitude, selfForceAmount);
+                rb.velocity = -fwd * speed;
             }
             
             nextFire = Time.time + fireCooldownTime;
