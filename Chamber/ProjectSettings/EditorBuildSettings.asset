@@ -14,7 +14,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/NewIdeasTestScene.unity
     guid: cb63844795ae20747bb406636008678c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SceneTestMain.unity
     guid: d9cd835208565544aa94cc7edd32dc76
   - enabled: 0
@@ -26,15 +26,18 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SceneTestC.unity
     guid: 548c3ee1e5968f3488c009218b6130ae
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/New Scenes/TutorialFirst.unity
     guid: 7e1f7e5240e5f324685d7e79ada0bd29
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/New Scenes/TutorialElevator.unity
     guid: d13c9b6248882d8498816a77f3f69d05
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/New Scenes/TutorialGround.unity
     guid: 97964ae476b4d784ea62cead5b00c6aa
+  - enabled: 0
+    path: Assets/Scenes/MovementTest.unity
+    guid: 048f3263352cf2240b68f11186e4135c
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: da851054f79f7814486ed1322225f33d,
       type: 2}
