@@ -1,0 +1,33 @@
+# ProBuilder 4.2.3
+# https://unity3d.com/unity/features/worldbuilding/probuilder
+# 5/22/2020 8:36:18 PM
+
+mtllib ./WallTrussed.mtl
+o WallTrussed
+
+g Wall
+v 0 0 0
+v -4.150185E-08 0 1.492404
+v 0 4 0
+v -4.150185E-08 4 1.492404
+v 4.150185E-08 0 2.507596
+v 4.150185E-08 4 2.507596
+v 0 0 4
+v 0 4 4
+
+vt 0 0
+vt -1.492404 0
+vt 0 4
+vt -1.492404 4
+vt -2.507596 0
+vt -2.507596 4
+vt -4 0
+vt -4 4
+
+vn 1 0 2.780873E-08
+
+usemtl DefaultHDMaterial
+f 3/3/1 4/4/1 2/2/1 1/1/1
+f 4/4/1 6/6/1 5/5/1 2/2/1
+f 6/6/1 8/8/1 7/7/1 5/5/1
+
