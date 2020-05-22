@@ -173,7 +173,9 @@ MonoBehaviour:
   targetPoint: {fileID: 3896943598661152165}
   isEnabled: 1
   automaticMove: 0
+  activateDelayTime: 1
   timeLockSpeed: 0.1
+  isTimelockable: 1
   timeLockDuration: 10
 --- !u!65 &3896943599177265708
 BoxCollider:

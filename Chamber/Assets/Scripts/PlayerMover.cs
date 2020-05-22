@@ -25,6 +25,7 @@ public class PlayerMover : MonoBehaviour {
     public float crouchDelay = 0.5f;
     public AnimationCurve crouchCurve;
     public Transform cameraTransform;
+    public Transform gunTransform;
     public Vector2 weaponBobStretch = new Vector2(2.0f, 1.0f);
     public Vector2 weaponSwayAmount;
     public float weaponSwayRecoverSpeed = 0.2f;
@@ -41,6 +42,7 @@ public class PlayerMover : MonoBehaviour {
     public float weaponBobFactorChangeSpeed = 0.2f;
     public float noclipSpeed = 10.0f;
     public float noclipSprintSpeed = 30.0f;
+    public float coyoteTimeDuration = 2f;
     #endregion
 
     #region Private Variables
@@ -63,6 +65,8 @@ public class PlayerMover : MonoBehaviour {
     private float endOfJumpTime = 0.0f;
     private bool needFootstep = false;
     private bool isNoclipping;
+    private float coyoteTimeEnd = 0f;
+    private bool canLand = false;
     #endregion
 
     Rigidbody rigidBody;
@@ -92,7 +96,6 @@ public class PlayerMover : MonoBehaviour {
     }
     
     void CalculateBob() {
-        /*
         weaponBobTime += weaponBobSpeed * Time.deltaTime;
         float t = weaponBobTime;
         weaponSwayKick = Vector2.SmoothDamp(weaponSwayKick, new Vector2(0,0), ref weaponSwayKickVelocity, weaponSwayRecoverSpeed);
@@ -113,7 +116,6 @@ public class PlayerMover : MonoBehaviour {
 
         Vector3 weaponBob = weaponBobAmount * new Vector3(weaponBobStretch.y * sint, weaponBobStretch.x * Mathf.Sin(t + Mathf.PI / 2.0f), 0);
         gunTransform.localEulerAngles = weaponSway + weaponBob;
-        */
     }
 
     public bool ToggleNoclip() {
@@ -156,11 +158,13 @@ public class PlayerMover : MonoBehaviour {
         GameManager gm = FindObjectOfType<GameManager>();
         if (!(gm && gm.paused) && !isNoclipping) {
             if (isJumpPressed) {
-                if (isGrounded()) {
+                if (Time.time < coyoteTimeEnd) {
                     weaponSwayKick.y -= jumpSway;
-                    rigidBody.AddForce(new Vector3(0, jumpImpulse, 0), ForceMode.Impulse);
+                    rigidBody.velocity = new Vector3(rigidBody.velocity.x, jumpImpulse, rigidBody.velocity.z);
                     endOfJumpTime = Time.time + jumpContinuationTime;
                     canExtendJump = true;
+                    coyoteTimeEnd = 0f;
+                    canLand = false;
                 }
             }
             else {
@@ -218,6 +222,20 @@ public class PlayerMover : MonoBehaviour {
             return;
         }
 
+        if (isGrounded()) {
+            if (canLand) {
+                // If I'm on the ground
+                coyoteTimeEnd = Mathf.Infinity;
+            }
+        }
+        else {
+            if (coyoteTimeEnd == Mathf.Infinity) {
+                // If I just got ungrounded
+                coyoteTimeEnd = Time.time + coyoteTimeDuration;
+            }
+            canLand = true;
+        }
+
         if (GetComponent<PlayerHealth>().isDead) {
             rigidBody.velocity = new Vector3();
             return;
@@ -265,7 +283,7 @@ public class PlayerMover : MonoBehaviour {
             }
         }
 
-        if (isGrounded()) {
+        if (Time.time < coyoteTimeEnd) {
             velocity = rigidBody.velocity;
 
             velocity.x *= maintainSpeedCoefficient;
@@ -326,12 +344,14 @@ public class PlayerMover : MonoBehaviour {
         rigidBody.velocity = velocity;
         
         bool free = true;
-        RaycastHit hit;
-        if (Physics.Raycast(new Vector3(c_collider.bounds.center.x,c_collider.bounds.min.y+0.01f,c_collider.bounds.center.z), -Vector3.up, out hit, 0.05f)) {
-            if (moveAxis.magnitude == 0f && Vector3.Dot(hit.normal, Vector3.up) < 0.99f && velocity.y <= 0f) {
-                free = false;
-                rigidBody.velocity = new Vector3();
-                rigidBody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+        if (Time.time < coyoteTimeEnd) {
+            RaycastHit hit;
+            if (Physics.Raycast(new Vector3(c_collider.bounds.center.x,c_collider.bounds.min.y+0.01f,c_collider.bounds.center.z), -Vector3.up, out hit, 0.05f)) {
+                if (moveAxis.magnitude == 0f && Vector3.Dot(hit.normal, Vector3.up) < 0.99f && velocity.y <= 0f) {
+                    free = false;
+                    rigidBody.velocity = new Vector3();
+                    rigidBody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+                }
             }
         }
 

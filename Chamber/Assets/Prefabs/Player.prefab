@@ -10358,6 +10358,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraTransform: {fileID: 3576744800330811291}
+  gunTransform: {fileID: 3576744800625245244}
   weaponBobStretch: {x: 2, y: 1}
   weaponSwayAmount: {x: 15, y: 15}
   weaponSwayRecoverSpeed: 0.2
@@ -10374,6 +10375,7 @@ MonoBehaviour:
   weaponBobFactorChangeSpeed: 0.2
   noclipSpeed: 10
   noclipSprintSpeed: 30
+  coyoteTimeDuration: 0.1
 --- !u!54 &3576744802192327401
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10426,6 +10428,7 @@ MonoBehaviour:
   selfForceAmount: 18
   downwardSelfForceAmount: 14
   downwardAngleTransition: {x: 0.5, y: 0.7}
+  airShotgunUiParent: {fileID: 0}
 --- !u!114 &3576744802192327413
 MonoBehaviour:
   m_ObjectHideFlags: 0

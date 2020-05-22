@@ -16,19 +16,17 @@ public class AirShotgun : MonoBehaviour {
     [Tooltip("cos(angle) by which to lerp the player velocity values.")]
     [MinMaxSlider(0f,1.0f)] 
     public Vector2 downwardAngleTransition = new Vector2(0.3f, 0.7f);
-
+    public GameObject airShotgunUiParent;
 
     RectTransform uiTransform;
-    GameObject airShotgunUiParent;
     float uiMaxWidth = 0.0f;
     float nextFire = 0.0f;
     Rigidbody rb;
 
     void Start() {
         rb = GetComponent<Rigidbody>();
-        uiTransform = (RectTransform)GameObject.Find("AirShotgunFillUI").transform;
+        uiTransform = (RectTransform)airShotgunUiParent.transform.GetChild(0).transform;
         uiMaxWidth = uiTransform.sizeDelta.x;
-        airShotgunUiParent = GameObject.Find("AirShotgunUI");
         airShotgunUiParent.SetActive(isActivated);
     }
 
