@@ -10378,8 +10378,10 @@ MonoBehaviour:
     m_Bits: 1048576
   forceAmount: 10
   forceRadius: 3
-  selfForceAmount: 12
   fireCooldownTime: 3
+  selfForceAmount: 15
+  downwardSelfForceAmount: 10
+  downwardAngleTransition: {x: 0.5, y: 0.7}
 --- !u!114 &3576744802192327413
 MonoBehaviour:
   m_ObjectHideFlags: 0

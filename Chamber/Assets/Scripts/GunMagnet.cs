@@ -18,9 +18,12 @@ public class GunMagnet : GunAmmoBase {
     public bool isPulling = false;
     private bool isMovingMagnetTarget = false;
     public Transform missParticle;
+    public AnimationCurve grappleAnimationCurve;
 
     private FMOD.Studio.EventInstance magnetizeEvent;
     private FMOD.Studio.EventInstance grappleEvent;
+
+    private float startGrappleDistance = 0f;
 
     public void StartReset() {
         magnetTarget = null;
@@ -28,7 +31,15 @@ public class GunMagnet : GunAmmoBase {
 
     void Update() {
         if (isPulling) {
-            transform.position = Vector3.MoveTowards(transform.position, targetLocation, movePlayerStrength * Time.deltaTime);
+            float currPercentage = 1f - (targetLocation - transform.position).magnitude / startGrappleDistance;
+            if(!Physics.Raycast(transform.position, (targetLocation - transform.position), Mathf.Infinity, magnetSurfaceLayers)) {
+                float amt = movePlayerStrength * Time.deltaTime;
+                amt = grappleAnimationCurve.Evaluate(currPercentage);
+                transform.position = Vector3.MoveTowards(transform.position, targetLocation, amt);
+            }
+            else {
+                EndGrapple();
+            }
         }
         else if (magnetTarget && isMovingMagnetTarget) {
             magnetTarget.AddForce(moveStrength * Vector3.Normalize(targetLocation - magnetTarget.transform.position), ForceMode.Force);
@@ -68,8 +79,11 @@ public class GunMagnet : GunAmmoBase {
                     grappleEvent.start();
                     isPulling = true;
                     GetComponent<Rigidbody>().useGravity = false;
+                    GetComponent<Rigidbody>().velocity = new Vector3(0f,0f,0f);
                     
                     targetLocation = hit.collider.transform.position + hit.collider.transform.forward * 1.5f;
+
+                    startGrappleDistance = (targetLocation - transform.position).magnitude;
                     gunContainer.PlayFireAnimation();
                     gunContainer.WaitForNextShot();
                     gunContainer.SetHoldMode(true);
@@ -107,16 +121,20 @@ public class GunMagnet : GunAmmoBase {
         }
     }
 
+    void EndGrapple() {
+        grappleEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        grappleEvent.release();
+        GetComponent<Rigidbody>().useGravity = true;
+        isPulling = false;
+        gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
+        gunContainer.SetHoldMode(false);
+        gunContainer.SwapToNextChamber();
+        gunContainer.WaitForNextShot();
+    }
+
     public override void FireRelease(Vector3 startPos, Vector3 forward) {
         if (isPulling) {
-            grappleEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-            grappleEvent.release();
-            GetComponent<Rigidbody>().useGravity = true;
-            isPulling = false;
-            gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
-            gunContainer.SetHoldMode(false);
-            gunContainer.SwapToNextChamber();
-            gunContainer.WaitForNextShot();
+            EndGrapple();
         }
         else if (magnetTarget) {
             magnetizeEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);

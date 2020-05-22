@@ -296,11 +296,13 @@ public class PlayerMover : MonoBehaviour {
 
             moveSpeed = airSpeed;
 
-            if (velocity.y < 0) {
-                velocity.y += Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
-            }
-            else if (isJumpPressed && canExtendJump && endOfJumpTime > Time.time) {
-                velocity.y -= Physics.gravity.y * (jumpContinuationForce) * Time.deltaTime;
+            if (rigidBody.useGravity) {
+                if (velocity.y < 0) {
+                    velocity.y += Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+                }
+                else if (isJumpPressed && canExtendJump && endOfJumpTime > Time.time) {
+                    velocity.y -= Physics.gravity.y * (jumpContinuationForce) * Time.deltaTime;
+                }
             }
         }
 

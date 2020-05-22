@@ -1,15 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GD.MinMaxSlider;
 
 public class AirShotgun : MonoBehaviour {
     public bool isActivated = true;
     public LayerMask targetHitLayers;
     public float forceAmount = 10.0f;
     public float forceRadius = 1.0f;
-    public float selfForceAmount = 20.0f;
     public float fireCooldownTime = 0.3f;
+    [Tooltip("Player velocity at non-downward angles.")]
+    public float selfForceAmount = 20.0f;
+    [Tooltip("Player velocity at downward angles.")]
+    public float downwardSelfForceAmount = 10.0f;
+    [Tooltip("cos(angle) by which to lerp the player velocity values.")]
+    [MinMaxSlider(0f,1.0f)] 
+    public Vector2 downwardAngleTransition = new Vector2(0.3f, 0.7f);
+
+
     private float nextFire = 0.0f;
+
+
     Rigidbody rb;
     void Start() {
         rb = GetComponent<Rigidbody>();
@@ -40,7 +51,11 @@ public class AirShotgun : MonoBehaviour {
             }
 
             if (rb) {
-                float speed = Mathf.Max(rb.velocity.magnitude, selfForceAmount);
+                float dt = Vector3.Dot(-fwd, Vector3.up);
+                float d = Mathf.Clamp((dt - downwardAngleTransition.x) / downwardAngleTransition.y, 0f, 1f);
+                Debug.Log(dt + " " + d);
+                float speed = Mathf.Lerp(selfForceAmount, downwardSelfForceAmount, d);
+                speed = Mathf.Max(rb.velocity.magnitude, speed);
                 rb.velocity = -fwd * speed;
             }
             
