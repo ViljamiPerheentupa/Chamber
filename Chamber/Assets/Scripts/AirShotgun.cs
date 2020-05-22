@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GD.MinMaxSlider;
 
 public class AirShotgun : MonoBehaviour {
     public bool isActivated = true;
@@ -14,8 +13,11 @@ public class AirShotgun : MonoBehaviour {
     [Tooltip("Player velocity at downward angles.")]
     public float downwardSelfForceAmount = 10.0f;
     [Tooltip("cos(angle) by which to lerp the player velocity values.")]
-    [MinMaxSlider(0f,1.0f)] 
-    public Vector2 downwardAngleTransition = new Vector2(0.3f, 0.7f);
+    [Range(0f, 1f)]
+    public float downwardAngleMin = 0.5f;
+    [Tooltip("cos(angle) by which to lerp the player velocity values.")]
+    [Range(0f, 1f)]
+    public float downwardAngleMax = 0.8f;
     public GameObject airShotgunUiParent;
 
     RectTransform uiTransform;
@@ -65,7 +67,7 @@ public class AirShotgun : MonoBehaviour {
 
             if (rb) {
                 float dt = Vector3.Dot(-fwd, Vector3.up);
-                float d = Mathf.Clamp((dt - downwardAngleTransition.x) / downwardAngleTransition.y, 0f, 1f);
+                float d = Mathf.Clamp((dt - downwardAngleMin) / downwardAngleMax, 0f, 1f);
                 float speed = Mathf.Lerp(selfForceAmount, downwardSelfForceAmount, d);
                 speed = Mathf.Max(rb.velocity.magnitude, speed);
                 rb.velocity = -fwd * speed;
