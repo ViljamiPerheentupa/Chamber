@@ -18,12 +18,23 @@ public class AirShotgun : MonoBehaviour {
     public Vector2 downwardAngleTransition = new Vector2(0.3f, 0.7f);
 
 
-    private float nextFire = 0.0f;
-
-
+    RectTransform uiTransform;
+    GameObject airShotgunUiParent;
+    float uiMaxWidth = 0.0f;
+    float nextFire = 0.0f;
     Rigidbody rb;
+
     void Start() {
         rb = GetComponent<Rigidbody>();
+        uiTransform = (RectTransform)GameObject.Find("AirShotgunFillUI").transform;
+        uiMaxWidth = uiTransform.sizeDelta.x;
+        airShotgunUiParent = GameObject.Find("AirShotgunUI");
+        airShotgunUiParent.SetActive(isActivated);
+    }
+
+    public void SetStatus(bool status) {
+        airShotgunUiParent.SetActive(status);
+        isActivated = status;
     }
 
     void Update() {
@@ -31,6 +42,10 @@ public class AirShotgun : MonoBehaviour {
         if ((gm && gm.paused) || GetComponent<PlayerHealth>().isDead || !isActivated) {
             return;
         }
+
+        float wAmt = 1f - (nextFire - Time.time) / fireCooldownTime;
+        wAmt = Mathf.Clamp(wAmt, 0f, 1f);
+        uiTransform.sizeDelta = new Vector2(wAmt * uiMaxWidth, uiTransform.sizeDelta.y);
         
         // In cooldown
         if (nextFire > Time.time) {
@@ -53,7 +68,6 @@ public class AirShotgun : MonoBehaviour {
             if (rb) {
                 float dt = Vector3.Dot(-fwd, Vector3.up);
                 float d = Mathf.Clamp((dt - downwardAngleTransition.x) / downwardAngleTransition.y, 0f, 1f);
-                Debug.Log(dt + " " + d);
                 float speed = Mathf.Lerp(selfForceAmount, downwardSelfForceAmount, d);
                 speed = Mathf.Max(rb.velocity.magnitude, speed);
                 rb.velocity = -fwd * speed;

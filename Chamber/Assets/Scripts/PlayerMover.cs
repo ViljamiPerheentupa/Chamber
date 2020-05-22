@@ -324,5 +324,19 @@ public class PlayerMover : MonoBehaviour {
         previousVelocityY = velocity.y;
 
         rigidBody.velocity = velocity;
+        
+        bool free = true;
+        RaycastHit hit;
+        if (Physics.Raycast(new Vector3(c_collider.bounds.center.x,c_collider.bounds.min.y+0.01f,c_collider.bounds.center.z), -Vector3.up, out hit, 0.05f)) {
+            if (moveAxis.magnitude == 0f && Vector3.Dot(hit.normal, Vector3.up) < 0.99f && velocity.y <= 0f) {
+                free = false;
+                rigidBody.velocity = new Vector3();
+                rigidBody.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+            }
+        }
+
+        if (free) {
+            rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
+        }
     }
 }

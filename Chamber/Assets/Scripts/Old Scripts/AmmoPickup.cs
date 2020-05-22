@@ -22,7 +22,7 @@ public class AmmoPickup : MonoBehaviour {
             if (gc && air) {
                 switch (ammo) {
                 case Type.AirShotgun:
-                    air.isActivated = true;
+                    air.SetStatus(true);
                     break;
                 case Type.Shock:
                     gc.SetAmmoTypeStatus(GunContainer.AmmoType.eShock, true);

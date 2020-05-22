@@ -10416,15 +10416,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a70dc8150f6b5d4e801bf43fd561f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActivated: 1
+  isActivated: 0
   targetHitLayers:
     serializedVersion: 2
     m_Bits: 1048576
   forceAmount: 10
   forceRadius: 3
   fireCooldownTime: 3
-  selfForceAmount: 15
-  downwardSelfForceAmount: 10
+  selfForceAmount: 18
+  downwardSelfForceAmount: 14
   downwardAngleTransition: {x: 0.5, y: 0.7}
 --- !u!114 &3576744802192327413
 MonoBehaviour:
@@ -10505,6 +10505,12 @@ MonoBehaviour:
   isPulling: 0
   missParticle: {fileID: 5561028442748360280, guid: 8a11ade4554b8b74388f8c9c2892ad37,
     type: 3}
+  grappleAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &3576744802192327407
 MonoBehaviour:
   m_ObjectHideFlags: 0
