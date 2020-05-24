@@ -31,8 +31,10 @@ public class GunMagnet : GunAmmoBase {
 
     void Update() {
         if (isPulling) {
-            float currPercentage = 1f - (targetLocation - transform.position).magnitude / startGrappleDistance;
-            if(!Physics.Raycast(transform.position, (targetLocation - transform.position), Mathf.Infinity, magnetSurfaceLayers)) {
+            Vector3 dir = (targetLocation - transform.position);
+            float dirstr = dir.magnitude;
+            float currPercentage = 1f - (dirstr / startGrappleDistance);
+            if(!Physics.Raycast(transform.position, dir, dirstr, magnetSurfaceLayers)) {
                 float amt = movePlayerStrength * Time.deltaTime;
                 amt = grappleAnimationCurve.Evaluate(currPercentage);
                 transform.position = Vector3.MoveTowards(transform.position, targetLocation, amt);
