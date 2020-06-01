@@ -8,8 +8,11 @@ public class SceneManagerUtil : MonoBehaviour {
 
     private void Start() {
         foreach (string st in initialScenes) {
-            UnloadScene(st);
-            LoadScene(st);
+            if (!SceneManager.GetSceneByName(st).isLoaded) {
+                UnloadScene(st);
+            }
+
+            SceneManager.LoadScene(st, LoadSceneMode.Additive);
         }
     }
 

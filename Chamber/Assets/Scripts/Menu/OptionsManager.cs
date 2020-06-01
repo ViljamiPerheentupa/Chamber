@@ -80,7 +80,8 @@ public class OptionsManager : MonoBehaviour {
 
         invertMouseCallback((PlayerPrefs.GetInt("mouse-invert", defaultMouseInverted ? 1 : 0) != 0));
         mouseSensitivityCallback(PlayerPrefs.GetInt("mouse-sensitivity", defaultMouseSensitivity));
-        masterVolumeCallback(PlayerPrefs.GetInt("volume-master", defaultMasterVolume));
+        //masterVolumeCallback(PlayerPrefs.GetInt("volume-master", defaultMasterVolume));
+        FMODUnity.RuntimeManager.GetVCA("VCA:/Master").setVolume(PlayerPrefs.GetInt("volume-master", defaultMasterVolume) / 100.0f);
         musicVolumeCallback(PlayerPrefs.GetInt("volume-music", defaultMusicVolume));
         //narrationVolumeCallback(PlayerPrefs.GetInt("mouse-sensitivity", defaultMusicVolume));
         sfxVolumeCallback(PlayerPrefs.GetInt("volume-sfx", defaultSfxVolume));

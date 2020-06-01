@@ -412,11 +412,6 @@ PrefabInstance:
       propertyPath: airShotgunUiParent
       value: 
       objectReference: {fileID: 1628162282}
-    - target: {fileID: 4514113981567788069, guid: ad82e878837850141823e80c8a613049,
-        type: 3}
-      propertyPath: volumeLayerMask.m_Bits
-      value: 1536
-      objectReference: {fileID: 0}
     - target: {fileID: 7059122510683598908, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: customRenderingSettings
@@ -425,11 +420,6 @@ PrefabInstance:
     - target: {fileID: 7059122510683598908, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: fullscreenPassthrough
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7059122510683598908, guid: ad82e878837850141823e80c8a613049,
-        type: 3}
-      propertyPath: volumeLayerMask.m_Bits
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
