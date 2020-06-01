@@ -9,6 +9,7 @@ public class MusicManager : MonoBehaviour
     public string musicPath = "event:/Music/Tutorial";
     public string parameter1 = "Sturcture";
     public string parameter2 = "Threatlevel";
+    public int mvalue;
     void Start()
     {
         Music = FMODUnity.RuntimeManager.CreateInstance(musicPath);
@@ -34,5 +35,10 @@ public class MusicManager : MonoBehaviour
 
     public void SetParameter2(int value) {
         Music.setParameterByName(parameter2, value);
+    }
+
+    public void SetParameter(string parameter, int value) {
+        Music.setParameterByName(parameter, value);
+        mvalue = value;
     }
 }

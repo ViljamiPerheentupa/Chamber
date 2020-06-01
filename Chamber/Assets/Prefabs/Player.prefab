@@ -5330,7 +5330,7 @@ MonoBehaviour:
   clearDepth: 1
   volumeLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 1025
   volumeAnchorOverride: {fileID: 0}
   antialiasing: 0
   SMAAQuality: 2
@@ -10358,7 +10358,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraTransform: {fileID: 3576744800330811291}
-  gunTransform: {fileID: 3576744800625245244}
+  gunTransform: {fileID: 0}
   weaponBobStretch: {x: 2, y: 1}
   weaponSwayAmount: {x: 15, y: 15}
   weaponSwayRecoverSpeed: 0.2
@@ -10375,7 +10375,7 @@ MonoBehaviour:
   weaponBobFactorChangeSpeed: 0.2
   noclipSpeed: 10
   noclipSprintSpeed: 30
-  coyoteTimeDuration: 0.1
+  coyoteTimeDuration: 2
 --- !u!54 &3576744802192327401
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10426,8 +10426,9 @@ MonoBehaviour:
   forceRadius: 3
   fireCooldownTime: 3
   selfForceAmount: 18
-  downwardSelfForceAmount: 14
-  downwardAngleTransition: {x: 0.5, y: 0.7}
+  downwardSelfForceAmount: 10
+  downwardAngleMin: 0.5
+  downwardAngleMax: 0.8
   airShotgunUiParent: {fileID: 0}
 --- !u!114 &3576744802192327413
 MonoBehaviour:
@@ -10510,7 +10511,25 @@ MonoBehaviour:
     type: 3}
   grappleAnimationCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.0011291504
+      value: 0.3015747
+      inSlope: 3.7518432
+      outSlope: 3.7518432
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.01540852
+    - serializedVersion: 3
+      time: 0.99656963
+      value: 0.19583946
+      inSlope: -1.3902968
+      outSlope: -1.3902968
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.017514177
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4

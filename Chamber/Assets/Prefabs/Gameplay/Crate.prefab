@@ -124,7 +124,7 @@ MonoBehaviour:
   overrideDuration: 0
   tlDuration: 5
   tlEffectMagnitude: 0.25
-  tlSlowAmount: 0.025
+  tlSlowAmount: 0
   isLiftable: 1
   liftDistance: 2
   liftAngle: {x: 0, y: 0, z: 0}
