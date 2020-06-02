@@ -5,27 +5,36 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/MenuScene.unity
     guid: 7a9f1d2556524974c942531aa2199480
   - enabled: 1
     path: Assets/Scenes/SceneTestMain.unity
     guid: d9cd835208565544aa94cc7edd32dc76
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/TutorialBase.unity
     guid: f801402a9cacb0e48857363794ef9421
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Tutorial1Elevator.unity
     guid: 2469434ea1d8a224ea261dacfaf42d4f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Tutorial2Elevator.unity
     guid: 60c7181efd23b024d8bf5f0d30dac44a
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Tutorial1.unity
     guid: 341146a2fb9fad84485bb03cd3b2208f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Tutorial2.unity
     guid: 64ef49f54db603041918d2283ca1f410
+  - enabled: 1
+    path: Assets/Scenes/New Scenes/TutorialElevator.unity
+    guid: d13c9b6248882d8498816a77f3f69d05
+  - enabled: 1
+    path: Assets/Scenes/New Scenes/TutorialFirst.unity
+    guid: 7e1f7e5240e5f324685d7e79ada0bd29
+  - enabled: 1
+    path: Assets/Scenes/New Scenes/TutorialGround.unity
+    guid: 97964ae476b4d784ea62cead5b00c6aa
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: da851054f79f7814486ed1322225f33d,
       type: 2}
