@@ -18,8 +18,14 @@ EditorBuildSettings:
     path: Assets/Scenes/Tutorial1Elevator.unity
     guid: 2469434ea1d8a224ea261dacfaf42d4f
   - enabled: 1
+    path: Assets/Scenes/Tutorial2Elevator.unity
+    guid: 60c7181efd23b024d8bf5f0d30dac44a
+  - enabled: 1
     path: Assets/Scenes/Tutorial1.unity
     guid: 341146a2fb9fad84485bb03cd3b2208f
+  - enabled: 1
+    path: Assets/Scenes/Tutorial2.unity
+    guid: 64ef49f54db603041918d2283ca1f410
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: da851054f79f7814486ed1322225f33d,
       type: 2}

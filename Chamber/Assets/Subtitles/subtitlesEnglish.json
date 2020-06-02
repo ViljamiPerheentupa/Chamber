@@ -1,8 +1,146 @@
 {
     "List": [
+
+		//Blueprint
+		/*{
+			"CueName": "",
+			"String": ""
+		}*/
         {
             "CueName": "s0-ridiculous-ties",
             "String": "Why do we all have to wear these \"RIDICULOUS\" ties?"
         }
+		{
+			"CueName": "t_intro-woke-up",
+			"String": "Oh? You seem to have woken up, finally."
+		}
+		{
+			"CueName": "t_intro-big-door",
+			"String": "Just head on through that big door, the one with the triangle."
+		}
+		{
+			"CueName": "t_intro-anyday",
+			"String": "...Any day now."
+		}
+		{
+			"CueName": "t_hub-welcome",
+			"String": "Welcome to our training ground, of sorts. Here we test to see if you're equipped to handle the actual \"fun\" stuff."
+		}
+		{
+			"CueName": "t_hub-first",
+			"String": "First, we'll test to see if you have mastered the functional use of your limbs. First door on your left."
+		}
+		{
+			"CueName": "t_hub-expectations",
+			"String": "We're not expecting much."
+		}
+		{
+			"CueName": "t_hub-wrong1",
+			"String": "No, not that one. The first door on the left - right next to the door you came in from."
+		}
+		{
+			"CueName": "t_hub-wrong2",
+			"String": "No, not that one \"either\". First door on the left."
+		}
+		{
+			"CueName": "t_hub-wrongfinal1",
+			"String": "They won't open, alright? First we need to make sure you're able to do the \"BASICS\"."
+		}
+		{
+			"CueName": "t_hub-wrongfinal2",
+			"String": "Which, fortunately for you, don't include understanding \"basic\" instructions."
+		}
+		{
+			"CueName": "t_basic-intro",
+			"String": "Good, this first part is all pretty simple stuff."
+		}
+		{
+			"CueName": "t_basic-directions",
+			"String": "Just head on through the open door."
+		}
+		{
+			"CueName": "t_basic-jump",
+			"String": "We'll start off with something easy. See that door? Just jump your way over there."
+		}
+		{
+			"CueName": "t_basic-jumpfall",
+			"String": "D-did you fall? That's... almost impressive, really."
+		}
+		{
+			"CueName": "t_basic-jumpfinish",
+			"String": "Well done. You can jump. Let's continue."
+		}
+		{
+			"CueName": "t_basic-jumpfinish2",
+			"String": "Don't fall this time."
+		}
+		{
+			"CueName": "t_basic-crawl",
+			"String": "See that hole? Crawl through it."
+		}
+		{
+			"CueName": "t_basic-doorclose",
+			"String": "Aw, you didn't make it. If only there was \"some\" way to hold it open."
+		}
+		{
+			"CueName": "t_basic-crateintro",
+			"String": "Wow. You can use your arms AND your head? Truly impressive."
+		}
+		{
+			"CueName": "t_basic-easy",
+			"String": "Now THIS is easy. See the door? Just walk over there."
+		}
+		{
+			"CueName": "t_basic-death",
+			"String": "Ouch. I probably should've mentioned you do need to hurry."
+		}
+		{
+			"CueName": "t_basic-wontlie",
+			"String": "Now this one? I won't lie. It's still rather easy."
+		}
+		{
+			"CueName": "t_basic-forgot",
+			"String": "And since I forgot it last time, you really do need to hurry with this one."
+		}
+		{
+			"CueName": "t_basic-nocrush",
+			"String": "Well at least this time you won't be crushed to death. Maybe."
+		}
+		{
+			"CueName": "t_basic-fall1",
+			"String": "Oof. It happens. Head back and just start again, right?"
+		}
+		{
+			"CueName": "t_basic-fall2",
+			"String": "Just... keep trying."
+		}
+		{
+			"CueName": "t_basic-fall3",
+			"String": "Not... great, I have to admit."
+		}
+		{
+			"CueName": "t_basic-fall4",
+			"String": "Just... Keep. Trying."
+		}
+		{
+			"CueName": "t_basic-normalfinish1",
+			"String": "Very impressive. You've show a \"remarkable\" ability to do basic functions with your arms and legs. Fantastic."
+		}
+		{
+			"CueName": "t_basic-normalfinish2",
+			"String": "Head on over back to the elevator, and we can continue."
+		}
+		{
+			"CueName": "t_basic-badfinish1",
+			"String": "...Finally. So far you've shown..."
+		}
+		{
+			"CueName": "t_basic-badfinish2",
+			"String": "Very little."
+		}
+		{
+			"CueName": "t_basic-badfinish3",
+			"String": "Go back to the elevator. Hopefully you're not as terrible with the next one."
+		}
     ]
 }
