@@ -10358,7 +10358,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   cameraTransform: {fileID: 3576744800330811291}
-  gunTransform: {fileID: 0}
+  gunTransform: {fileID: 3576744800625245244}
   weaponBobStretch: {x: 2, y: 1}
   weaponSwayAmount: {x: 15, y: 15}
   weaponSwayRecoverSpeed: 0.2

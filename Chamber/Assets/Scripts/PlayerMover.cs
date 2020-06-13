@@ -158,7 +158,11 @@ public class PlayerMover : MonoBehaviour {
         GameManager gm = FindObjectOfType<GameManager>();
         if (!(gm && gm.paused) && !isNoclipping) {
             if (isJumpPressed) {
-                if (Time.time < coyoteTimeEnd) {
+                Vector3 vaultTarget;
+                if (CanVault(out vaultTarget)) {
+                    Vault(vaultTarget);
+                }
+                else if (Time.time < coyoteTimeEnd) {
                     weaponSwayKick.y -= jumpSway;
                     rigidBody.velocity = new Vector3(rigidBody.velocity.x, jumpImpulse, rigidBody.velocity.z);
                     endOfJumpTime = Time.time + jumpContinuationTime;
@@ -216,7 +220,56 @@ public class PlayerMover : MonoBehaviour {
         FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/PFootstep");
     }
 
+    bool CanFindVaultWall(out RaycastHit hitHorizontal) {
+        float vaultWallDistance = 3.0f;
+        return Physics.Raycast(transform.position + Vector3.up * 0.6f, transform.forward, out hitHorizontal, vaultWallDistance);
+    }
+
+    bool CanVault(out Vector3 finalPos) {
+        float vaultWallMaxHeight = 3.1f;
+        float vaultWallMinHeight = 0.5f;
+        float vaultWallStandDepth = 0.8f;
+        float playerCenterHeight = 1.0f;
+        float vaultLittleBitExtra = 0.05f;
+
+        RaycastHit hitHorizontal;
+        if (CanFindVaultWall(out hitHorizontal)) {
+            Vector3 topWallCheck = hitHorizontal.point - hitHorizontal.normal * vaultWallStandDepth + Vector3.up * (vaultWallMaxHeight - playerCenterHeight);
+            
+            RaycastHit hitVertical;
+            if (Physics.Raycast(topWallCheck, -Vector3.up, out hitVertical, vaultWallMaxHeight - vaultWallMinHeight)) {
+                Vector3 playerTargetCenter = hitVertical.point + Vector3.up * (playerCenterHeight + vaultLittleBitExtra);
+                Debug.Log(playerTargetCenter);
+                float playerCapsuleRadius = ((CapsuleCollider)c_collider).radius;
+                float playerCapsuleHeight = ((CapsuleCollider)c_collider).height;
+                float playerHeightMinusRadii = playerCapsuleHeight - 2 * playerCapsuleRadius;
+                Vector3 playerHMRUp = Vector3.up * playerHeightMinusRadii / 2.0f;
+                if (!Physics.CheckCapsule(playerTargetCenter - playerHMRUp, playerTargetCenter + playerHMRUp, playerCapsuleRadius)) {
+                    Debug.Log("Vault: Can Vault");
+
+                    finalPos = playerTargetCenter;
+                    return true;
+                }
+                else {
+                    Debug.Log("Vault: Ledge found, but no space");
+                }
+            }
+            else {
+                Debug.Log("Vault: Wall found, but no ledge");
+            }
+        }
+
+        finalPos = new Vector3();
+        return false;
+    }
+
+    void Vault(Vector3 vaultTarget) {
+        transform.position = vaultTarget;
+    }
+
     void FixedUpdate() {
+        Vector3 target;
+        CanVault(out target);
         GameManager gm = GameObject.FindObjectOfType<GameManager>();
         if ((gm && gm.paused) || GetComponent<GunMagnet>().isPulling) {
             return;
