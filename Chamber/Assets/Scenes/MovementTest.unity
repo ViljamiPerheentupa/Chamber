@@ -3070,7 +3070,6 @@ MonoBehaviour:
   m_Script: {fileID: 640809379}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Entries: []
 --- !u!4 &324100561
 Transform:
   m_ObjectHideFlags: 19
@@ -11819,7 +11818,7 @@ PrefabInstance:
     - target: {fileID: 5394257147308704440, guid: 1be18616bdcc94548ae2ee66dee445ac,
         type: 3}
       propertyPath: onEnter.m_PersistentCalls.m_Calls.Array.data[3].m_Arguments.m_StringArgument
-      value: s0-ridiculous-ties
+      value: '{s0-ridiculous-ties}'
       objectReference: {fileID: 0}
     - target: {fileID: 8924540185342852859, guid: 1be18616bdcc94548ae2ee66dee445ac,
         type: 3}

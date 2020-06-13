@@ -36,7 +36,8 @@ public class GameManager : MonoBehaviour {
 
     public void Pause() {
         if (!paused) {
-            if (FindObjectOfType<PlayerHealth>().isDead) {
+            PlayerHealth ph = FindObjectOfType<PlayerHealth>();
+            if (ph.isDead) {
                 return;
             }
 

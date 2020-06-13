@@ -1739,6 +1739,7 @@ MonoBehaviour:
   musicPath: event:/SFX/ReverbControl
   parameter1: Space
   parameter2: Threatlevel
+  mvalue: 0
 --- !u!1 &4064494374417055130
 GameObject:
   m_ObjectHideFlags: 0
@@ -2504,7 +2505,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6751343941537756960
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3027,6 +3028,7 @@ MonoBehaviour:
   musicPath: event:/Music/Tutorial
   parameter1: Structure
   parameter2: Threatlevel
+  mvalue: 0
 --- !u!1 &8850188813086703245
 GameObject:
   m_ObjectHideFlags: 0

@@ -53,7 +53,7 @@ public class OptionsManager : MonoBehaviour {
         const int defaultMusicVolume = 100;
         const int defaultSfxVolume = 100;
         const bool defaultSubtitlesEnabled = true;
-        const int defaultSubtitleLanguage = (int)SubtitleManager.SubtitleLanguage.English;
+        const int defaultSubtitleLanguage = (int)Localization.Locales.English;
         const int defaultDecalNum = 200;
         const int defaultFov = 90;
         const int defaultResolution = 0;
@@ -308,8 +308,8 @@ public class OptionsManager : MonoBehaviour {
         CreateSubcategory("Subtitles");
         CreateToggle("Subtitles Enabled", "subtitle-enable",    defaultSubtitlesEnabled, subtitlesEnableCallback);
         List<string> subtitles = new List<string>();
-        for(int i = 0; i < (int)SubtitleManager.SubtitleLanguage.Count; ++i) {
-            subtitles.Add(((SubtitleManager.SubtitleLanguage)i).ToString());
+        for(int i = 0; i < (int)Localization.Locales.Count; ++i) {
+            subtitles.Add(((Localization.Locales)i).ToString());
         }
         CreateDropDownList("Subtitle Language", "subtitle-language",   subtitles, defaultSubtitleLanguage, subtitleLanguageCallback);
         FinishCategory();
@@ -446,9 +446,9 @@ public class OptionsManager : MonoBehaviour {
     }
     
     void subtitleLanguageCallback(int language) {
-        SubtitleManager sm = GameObject.FindObjectOfType<SubtitleManager>();
-        if (sm) {
-            sm.LoadSubtitles((SubtitleManager.SubtitleLanguage)language);
+        Localization loc = Localization.Instance;
+        if (loc) {
+            loc.LoadSubtitles((Localization.Locales)language);
         }
         else {
             Debug.Log("Could not get SubtitleManager.");
