@@ -1290,6 +1290,18 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!114 &130171849 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4166972439399950925, guid: 1901f773fb5a2e74a939f14c3e2996bf,
+    type: 3}
+  m_PrefabInstance: {fileID: 4166972440744459773}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2d1ab99aa528924fac37fd4467f7e1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &134868646
 GameObject:
   m_ObjectHideFlags: 0
@@ -3070,6 +3082,7 @@ MonoBehaviour:
   m_Script: {fileID: 640809379}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Entries: []
 --- !u!4 &324100561
 Transform:
   m_ObjectHideFlags: 19
@@ -6082,6 +6095,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 901728346}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &911893227 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 7678307990215455386, guid: d809cf912f05201488f2b0acd952314b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1011570991}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &915566034
 GameObject:
   m_ObjectHideFlags: 0
@@ -7450,7 +7469,7 @@ MonoBehaviour:
   onShockTrigger:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1676472254}
         m_MethodName: AddAmount
         m_Mode: 3
         m_Arguments:
@@ -7473,7 +7492,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 130171849}
         m_MethodName: SetState
         m_Mode: 6
         m_Arguments:
@@ -8376,7 +8395,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28212
+  m_Name: pb_Mesh23568
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -10248,6 +10267,12 @@ Transform:
   m_Father: {fileID: 1027405103}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &1344600109 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 7678307990215455386, guid: d809cf912f05201488f2b0acd952314b,
+    type: 3}
+  m_PrefabInstance: {fileID: 205729060}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1353762864 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6909060912542612323, guid: 171cea5f5094bd44f962a137120b7022,
@@ -12328,6 +12353,12 @@ Transform:
   m_Father: {fileID: 1928527191}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!54 &1547794715 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 7678307990215455386, guid: d809cf912f05201488f2b0acd952314b,
+    type: 3}
+  m_PrefabInstance: {fileID: 7678307991050006813}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1554151239
 GameObject:
   m_ObjectHideFlags: 0
@@ -12760,7 +12791,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28368
+  m_Name: pb_Mesh23720
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -13779,7 +13810,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
-            m_StringArgument: s0-ridiculous-ties
+            m_StringArgument: '{t_intro-woke-up}'
             m_BoolArgument: 0
           m_CallState: 2
     canOnlyFireOnce: 1
@@ -13965,7 +13996,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh28570
+  m_Name: pb_Mesh23924
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -16895,7 +16926,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2068804653}
         m_MethodName: set_useGravity
         m_Mode: 6
         m_Arguments:
@@ -16906,7 +16937,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2033058783}
         m_MethodName: set_useGravity
         m_Mode: 6
         m_Arguments:
@@ -16917,29 +16948,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: set_useGravity
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_MethodName: set_useGravity
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1344600109}
         m_MethodName: set_useGravity
         m_Mode: 6
         m_Arguments:
@@ -16961,7 +16970,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1676472254}
         m_MethodName: AddAmount
         m_Mode: 3
         m_Arguments:
@@ -16993,7 +17002,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1547794715}
         m_MethodName: set_useGravity
         m_Mode: 6
         m_Arguments:
@@ -17004,7 +17013,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 911893227}
         m_MethodName: set_useGravity
         m_Mode: 6
         m_Arguments:
@@ -17015,7 +17024,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2068804653}
         m_MethodName: set_useGravity
         m_Mode: 6
         m_Arguments:
@@ -17026,7 +17035,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2033058783}
         m_MethodName: set_useGravity
         m_Mode: 6
         m_Arguments:
@@ -17037,7 +17046,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1344600109}
         m_MethodName: set_useGravity
         m_Mode: 6
         m_Arguments:
@@ -17446,6 +17455,18 @@ Transform:
   m_Father: {fileID: 1027405103}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!54 &2033058783 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 7678307990215455386, guid: d809cf912f05201488f2b0acd952314b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1800760282}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &2068804653 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 7678307990215455386, guid: d809cf912f05201488f2b0acd952314b,
+    type: 3}
+  m_PrefabInstance: {fileID: 236632039}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2082661270 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7350508852097350791, guid: 171cea5f5094bd44f962a137120b7022,

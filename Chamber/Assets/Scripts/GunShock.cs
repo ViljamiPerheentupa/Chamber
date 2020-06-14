@@ -5,8 +5,7 @@ using FMODUnity;
 
 public class GunShock : GunAmmoBase {
     public Transform shockParticle;
-    public Vector3 decalSize;
-    public Material decalMaterial;
+    public DecalData decalData;
     public float bulletDamage = 40.0f;
     public float forceAmount = 30.0f;
 
@@ -27,7 +26,7 @@ public class GunShock : GunAmmoBase {
                 }
             }
             else if (hit.collider.gameObject.layer == 12) {
-                gunContainer.CreateDecal(hit.point, Quaternion.LookRotation(hit.normal), decalSize, decalMaterial, hit.collider.transform);
+                gunContainer.CreateDecal(hit.point, Quaternion.LookRotation(hit.normal), decalData.decalSize, decalData.decalMaterial, hit.collider.transform);
             }
 
             BaseHealth health = hit.collider.GetComponent<BaseHealth>();

@@ -191,8 +191,8 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
+  m_HDR: 0
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -10478,8 +10478,7 @@ MonoBehaviour:
   color: {r: 0.349, g: 0.725, b: 0.7, a: 0.9}
   shockParticle: {fileID: 1788033988384031787, guid: 7aeb79d68b5ede34d9e21c338d45e04b,
     type: 3}
-  decalSize: {x: 0.18, y: 0.18, z: 0.05}
-  decalMaterial: {fileID: 2100000, guid: 920b08d26d02dab47bcb5a06091c8a6b, type: 2}
+  decalData: {fileID: 11400000, guid: 0347e6d5ecef8f14e98d2273e45e47ef, type: 2}
   bulletDamage: 40
   forceAmount: 30
 --- !u!114 &3576744802192327412

@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d1b907ac835f04caf4d931a6070c83, type: 3}
+  m_Name: BasicTurret
+  m_EditorClassIdentifier: 
+  bulletDecal: {fileID: 11400000, guid: ac05bebbda0314d43ae1fd4630577ac4, type: 2}
+  bulletForce: 2
+  playerDetectRange: 10
+  playerLoseRange: 12
+  detectConeAngle: 30
+  playerForgetTime: 1
+  bulletHitRange: 40
+  minimumBulletDamage: 1
+  maximumBulletDamage: 5
+  minimumBulletDelay: 0.3
+  maximumBulletDelay: 0.1
+  minimumBulletSpread: 30
+  maximumBulletSpread: 5
+  timeToMaximum: 2
+  animationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  trackingSpeed: 0.3
+  minBarrelPitch: -40
+  maxBarrelPitch: 40
+  turningIdleSpeed: 20
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 87077377
