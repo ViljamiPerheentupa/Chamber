@@ -39,7 +39,7 @@ public class MouseLook : MonoBehaviour
             nextScreenShake = Time.time + Random.Range(0.01f, 0.07f);
         }
 
-        if (!GameObject.Find("GameManager").GetComponent<GameManager>().paused) {
+        if (!GameManager.Instance.isPaused) {
             mouseX = lookAxis.x * mouseSensitivity * Time.deltaTime; //Get the mouse X and Y axis'
             mouseY = lookAxis.y * mouseSensitivity * Time.deltaTime;
             if (inverted) mouseY *= 1;

@@ -4,18 +4,27 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
+    private static GameManager _instance = null;
+    public static GameManager Instance { get {
+        if (!_instance) {
+            _instance = GameObject.FindObjectOfType<GameManager>();
+            if (_instance == null) {
+                GameObject container = new GameObject("GameManager");
+                _instance = container.AddComponent<GameManager>();
+            }
+        }
+
+        return _instance;
+    }}
+
     public Canvas menuCanvas;
     public Canvas guiCanvas;
     public GameObject optionsMenu;
     public GameObject pauseMenu;
     public GameObject inGameUI;
-    public bool paused;
+    public bool isPaused { get; private set; }
     FMOD.Studio.EventInstance pausefilter;
-    private void Update() {
-        if(Input.GetButtonDown("Cancel")) {
-            Pause();
-        }
-    }
+    
     private void Start() {
         guiCanvas.gameObject.SetActive(true);
         menuCanvas.gameObject.SetActive(true);
@@ -34,8 +43,8 @@ public class GameManager : MonoBehaviour {
         Cursor.visible = false;
     }
 
-    public void Pause() {
-        if (!paused) {
+    public void TogglePause() {
+        if (!isPaused) {
             PlayerHealth ph = FindObjectOfType<PlayerHealth>();
             if (ph.isDead) {
                 return;
@@ -46,13 +55,17 @@ public class GameManager : MonoBehaviour {
             pausefilter.release();
         } else pausefilter.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
 
-        Time.timeScale = paused ? 1 : 0;
-        Cursor.lockState = paused ? CursorLockMode.Locked : CursorLockMode.Confined;
-        Cursor.visible = paused ? false : true;
+        Time.timeScale = isPaused ? 1 : 0;
+        Cursor.lockState = isPaused ? CursorLockMode.Locked : CursorLockMode.Confined;
+        Cursor.visible = isPaused ? false : true;
         optionsMenu.SetActive(false);
-        pauseMenu.GetComponent<PauseMenuAnimHandler>().StartFade(!paused);
-        inGameUI.SetActive(paused);
-        paused = !paused;
+        pauseMenu.GetComponent<PauseMenuAnimHandler>().StartFade(!isPaused);
+        inGameUI.SetActive(isPaused);
+        isPaused = !isPaused;
+    }
+
+    private void OnPause() {
+        TogglePause();
     }
     
     public void LoadScene(int scene) {

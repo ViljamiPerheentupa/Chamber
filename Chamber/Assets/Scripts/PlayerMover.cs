@@ -100,8 +100,6 @@ public class PlayerMover : MonoBehaviour {
         float t = weaponBobTime;
         weaponSwayKick = Vector2.SmoothDamp(weaponSwayKick, new Vector2(0,0), ref weaponSwayKickVelocity, weaponSwayRecoverSpeed);
         weaponSway = Vector3.SmoothDamp(weaponSway, new Vector3(0,0,0), ref weaponSwayVelocity, weaponSwayRecoverSpeed);
-        weaponSway.x -= (weaponSwayKick.y + Input.GetAxisRaw("Mouse Y") * weaponSwayAmount.y) * Time.deltaTime;
-        weaponSway.y -= (weaponSwayKick.x + Input.GetAxisRaw("Mouse X") * weaponSwayAmount.x) * Time.deltaTime;
 
         float sint = Mathf.Sin(2 * t);
         if (sint < -0.9) {
@@ -150,13 +148,14 @@ public class PlayerMover : MonoBehaviour {
 
     void OnLook(InputValue value) {
         cameraTransform.GetComponent<MouseLook>().lookAxis = value.Get<Vector2>();
+        weaponSway.x -= (weaponSwayKick.y + value.Get<Vector2>().y * weaponSwayAmount.y) * Time.deltaTime;
+        weaponSway.y -= (weaponSwayKick.x + value.Get<Vector2>().x * weaponSwayAmount.x) * Time.deltaTime;
     }
 
     void OnJump(InputValue value) {
         isJumpPressed = value.isPressed;
 
-        GameManager gm = FindObjectOfType<GameManager>();
-        if (!(gm && gm.paused) && !isNoclipping) {
+        if (!GameManager.Instance.isPaused && !isNoclipping) {
             if (isJumpPressed) {
                 Vector3 vaultTarget;
                 if (CanVault(out vaultTarget)) {
@@ -184,8 +183,7 @@ public class PlayerMover : MonoBehaviour {
     void OnCrouch(InputValue value) {
         isCrouchPressed = value.isPressed;
 
-        GameManager gm = GameObject.FindObjectOfType<GameManager>();
-        if (!(gm && gm.paused) && !isNoclipping && isCrouchPressed && !isCrouching) {
+        if (!GameManager.Instance.isPaused && !isNoclipping && isCrouchPressed && !isCrouching) {
             float t = crouchDelay - (Time.time - startCrouchTime);
             t = Mathf.Clamp(t, 0.0f, crouchDelay);
             weaponSwayKick.y += standToCrouchWeaponSway;
@@ -270,8 +268,7 @@ public class PlayerMover : MonoBehaviour {
     void FixedUpdate() {
         Vector3 target;
         CanVault(out target);
-        GameManager gm = GameObject.FindObjectOfType<GameManager>();
-        if ((gm && gm.paused) || GetComponent<GunMagnet>().isPulling) {
+        if (GameManager.Instance.isPaused || GetComponent<GunMagnet>().isPulling) {
             return;
         }
 

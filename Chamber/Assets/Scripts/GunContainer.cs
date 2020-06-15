@@ -152,7 +152,7 @@ public class GunContainer : MonoBehaviour {
     }
 
     bool canDoAction() {
-        return (!GameObject.Find("GameManager").GetComponent<GameManager>().paused && !GetComponent<PlayerHealth>().isDead && (nextFire < Time.time));
+        return (!GameManager.Instance.isPaused && !GetComponent<PlayerHealth>().isDead && (nextFire < Time.time));
     }
 
     bool canDoActionAndNoHolster() {
