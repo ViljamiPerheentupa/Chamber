@@ -30,6 +30,11 @@ public class MouseLook : MonoBehaviour
         xRotation = 0.0f;
     }
 
+    public void SetAngles(float pitch, float yaw) {
+        xRotation = yaw;
+        yRotation = pitch;
+    }
+
     void Update() {
         mouseKick *= (1 - Time.deltaTime);
         if (Time.time > nextScreenShake) {

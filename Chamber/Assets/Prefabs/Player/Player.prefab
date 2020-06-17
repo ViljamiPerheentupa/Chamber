@@ -10314,68 +10314,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fe35b4cecf26cf43b905a7f8348a8e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crouchMoveSpeed: 0.5
-  airSpeed: 0.2
-  runSpeed: 1.5
-  sprintSpeed: 2.5
-  maxSpeed: 5
-  jumpImpulse: 6
-  jumpContinuationForce: 0.8
-  jumpContinuationTime: 0.2
-  fallMultiplier: 1.6
-  maintainAirSpeedCoefficient: 0.98
-  maintainSpeedCoefficient: 0.8
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 54525239
-  cameraHeight: -0.25
-  standCapsuleHeight: 2
-  crouchCapsuleHeight: 1.25
-  startCrouchTime: 0
-  crouchDelay: 0.3
-  crouchCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  config: {fileID: 11400000, guid: 00faabc2a7569f1448ec9ef082a47213, type: 2}
   cameraTransform: {fileID: 3576744800330811291}
   gunTransform: {fileID: 3576744800625245244}
-  weaponBobStretch: {x: 2, y: 1}
-  weaponSwayAmount: {x: 15, y: 15}
-  weaponSwayRecoverSpeed: 0.2
-  standToCrouchWeaponSway: 80
-  crouchToStandWeaponSway: 80
-  jumpSway: 100
-  landSwayMultiplier: 5
-  couchBobSpeed: 6
-  runBobSpeed: 8
-  sprintBobSpeed: 12
-  couchBobAmount: 2
-  runBobAmount: 1
-  sprintBobAmount: 2
-  weaponBobFactorChangeSpeed: 0.2
-  noclipSpeed: 10
-  noclipSprintSpeed: 30
-  coyoteTimeDuration: 2
 --- !u!54 &3576744802192327401
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10562,8 +10503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 042cc1d4139ad49489015c549c4bc8c6,
-    type: 3}
+  m_Actions: {fileID: 0}
   m_NotificationBehavior: 0
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:

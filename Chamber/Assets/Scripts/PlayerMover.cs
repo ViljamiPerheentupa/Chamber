@@ -5,45 +5,9 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class PlayerMover : MonoBehaviour {
-    #region Public Variables
-    public float crouchMoveSpeed = 0.5f;
-    public float airSpeed = 2.0f;
-    public float runSpeed = 3.0f;
-    public float sprintSpeed = 8.0f;
-    public float maxSpeed = 40.0f;
-    public float jumpImpulse = 6.0f;
-    public float jumpContinuationForce = 0.6f;
-    public float jumpContinuationTime = 0.4f;
-    public float fallMultiplier = 1.8f;
-    public float maintainAirSpeedCoefficient = 0.98f;
-    public float maintainSpeedCoefficient = 0.8f;
-    public LayerMask floorMask = ~(1 << 9); 
-    public float cameraHeight = -0.25f;
-    public float standCapsuleHeight = 2.0f;
-    public float crouchCapsuleHeight = 1.0f;
-    public float startCrouchTime = 0.0f;
-    public float crouchDelay = 0.5f;
-    public AnimationCurve crouchCurve;
+    public PlayerMoverData config;
     public Transform cameraTransform;
     public Transform gunTransform;
-    public Vector2 weaponBobStretch = new Vector2(2.0f, 1.0f);
-    public Vector2 weaponSwayAmount;
-    public float weaponSwayRecoverSpeed = 0.2f;
-    public float standToCrouchWeaponSway = 80.0f;
-    public float crouchToStandWeaponSway = 80.0f;
-    public float jumpSway = 100.0f;
-    public float landSwayMultiplier = 10.0f;
-    public float couchBobSpeed = 2.0f;
-    public float runBobSpeed = 1.0f;
-    public float sprintBobSpeed = 2.0f;
-    public float couchBobAmount = 2.0f;
-    public float runBobAmount = 1.0f;
-    public float sprintBobAmount = 2.0f;
-    public float weaponBobFactorChangeSpeed = 0.2f;
-    public float noclipSpeed = 10.0f;
-    public float noclipSprintSpeed = 30.0f;
-    public float coyoteTimeDuration = 2f;
-    #endregion
 
     #region Private Variables
     private bool isCrouchPressed = false;
@@ -81,25 +45,27 @@ public class PlayerMover : MonoBehaviour {
         rigidBody.velocity = new Vector3();
         weaponSway = new Vector3();
         isCrouching = false;
-        startCrouchTime = 0;
+        config.startCrouchTime = 0;
         SetNoclip(false);
     }
 
     bool isGrounded() {
-        return Physics.CheckCapsule(c_collider.bounds.center,new Vector3(c_collider.bounds.center.x,c_collider.bounds.min.y-0.1f,c_collider.bounds.center.z),0.18f, floorMask);
+        return Physics.CheckCapsule(c_collider.bounds.center,new Vector3(c_collider.bounds.center.x,c_collider.bounds.min.y-0.1f,c_collider.bounds.center.z),0.18f, config.floorMask);
     }
 
     bool CanStand() {
         Vector3 topOfHead = transform.position;
-        float distance = standCapsuleHeight - crouchCapsuleHeight;
-        return !Physics.Raycast(topOfHead, Vector3.up, distance, floorMask); 
+        float distance = config.standCapsuleHeight - config.crouchCapsuleHeight;
+        return !Physics.Raycast(topOfHead, Vector3.up, distance, config.floorMask); 
     }
     
     void CalculateBob() {
         weaponBobTime += weaponBobSpeed * Time.deltaTime;
         float t = weaponBobTime;
-        weaponSwayKick = Vector2.SmoothDamp(weaponSwayKick, new Vector2(0,0), ref weaponSwayKickVelocity, weaponSwayRecoverSpeed);
-        weaponSway = Vector3.SmoothDamp(weaponSway, new Vector3(0,0,0), ref weaponSwayVelocity, weaponSwayRecoverSpeed);
+        weaponSwayKick = Vector2.SmoothDamp(weaponSwayKick, new Vector2(0,0), ref weaponSwayKickVelocity, config.weaponSwayRecoverSpeed);
+        weaponSway = Vector3.SmoothDamp(weaponSway, new Vector3(0,0,0), ref weaponSwayVelocity, config.weaponSwayRecoverSpeed);
+        weaponSway.x -= (weaponSwayKick.y + Input.GetAxisRaw("Mouse Y") * config.weaponSwayAmount.y) * Time.deltaTime;
+        weaponSway.y -= (weaponSwayKick.x + Input.GetAxisRaw("Mouse X") * config.weaponSwayAmount.x) * Time.deltaTime;
 
         float sint = Mathf.Sin(2 * t);
         if (sint < -0.9) {
@@ -112,7 +78,7 @@ public class PlayerMover : MonoBehaviour {
             needFootstep = true;
         }
 
-        Vector3 weaponBob = weaponBobAmount * new Vector3(weaponBobStretch.y * sint, weaponBobStretch.x * Mathf.Sin(t + Mathf.PI / 2.0f), 0);
+        Vector3 weaponBob = weaponBobAmount * new Vector3(config.weaponBobStretch.y * sint, config.weaponBobStretch.x * Mathf.Sin(t + Mathf.PI / 2.0f), 0);
         gunTransform.localEulerAngles = weaponSway + weaponBob;
     }
 
@@ -148,8 +114,6 @@ public class PlayerMover : MonoBehaviour {
 
     void OnLook(InputValue value) {
         cameraTransform.GetComponent<MouseLook>().lookAxis = value.Get<Vector2>();
-        weaponSway.x -= (weaponSwayKick.y + value.Get<Vector2>().y * weaponSwayAmount.y) * Time.deltaTime;
-        weaponSway.y -= (weaponSwayKick.x + value.Get<Vector2>().x * weaponSwayAmount.x) * Time.deltaTime;
     }
 
     void OnJump(InputValue value) {
@@ -157,14 +121,14 @@ public class PlayerMover : MonoBehaviour {
 
         if (!GameManager.Instance.isPaused && !isNoclipping) {
             if (isJumpPressed) {
-                Vector3 vaultTarget;
-                if (CanVault(out vaultTarget)) {
-                    Vault(vaultTarget);
+                Vector3 targetPosition, targetDirection;
+                if (CanVault(out targetPosition, out targetDirection)) {
+                    Vault(targetPosition, targetDirection);
                 }
                 else if (Time.time < coyoteTimeEnd) {
-                    weaponSwayKick.y -= jumpSway;
-                    rigidBody.velocity = new Vector3(rigidBody.velocity.x, jumpImpulse, rigidBody.velocity.z);
-                    endOfJumpTime = Time.time + jumpContinuationTime;
+                    weaponSwayKick.y -= config.jumpSway;
+                    rigidBody.velocity = new Vector3(rigidBody.velocity.x, config.jumpImpulse, rigidBody.velocity.z);
+                    endOfJumpTime = Time.time + config.jumpContinuationTime;
                     canExtendJump = true;
                     coyoteTimeEnd = 0f;
                     canLand = false;
@@ -184,11 +148,11 @@ public class PlayerMover : MonoBehaviour {
         isCrouchPressed = value.isPressed;
 
         if (!GameManager.Instance.isPaused && !isNoclipping && isCrouchPressed && !isCrouching) {
-            float t = crouchDelay - (Time.time - startCrouchTime);
-            t = Mathf.Clamp(t, 0.0f, crouchDelay);
-            weaponSwayKick.y += standToCrouchWeaponSway;
+            float t = config.crouchDelay - (Time.time - config.startCrouchTime);
+            t = Mathf.Clamp(t, 0.0f, config.crouchDelay);
+            weaponSwayKick.y += config.standToCrouchWeaponSway;
             isCrouching = true;
-            startCrouchTime = Time.time - t;
+            config.startCrouchTime = Time.time - t;
         }
     }
 
@@ -201,13 +165,13 @@ public class PlayerMover : MonoBehaviour {
 
         float currentCamHeight*/
 
-        float t = (Time.time - startCrouchTime) / crouchDelay;
+        float t = (Time.time - config.startCrouchTime) / config.crouchDelay;
         if (isCrouching) t = 1 - t;
-        t = crouchCurve.Evaluate(t);
+        t = config.crouchCurve.Evaluate(t);
 
-        float currentCapsuleHeight = Mathf.Lerp(crouchCapsuleHeight, standCapsuleHeight, t);
-        float currentCapsulePosition = (currentCapsuleHeight - standCapsuleHeight) / 2.0f;
-        float currentCameraHeight = currentCapsulePosition + currentCapsuleHeight/2.0f + cameraHeight;
+        float currentCapsuleHeight = Mathf.Lerp(config.crouchCapsuleHeight, config.standCapsuleHeight, t);
+        float currentCapsulePosition = (currentCapsuleHeight - config.standCapsuleHeight) / 2.0f;
+        float currentCameraHeight = currentCapsulePosition + currentCapsuleHeight/2.0f + config.cameraHeight;
         CapsuleCollider capsuleCollider = GetComponent<CapsuleCollider>();
         capsuleCollider.height = currentCapsuleHeight;
         capsuleCollider.center = new Vector3(0.0f, currentCapsulePosition, 0.0f);
@@ -219,55 +183,47 @@ public class PlayerMover : MonoBehaviour {
     }
 
     bool CanFindVaultWall(out RaycastHit hitHorizontal) {
-        float vaultWallDistance = 3.0f;
-        return Physics.Raycast(transform.position + Vector3.up * 0.6f, transform.forward, out hitHorizontal, vaultWallDistance);
+        return Physics.Raycast(transform.position + Vector3.up * 0.6f, transform.forward, out hitHorizontal, config.vaultWallDistance);
     }
 
-    bool CanVault(out Vector3 finalPos) {
-        float vaultWallMaxHeight = 3.1f;
-        float vaultWallMinHeight = 0.5f;
-        float vaultWallStandDepth = 0.8f;
+    bool CanVault(out Vector3 finalPos, out Vector3 finalDirection) {
         float playerCenterHeight = 1.0f;
         float vaultLittleBitExtra = 0.05f;
 
         RaycastHit hitHorizontal;
         if (CanFindVaultWall(out hitHorizontal)) {
-            Vector3 topWallCheck = hitHorizontal.point - hitHorizontal.normal * vaultWallStandDepth + Vector3.up * (vaultWallMaxHeight - playerCenterHeight);
+            finalDirection = -hitHorizontal.normal;
+            Vector3 topWallCheck = hitHorizontal.point - hitHorizontal.normal * config.vaultWallStandDepth + Vector3.up * (config.vaultWallMaxHeight - playerCenterHeight);
             
             RaycastHit hitVertical;
-            if (Physics.Raycast(topWallCheck, -Vector3.up, out hitVertical, vaultWallMaxHeight - vaultWallMinHeight)) {
+            if (Physics.Raycast(topWallCheck, -Vector3.up, out hitVertical, config.vaultWallMaxHeight - config.vaultWallMinHeight)) {
                 Vector3 playerTargetCenter = hitVertical.point + Vector3.up * (playerCenterHeight + vaultLittleBitExtra);
-                Debug.Log(playerTargetCenter);
                 float playerCapsuleRadius = ((CapsuleCollider)c_collider).radius;
                 float playerCapsuleHeight = ((CapsuleCollider)c_collider).height;
                 float playerHeightMinusRadii = playerCapsuleHeight - 2 * playerCapsuleRadius;
                 Vector3 playerHMRUp = Vector3.up * playerHeightMinusRadii / 2.0f;
                 if (!Physics.CheckCapsule(playerTargetCenter - playerHMRUp, playerTargetCenter + playerHMRUp, playerCapsuleRadius)) {
-                    Debug.Log("Vault: Can Vault");
-
                     finalPos = playerTargetCenter;
                     return true;
                 }
-                else {
-                    Debug.Log("Vault: Ledge found, but no space");
-                }
-            }
-            else {
-                Debug.Log("Vault: Wall found, but no ledge");
             }
         }
 
+        finalDirection = new Vector3();
         finalPos = new Vector3();
         return false;
     }
 
-    void Vault(Vector3 vaultTarget) {
+    void Vault(Vector3 vaultTarget, Vector3 direction) {
         transform.position = vaultTarget;
+        Quaternion lookAt = Quaternion.LookRotation(direction);
+        Vector3 lookEuler = lookAt.eulerAngles;
+        cameraTransform.GetComponent<MouseLook>().SetAngles(lookEuler.x, lookEuler.y);
     }
 
     void FixedUpdate() {
-        Vector3 target;
-        CanVault(out target);
+        Vector3 targetPosition, targetDirection;
+        CanVault(out targetPosition, out targetDirection);
         if (GameManager.Instance.isPaused || GetComponent<GunMagnet>().isPulling) {
             return;
         }
@@ -281,7 +237,7 @@ public class PlayerMover : MonoBehaviour {
         else {
             if (coyoteTimeEnd == Mathf.Infinity) {
                 // If I just got ungrounded
-                coyoteTimeEnd = Time.time + coyoteTimeDuration;
+                coyoteTimeEnd = Time.time + config.coyoteTimeDuration;
             }
             canLand = true;
         }
@@ -292,7 +248,7 @@ public class PlayerMover : MonoBehaviour {
         }
 
         if (isNoclipping) {
-            float flySpeed = isSprinting ? noclipSprintSpeed : noclipSpeed;
+            float flySpeed = isSprinting ? config.noclipSprintSpeed : config.noclipSpeed;
             transform.position += (cameraTransform.forward * moveAxis.y + cameraTransform.right * moveAxis.x) * flySpeed * Time.deltaTime;
             transform.position += (cameraTransform.up * ((isJumpPressed ? 1f : 0f) - (isCrouchPressed ? 1f : 0f))) * flySpeed * Time.deltaTime;
             return;
@@ -301,12 +257,12 @@ public class PlayerMover : MonoBehaviour {
         if (!isCrouchPressed) {
             if (isCrouching) {
                 if (CanStand()) {
-                    float t = crouchDelay - (Time.time - startCrouchTime);
-                    t = Mathf.Clamp(t, 0.0f, crouchDelay);
+                    float t = config.crouchDelay - (Time.time - config.startCrouchTime);
+                    t = Mathf.Clamp(t, 0.0f, config.crouchDelay);
                     
-                    weaponSwayKick.y -= crouchToStandWeaponSway;
+                    weaponSwayKick.y -= config.crouchToStandWeaponSway;
                     isCrouching = false;
-                    startCrouchTime = Time.time - t;
+                    config.startCrouchTime = Time.time - t;
                 }
             }
         }
@@ -329,47 +285,47 @@ public class PlayerMover : MonoBehaviour {
                 if (vol > 0.2f) {
                     FMODUnity.RuntimeManager.PlayOneShotAtVolume("event:/SFX/Pland", vol);
                 }
-                weaponSwayKick.y += landSwayMultiplier * -previousVelocityY;
+                weaponSwayKick.y += config.landSwayMultiplier * -previousVelocityY;
             }
         }
 
         if (Time.time < coyoteTimeEnd) {
             velocity = rigidBody.velocity;
 
-            velocity.x *= maintainSpeedCoefficient;
-            velocity.z *= maintainSpeedCoefficient;
+            velocity.x *= config.maintainSpeedCoefficient;
+            velocity.z *= config.maintainSpeedCoefficient;
 
             if (isCrouching) {
-                moveSpeed = crouchMoveSpeed;
-                targetBobSpeed = couchBobSpeed;
-                targetBobAmount = couchBobAmount;
+                moveSpeed = config.crouchMoveSpeed;
+                targetBobSpeed = config.couchBobSpeed;
+                targetBobAmount = config.couchBobAmount;
             }
             else if (isSprinting) {
-                moveSpeed = sprintSpeed;
-                targetBobSpeed = sprintBobSpeed;
-                targetBobAmount = sprintBobAmount;
+                moveSpeed = config.sprintSpeed;
+                targetBobSpeed = config.sprintBobSpeed;
+                targetBobAmount = config.sprintBobAmount;
             }
             else {
-                moveSpeed = runSpeed;
-                targetBobSpeed = runBobSpeed;
-                targetBobSpeed = runBobSpeed;
-                targetBobAmount = runBobAmount;
+                moveSpeed = config.runSpeed;
+                targetBobSpeed = config.runBobSpeed;
+                targetBobSpeed = config.runBobSpeed;
+                targetBobAmount = config.runBobAmount;
             }
         }
         else {
             velocity = rigidBody.velocity;
 
-            velocity.x *= maintainAirSpeedCoefficient;
-            velocity.z *= maintainAirSpeedCoefficient;
+            velocity.x *= config.maintainAirSpeedCoefficient;
+            velocity.z *= config.maintainAirSpeedCoefficient;
 
-            moveSpeed = airSpeed;
+            moveSpeed = config.airSpeed;
 
             if (rigidBody.useGravity) {
                 if (velocity.y < 0) {
-                    velocity.y += Physics.gravity.y * (fallMultiplier - 1) * Time.deltaTime;
+                    velocity.y += Physics.gravity.y * (config.fallMultiplier - 1) * Time.deltaTime;
                 }
                 else if (isJumpPressed && canExtendJump && endOfJumpTime > Time.time) {
-                    velocity.y -= Physics.gravity.y * (jumpContinuationForce) * Time.deltaTime;
+                    velocity.y -= Physics.gravity.y * (config.jumpContinuationForce) * Time.deltaTime;
                 }
             }
         }
@@ -383,9 +339,9 @@ public class PlayerMover : MonoBehaviour {
         newVelocity *= moveSpeed;
 
         float speed = Vector3.Magnitude(newVelocity);
-        speed = Mathf.Min(speed, maxSpeed);
-        weaponBobSpeed = Mathf.SmoothDamp(weaponBobSpeed, targetBobSpeed, ref weaponBobSpeedChange, weaponBobFactorChangeSpeed);
-        weaponBobAmount = Mathf.SmoothDamp(weaponBobAmount, targetBobAmount, ref weaponBobAmountChange, weaponBobFactorChangeSpeed);
+        speed = Mathf.Min(speed, config.maxSpeed);
+        weaponBobSpeed = Mathf.SmoothDamp(weaponBobSpeed, targetBobSpeed, ref weaponBobSpeedChange, config.weaponBobFactorChangeSpeed);
+        weaponBobAmount = Mathf.SmoothDamp(weaponBobAmount, targetBobAmount, ref weaponBobAmountChange, config.weaponBobFactorChangeSpeed);
 
         velocity += Vector3.Normalize(newVelocity) * speed;
 
