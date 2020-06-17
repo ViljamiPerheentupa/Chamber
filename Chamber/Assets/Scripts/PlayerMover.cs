@@ -118,7 +118,6 @@ public class PlayerMover : MonoBehaviour {
 
     void OnJump(InputValue value) {
         isJumpPressed = value.isPressed;
-
         if (!GameManager.Instance.isPaused && !isNoclipping) {
             if (isJumpPressed) {
                 Vector3 targetPosition, targetDirection;
@@ -182,16 +181,25 @@ public class PlayerMover : MonoBehaviour {
         FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/PFootstep");
     }
 
-    bool CanFindVaultWall(out RaycastHit hitHorizontal) {
-        return Physics.Raycast(transform.position + Vector3.up * 0.6f, transform.forward, out hitHorizontal, config.vaultWallDistance);
+    bool CanFindVaultWall(float y, out RaycastHit hitHorizontal) {
+        return Physics.Raycast(transform.position + Vector3.up * y, transform.forward, out hitHorizontal, config.vaultWallDistance);
     }
 
     bool CanVault(out Vector3 finalPos, out Vector3 finalDirection) {
         float playerCenterHeight = 1.0f;
         float vaultLittleBitExtra = 0.05f;
 
-        RaycastHit hitHorizontal;
-        if (CanFindVaultWall(out hitHorizontal)) {
+        RaycastHit hitHorizontal = new RaycastHit();
+        bool wallFound = false;
+
+        foreach (float height in config.vaultHeightChecks) {
+            if (CanFindVaultWall(height, out hitHorizontal)) {
+                wallFound = true;
+                break;
+            }
+        }
+
+        if (wallFound) {
             finalDirection = -hitHorizontal.normal;
             Vector3 topWallCheck = hitHorizontal.point - hitHorizontal.normal * config.vaultWallStandDepth + Vector3.up * (config.vaultWallMaxHeight - playerCenterHeight);
             
@@ -222,10 +230,15 @@ public class PlayerMover : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        Vector3 targetPosition, targetDirection;
-        CanVault(out targetPosition, out targetDirection);
         if (GameManager.Instance.isPaused || GetComponent<GunMagnet>().isPulling) {
             return;
+        }
+
+        if (isJumpPressed) {
+            Vector3 targetPosition, targetDirection;
+            if (CanVault(out targetPosition, out targetDirection)) {
+                Vault(targetPosition, targetDirection);
+            }
         }
 
         if (isGrounded()) {

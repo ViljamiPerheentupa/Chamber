@@ -41,4 +41,5 @@ public class PlayerMoverData : ScriptableObject {
     public float vaultWallMaxHeight = 3.1f;
     public float vaultWallMinHeight = 0.5f;
     public float vaultWallStandDepth = 0.8f;
+    public float[] vaultHeightChecks;
 }
