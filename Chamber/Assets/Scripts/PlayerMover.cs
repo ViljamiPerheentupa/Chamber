@@ -35,10 +35,12 @@ public class PlayerMover : MonoBehaviour {
 
     Rigidbody rigidBody;
     Collider c_collider;
+    Animator animator;
 
     void Start() {
         c_collider = GetComponent<Collider>();
         rigidBody = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
     }
 
     public void StartReset() {
@@ -377,5 +379,9 @@ public class PlayerMover : MonoBehaviour {
         if (free) {
             rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
         }
+    }
+
+    public void DisableAnimator() {
+        animator.enabled = false;
     }
 }
