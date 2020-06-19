@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GunAnimationFunctions : MonoBehaviour {
-    private GunContainer gun;
+    private Gun gun;
 
     void Start() {
         /*GameObject gunReticle = GameObject.Find("Gunvas");
         
         if (gunReticle)
-            gun = gunReticle.GetComponent<GunContainer>();*/
+            gun = gunReticle.GetComponent<Gun>();*/
     }
 
     public void Shoot() {
@@ -23,7 +23,6 @@ public class GunAnimationFunctions : MonoBehaviour {
     }
 
     public void Enabled() {
-        Debug.Log("Enabled");
         //if (gun)
         //    gun.enabled = true;
     }

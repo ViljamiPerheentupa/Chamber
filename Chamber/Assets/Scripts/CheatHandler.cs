@@ -32,7 +32,7 @@ public class CheatHandler : MonoBehaviour {
         statusText.color = new Color(0f, 1f, 0f, 1f);
 
         if (text == "giveshock") {
-            GunContainer gc = FindObjectOfType<GunContainer>();
+            Gun gc = FindObjectOfType<Gun>();
             if (gc) {
                 gc.enabledAmmoTypes[0] = true;
                 statusText.text = "Gave the player the shock bullet.";
@@ -43,7 +43,7 @@ public class CheatHandler : MonoBehaviour {
             }
         }
         else if (text == "givemagnet") {
-            GunContainer gc = FindObjectOfType<GunContainer>();
+            Gun gc = FindObjectOfType<Gun>();
             if (gc) {
                 gc.enabledAmmoTypes[1] = true;
                 statusText.text = "Gave the player the magnetize bullet.";
@@ -54,7 +54,7 @@ public class CheatHandler : MonoBehaviour {
             }
         }
         else if (text == "givetime") {
-            GunContainer gc = FindObjectOfType<GunContainer>();
+            Gun gc = FindObjectOfType<Gun>();
             if (gc) {
                 gc.enabledAmmoTypes[2] = true;
                 statusText.text = "Gave the player the time bullet.";

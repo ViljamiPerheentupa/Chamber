@@ -18,20 +18,20 @@ public class AmmoPickup : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
             AirShotgun air = FindObjectOfType<AirShotgun>();
-            GunContainer gc = FindObjectOfType<GunContainer>();
+            Gun gc = FindObjectOfType<Gun>();
             if (gc && air) {
                 switch (ammo) {
                 case Type.AirShotgun:
                     air.SetStatus(true);
                     break;
                 case Type.Shock:
-                    gc.SetAmmoTypeStatus(GunContainer.AmmoType.eShock, true);
+                    gc.SetAmmoTypeStatus(Gun.AmmoType.eShock, true);
                     break;
                 case Type.Magnet:
-                    gc.SetAmmoTypeStatus(GunContainer.AmmoType.Magnet, true);
+                    gc.SetAmmoTypeStatus(Gun.AmmoType.Magnet, true);
                     break;
                 case Type.Time:
-                    gc.SetAmmoTypeStatus(GunContainer.AmmoType.Time, true);
+                    gc.SetAmmoTypeStatus(Gun.AmmoType.Time, true);
                     break;
                 };
             }

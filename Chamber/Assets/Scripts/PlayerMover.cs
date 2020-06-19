@@ -31,6 +31,8 @@ public class PlayerMover : MonoBehaviour {
     private bool isNoclipping;
     private float coyoteTimeEnd = 0f;
     private bool canLand = false;
+    private bool inAnimation = false;
+    private float startCrouchTime = 0.0f;
     #endregion
 
     Rigidbody rigidBody;
@@ -47,7 +49,7 @@ public class PlayerMover : MonoBehaviour {
         rigidBody.velocity = new Vector3();
         weaponSway = new Vector3();
         isCrouching = false;
-        config.startCrouchTime = 0;
+        startCrouchTime = 0;
         SetNoclip(false);
     }
 
@@ -149,11 +151,11 @@ public class PlayerMover : MonoBehaviour {
         isCrouchPressed = value.isPressed;
 
         if (!GameManager.Instance.isPaused && !isNoclipping && isCrouchPressed && !isCrouching) {
-            float t = config.crouchDelay - (Time.time - config.startCrouchTime);
+            float t = config.crouchDelay - (Time.time - startCrouchTime);
             t = Mathf.Clamp(t, 0.0f, config.crouchDelay);
             weaponSwayKick.y += config.standToCrouchWeaponSway;
             isCrouching = true;
-            config.startCrouchTime = Time.time - t;
+            startCrouchTime = Time.time - t;
         }
     }
 
@@ -166,7 +168,8 @@ public class PlayerMover : MonoBehaviour {
 
         float currentCamHeight*/
 
-        float t = (Time.time - config.startCrouchTime) / config.crouchDelay;
+        float t = (Time.time - startCrouchTime) / config.crouchDelay;
+        Debug.Log(t);
         if (isCrouching) t = 1 - t;
         t = config.crouchCurve.Evaluate(t);
 
@@ -225,14 +228,32 @@ public class PlayerMover : MonoBehaviour {
     }
 
     void Vault(Vector3 vaultTarget, Vector3 direction) {
-        transform.position = vaultTarget;
+        //transform.position = vaultTarget;
+        direction.y = 0;
+        Vector3.Normalize(direction);
         Quaternion lookAt = Quaternion.LookRotation(direction);
         Vector3 lookEuler = lookAt.eulerAngles;
-        cameraTransform.GetComponent<MouseLook>().SetAngles(lookEuler.x, lookEuler.y);
+        //cameraTransform.GetComponent<MouseLook>().SetAngles(lookEuler.x, lookEuler.y);
+
+        c_collider.enabled = false;
+        rigidBody.useGravity = false;
+        rigidBody.detectCollisions = false;
+        rigidBody.velocity = new Vector3();
+        animator.Play("p_fullclimb");
+        animator.enabled = true;
+        inAnimation = true;
+    }
+
+    public void EndVault() {
+        animator.enabled = false;
+        c_collider.enabled = true;
+        rigidBody.useGravity = true;
+        rigidBody.detectCollisions = true;
+        inAnimation = false;
     }
 
     void FixedUpdate() {
-        if (GameManager.Instance.isPaused || GetComponent<GunMagnet>().isPulling) {
+        if (GameManager.Instance.isPaused || inAnimation) {
             return;
         }
 
@@ -272,12 +293,12 @@ public class PlayerMover : MonoBehaviour {
         if (!isCrouchPressed) {
             if (isCrouching) {
                 if (CanStand()) {
-                    float t = config.crouchDelay - (Time.time - config.startCrouchTime);
+                    float t = config.crouchDelay - (Time.time - startCrouchTime);
                     t = Mathf.Clamp(t, 0.0f, config.crouchDelay);
                     
                     weaponSwayKick.y -= config.crouchToStandWeaponSway;
                     isCrouching = false;
-                    config.startCrouchTime = Time.time - t;
+                    startCrouchTime = Time.time - t;
                 }
             }
         }
@@ -379,9 +400,5 @@ public class PlayerMover : MonoBehaviour {
         if (free) {
             rigidBody.constraints = RigidbodyConstraints.FreezeRotation;
         }
-    }
-
-    public void DisableAnimator() {
-        animator.enabled = false;
     }
 }

@@ -72,7 +72,11 @@ MonoBehaviour:
   noclipSpeed: 10
   noclipSprintSpeed: 30
   coyoteTimeDuration: 2
-  vaultWallDistance: 1
+  vaultWallDistance: 0.5
   vaultWallMaxHeight: 3.1
   vaultWallMinHeight: 0.5
   vaultWallStandDepth: 0.8
+  vaultHeightChecks:
+  - -0.1
+  - 0.2
+  - 0.4

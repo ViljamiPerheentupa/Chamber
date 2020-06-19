@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMODUnity;
 
+[CreateAssetMenu(fileName = "GunShock", menuName = "Chamber/Player/Gun/Shock", order = 0)]
 public class GunShock : GunAmmoBase {
     public Transform shockParticle;
     public DecalData decalData;
@@ -26,23 +27,23 @@ public class GunShock : GunAmmoBase {
                 }
             }
             else if (hit.collider.gameObject.layer == 12) {
-                gunContainer.CreateDecal(hit.point, Quaternion.LookRotation(hit.normal), decalData.decalSize, decalData.decalMaterial, hit.collider.transform);
+                gun.CreateDecal(hit.point, Quaternion.LookRotation(hit.normal), decalData.decalSize, decalData.decalMaterial, hit.collider.transform);
             }
 
             BaseHealth health = hit.collider.GetComponent<BaseHealth>();
             if (health) {
-                health.TakeDamage(bulletDamage, transform);
+                health.TakeDamage(bulletDamage, gun.transform);
 
             }
 
             Instantiate(shockParticle, hit.point, Quaternion.LookRotation(hit.normal));
-            gunContainer.FireLineRenderer(hit.point, 0);
+            gun.FireLineRenderer(hit.point, 0);
         }
 
         FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/Gunshot", startPos);
-        gunContainer.PlayFireAnimation();
-        gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
-        gunContainer.SwapToNextChamber();
-        gunContainer.WaitForNextShot();
+        gun.PlayFireAnimation();
+        gun.SetCurrentChamber(Gun.AmmoType.Empty);
+        gun.SwapToNextChamber();
+        gun.WaitForNextShot();
     }
 }

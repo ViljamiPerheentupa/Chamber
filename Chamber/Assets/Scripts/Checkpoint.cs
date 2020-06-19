@@ -25,7 +25,7 @@ public class Checkpoint : MonoBehaviour {
             ml.StartReset(transform.eulerAngles.y);
         }
 
-        GunContainer gc = FindObjectOfType<GunContainer>();
+        Gun gc = FindObjectOfType<Gun>();
         if (gc) {
             gc.StartReset();
         }

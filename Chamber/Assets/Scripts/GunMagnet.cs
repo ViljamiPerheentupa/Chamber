@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "GunMagnet", menuName = "Chamber/Player/Gun/Magnet", order = 0)]
 public class GunMagnet : GunAmmoBase {
     //[FMODUnity.EventRef]
     //[FMODUnity.EventRef]
@@ -29,7 +30,7 @@ public class GunMagnet : GunAmmoBase {
         magnetTarget = null;
     }
 
-    void Update() {
+    public override void FireHold(Vector3 startPos, Vector3 forward) {
         if (isPulling) {
             Vector3 dir = (targetLocation - transform.position);
             float dirstr = dir.magnitude;
@@ -55,21 +56,21 @@ public class GunMagnet : GunAmmoBase {
             if(Physics.Raycast(startPos, forward, out hit, Mathf.Infinity, magnetSurfaceLayers)) {
                 isMovingMagnetTarget = true;
                 targetLocation = hit.point;
-                gunContainer.FireLineRenderer(hit.point, 1);
+                gun.FireLineRenderer(hit.point, 1);
                 magnetTarget.AddForce(moveStrength * Vector3.Normalize(hit.point - magnetTarget.transform.position), ForceMode.Force);
-                gunContainer.SetHoldMode(true);
+                gun.SetHoldMode(true);
                 magnetizeEvent = FMODUnity.RuntimeManager.CreateInstance(magnetizeEventPath);
                 magnetizeEvent.setParameterByName("LockOn", 1.0f);
                 magnetizeEvent.start();
             }
             else {
-                gunContainer.FireLineRenderer(startPos + forward * 100.0f, 1);
-                gunContainer.WaitForNextShot();
-                gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
-                gunContainer.SetHoldMode(false);
-                gunContainer.SwapToNextChamber();
+                gun.FireLineRenderer(startPos + forward * 100.0f, 1);
+                gun.WaitForNextShot();
+                gun.SetCurrentChamber(Gun.AmmoType.Empty);
+                gun.SetHoldMode(false);
+                gun.SwapToNextChamber();
             }
-            gunContainer.PlayFireAnimation();
+            gun.PlayFireAnimation();
         }
         else {
             RaycastHit hit;
@@ -80,16 +81,16 @@ public class GunMagnet : GunAmmoBase {
                     grappleEvent.setParameterByName("LockOn", 1.0f);
                     grappleEvent.start();
                     isPulling = true;
-                    GetComponent<Rigidbody>().useGravity = false;
-                    GetComponent<Rigidbody>().velocity = new Vector3(0f,0f,0f);
+                    rigidbody.useGravity = false;
+                    rigidbody.velocity = new Vector3(0f,0f,0f);
                     
                     targetLocation = hit.collider.transform.position + hit.collider.transform.forward * 1.5f;
 
                     startGrappleDistance = (targetLocation - transform.position).magnitude;
-                    gunContainer.PlayFireAnimation();
-                    gunContainer.WaitForNextShot();
-                    gunContainer.SetHoldMode(true);
-                    gunContainer.SetCurrentChamberColor(holdColor);
+                    gun.PlayFireAnimation();
+                    gun.WaitForNextShot();
+                    gun.SetHoldMode(true);
+                    gun.SetCurrentChamberColor(holdColor);
                 }
                 else if (hit.collider.GetComponent<ShootTrigger>()) {
                     hit.collider.GetComponent<ShootTrigger>().OnMagnetTrigger();
@@ -97,28 +98,28 @@ public class GunMagnet : GunAmmoBase {
                 else if (hit.rigidbody) {
                     FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/HitElectric", startPos);
                     magnetTarget = hit.rigidbody;
-                    gunContainer.PlayFireAnimation();
-                    gunContainer.WaitForNextShot();
-                    gunContainer.SetCurrentChamberColor(holdColor);
+                    gun.PlayFireAnimation();
+                    gun.WaitForNextShot();
+                    gun.SetCurrentChamberColor(holdColor);
                 }
                 else {
                     Instantiate(missParticle, hit.point, Quaternion.LookRotation(hit.normal));
-                    gunContainer.PlayFireAnimation();
-                    gunContainer.WaitForNextShot();
-                    gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
-                    gunContainer.SetHoldMode(false);
-                    gunContainer.SwapToNextChamber();
+                    gun.PlayFireAnimation();
+                    gun.WaitForNextShot();
+                    gun.SetCurrentChamber(Gun.AmmoType.Empty);
+                    gun.SetHoldMode(false);
+                    gun.SwapToNextChamber();
                 }
                 
-                gunContainer.FireLineRenderer(hit.point, 1);
+                gun.FireLineRenderer(hit.point, 1);
             }
             else {
-                gunContainer.FireLineRenderer(startPos + forward * 100.0f, 1);
-                gunContainer.PlayFireAnimation();
-                gunContainer.WaitForNextShot();
-                gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
-                gunContainer.SetHoldMode(false);
-                gunContainer.SwapToNextChamber();
+                gun.FireLineRenderer(startPos + forward * 100.0f, 1);
+                gun.PlayFireAnimation();
+                gun.WaitForNextShot();
+                gun.SetCurrentChamber(Gun.AmmoType.Empty);
+                gun.SetHoldMode(false);
+                gun.SwapToNextChamber();
             }
         }
     }
@@ -126,12 +127,12 @@ public class GunMagnet : GunAmmoBase {
     void EndGrapple() {
         grappleEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
         grappleEvent.release();
-        GetComponent<Rigidbody>().useGravity = true;
+        rigidbody.useGravity = true;
         isPulling = false;
-        gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
-        gunContainer.SetHoldMode(false);
-        gunContainer.SwapToNextChamber();
-        gunContainer.WaitForNextShot();
+        gun.SetCurrentChamber(Gun.AmmoType.Empty);
+        gun.SetHoldMode(false);
+        gun.SwapToNextChamber();
+        gun.WaitForNextShot();
     }
 
     public override void FireRelease(Vector3 startPos, Vector3 forward) {
@@ -143,10 +144,10 @@ public class GunMagnet : GunAmmoBase {
             magnetizeEvent.release();
             isMovingMagnetTarget = false;
             magnetTarget = null;
-            gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
-            gunContainer.SetHoldMode(false);
-            gunContainer.SwapToNextChamber();
-            gunContainer.WaitForNextShot();
+            gun.SetCurrentChamber(Gun.AmmoType.Empty);
+            gun.SetHoldMode(false);
+            gun.SwapToNextChamber();
+            gun.WaitForNextShot();
         }
     }
 }

@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 7678307990215455386}
   - component: {fileID: 7678307990215455376}
   - component: {fileID: 5259181975919451932}
-  - component: {fileID: 7678307990215455377}
+  - component: {fileID: 3442907660075295306}
+  - component: {fileID: 3995208711442503027}
   m_Layer: 20
   m_Name: Crate
   m_TagString: Untagged
@@ -108,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a55770a4220ce474d8646c5d0d809971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7678307990215455377
+--- !u!114 &3442907660075295306
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -117,14 +118,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 7678307990215455387}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 381e21b77084d5f4f885bf31c9ebd0d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 4364193eb5d1a38488ba4796234f045b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeLocked: 0
   overrideDuration: 0
   tlDuration: 5
   tlEffectMagnitude: 0.25
-  tlSlowAmount: 0
+--- !u!114 &3995208711442503027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7678307990215455387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04557f8bcb4b00f4380420651a862c57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   isLiftable: 1
   liftDistance: 2
   liftAngle: {x: 0, y: 0, z: 0}
