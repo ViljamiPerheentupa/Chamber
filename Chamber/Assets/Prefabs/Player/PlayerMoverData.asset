@@ -71,9 +71,12 @@ MonoBehaviour:
   weaponBobFactorChangeSpeed: 0.2
   noclipSpeed: 10
   noclipSprintSpeed: 30
-  coyoteTimeDuration: 0.3
-  vaultWallDistance: 1
+  coyoteTimeDuration: 2
+  vaultWallDistance: 0.5
   vaultWallMaxHeight: 3.1
   vaultWallMinHeight: 0.5
   vaultWallStandDepth: 0.8
-  vaultHeightChecks: []
+  vaultHeightChecks:
+  - -0.1
+  - 0.2
+  - 0.4

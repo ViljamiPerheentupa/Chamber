@@ -21,6 +21,8 @@ public class NpcShield : BaseResetable {
         public float pushDelay = 1f;
         public float playerDetectRange = 10.0f;
         public float detectConeAngle = 45.0f;
+        public float seeRange = 90.0f;
+        public float seeAngle = 10.0f;
         public LayerMask visibilityLayerMask;
         public float shootShieldPushBackAmount = 2.0f;
         public float shootConfusedTime = 1.0f;
@@ -29,17 +31,21 @@ public class NpcShield : BaseResetable {
     #region Private Variables
         float nextNotConfused;
         Transform target;
+        Vector3 lastKnownPosition;
         float startMoveTime;
         bool isShieldUp;
         Status status;
         float nextPush;
         NavMeshAgent navigationAgent;
         bool isDead = false;
+        Vector3 startPosition;
     #endregion
 
     void Start() {
         status = Status.Idle;
         navigationAgent = GetComponent<NavMeshAgent>();
+
+        startPosition = transform.position;
     
         CheckpointManager cm = FindObjectOfType<CheckpointManager>();
         if (cm) {
@@ -50,6 +56,7 @@ public class NpcShield : BaseResetable {
     public override void StartReset() {
         shieldPivot.gameObject.SetActive(true);
         isDead = false;
+        navigationAgent.destination = startPosition;
     }
 
     void StartMovingShield(bool up) {
@@ -138,6 +145,10 @@ public class NpcShield : BaseResetable {
                 }
                 
                 float diffDot = Vector3.Dot(Vector3.Normalize(diff), Vector3.up);
+
+                if (TargetIsInCone(seeRange, seeAngle)) {
+                    lastKnownPosition = target.position;
+                }
                 
                 if (diffDot > Mathf.Cos(Mathf.Deg2Rad * shieldUpAngle)) {
                     if (!isShieldUp) StartMovingShield(true);
@@ -153,7 +164,7 @@ public class NpcShield : BaseResetable {
                     }
                     else {
                         // Move Towards
-                        navigationAgent.destination = target.position;
+                        navigationAgent.destination = lastKnownPosition;
                     }
                 }
                 break;

@@ -33,25 +33,25 @@ public class Trigger : MonoBehaviour
         }
     }
 
-    public void ShootTrigger(GunContainer.AmmoType type) {
-        if (type == GunContainer.AmmoType.eShock && triggerType == TriggerType.Shockable && !turnedOn) {
+    public void ShootTrigger(Gun.AmmoType type) {
+        if (type == Gun.AmmoType.eShock && triggerType == TriggerType.Shockable && !turnedOn) {
             onTriggerOn.Invoke();
             turnedOn = true;
             FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/SwitchE");
             return;
         }
-        if (type == GunContainer.AmmoType.eShock && triggerType == TriggerType.Shockable && turnedOn) {
+        if (type == Gun.AmmoType.eShock && triggerType == TriggerType.Shockable && turnedOn) {
             onTriggerOff.Invoke();
             turnedOn = false;
             return;
         }
-        if (type == GunContainer.AmmoType.Magnet && triggerType == TriggerType.Normal && !turnedOn) {
+        if (type == Gun.AmmoType.Magnet && triggerType == TriggerType.Normal && !turnedOn) {
             onTriggerOn.Invoke();
             turnedOn = true;
             FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/Switch");
             return;
         }
-        if (type == GunContainer.AmmoType.Time && triggerType == TriggerType.Normal && turnedOn) {
+        if (type == Gun.AmmoType.Time && triggerType == TriggerType.Normal && turnedOn) {
             onTriggerOff.Invoke();
             turnedOn = false;
             return;

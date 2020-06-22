@@ -17,7 +17,6 @@ public class PlayerMoverData : ScriptableObject {
     public float cameraHeight = -0.25f;
     public float standCapsuleHeight = 2.0f;
     public float crouchCapsuleHeight = 1.25f;
-    public float startCrouchTime = 0.0f;
     public float crouchDelay = 0.3f;
     public AnimationCurve crouchCurve;
     public Vector2 weaponBobStretch = new Vector2(2.0f, 1.0f);
