@@ -29,7 +29,6 @@ MonoBehaviour:
   cameraHeight: -0.25
   standCapsuleHeight: 2
   crouchCapsuleHeight: 1.25
-  startCrouchTime: 0
   crouchDelay: 0.3
   crouchCurve:
     serializedVersion: 2
@@ -71,7 +70,7 @@ MonoBehaviour:
   weaponBobFactorChangeSpeed: 0.2
   noclipSpeed: 10
   noclipSprintSpeed: 30
-  coyoteTimeDuration: 2
+  coyoteTimeDuration: 0.3
   vaultWallDistance: 0.5
   vaultWallMaxHeight: 3.1
   vaultWallMinHeight: 0.5
