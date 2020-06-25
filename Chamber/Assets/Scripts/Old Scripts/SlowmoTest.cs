@@ -28,7 +28,7 @@ public class SlowmoTest : MonoBehaviour
     }
     void Update()
     {
-        if (!GameObject.Find("GameManager").GetComponent<GameManager>().paused) {
+        if (!GameManager.Instance.isPaused) {
             if (Input.GetButton("Fire2") && !cooldown) {
                 Time.timeScale = peakSlowmo;
                 slowmo.setParameterByName("BulletTime", 1);

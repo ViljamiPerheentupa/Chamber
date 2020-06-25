@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15aa02a2455ce354593dcce54f2391b6, type: 3}
+  m_Name: PlayerMoverData
+  m_EditorClassIdentifier: 
+  crouchMoveSpeed: 0.5
+  airSpeed: 0.2
+  runSpeed: 1.5
+  sprintSpeed: 2.5
+  maxSpeed: 5
+  jumpImpulse: 6
+  jumpContinuationForce: 0.8
+  jumpContinuationTime: 0.2
+  fallMultiplier: 1.6
+  maintainAirSpeedCoefficient: 0.98
+  maintainSpeedCoefficient: 0.8
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 125300737
+  cameraHeight: -0.25
+  standCapsuleHeight: 2
+  crouchCapsuleHeight: 1.25
+  crouchDelay: 0.3
+  crouchCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  weaponBobStretch: {x: 2, y: 1}
+  weaponSwayAmount: {x: 15, y: 15}
+  weaponSwayRecoverSpeed: 0.2
+  standToCrouchWeaponSway: 80
+  crouchToStandWeaponSway: 80
+  jumpSway: 100
+  landSwayMultiplier: 5
+  couchBobSpeed: 6
+  runBobSpeed: 8
+  sprintBobSpeed: 12
+  couchBobAmount: 2
+  runBobAmount: 1
+  sprintBobAmount: 2
+  weaponBobFactorChangeSpeed: 0.2
+  noclipSpeed: 10
+  noclipSprintSpeed: 30
+  coyoteTimeDuration: 0.3
+  vaultWallDistance: 0.5
+  vaultWallMaxHeight: 3.1
+  vaultWallMinHeight: 0.5
+  vaultWallStandDepth: 0.8
+  vaultHeightChecks:
+  - -0.1
+  - 0.2
+  - 0.4

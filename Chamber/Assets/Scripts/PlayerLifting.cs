@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerLifting : MonoBehaviour {
-    public GunContainer gunContainer;
+    public Gun gun;
     [Tooltip("How far away you can pick something up.")]
     public float maxLiftDistance = 4.0f;
     [Tooltip("How far away an object is from in front of you before you let go of it.")]
@@ -19,8 +19,12 @@ public class PlayerLifting : MonoBehaviour {
 
     // Private
     private Quaternion liftRotation;
-    private DynamicProp prop;
+    private Liftable prop;
     private Rigidbody rigid;
+
+    void Start() {
+        gun = GetComponent<Gun>();
+    }
 
     public void StartReset() {
         prop = null;
@@ -28,22 +32,22 @@ public class PlayerLifting : MonoBehaviour {
     }
 
     void OnFire(InputValue value) {
-        GameManager gm = FindObjectOfType<GameManager>();
-        if (!(gm && gm.paused) && !GetComponent<PlayerHealth>().isDead && prop) {
+        if (!GameManager.Instance.isPaused && !GetComponent<PlayerHealth>().isDead && prop) {
             rigid.AddForce(Camera.main.transform.forward * throwStrength, ForceMode.Impulse);
             Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
-            gunContainer.SetHolstering(false);
+            if (gun)
+                gun.SetHolstering(false);
             prop = null;
             rigid = null;
         }
     }
 
     void OnInteract(InputValue value) {
-        GameManager gm = FindObjectOfType<GameManager>();
-        if (!(gm && gm.paused) && !GetComponent<PlayerHealth>().isDead) {
+        if (!GameManager.Instance.isPaused && !GetComponent<PlayerHealth>().isDead) {
             if (prop) {
                 Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
-                gunContainer.SetHolstering(false);
+                if (gun)
+                    gun.SetHolstering(false);
                 prop = null;
                 rigid = null;
             }
@@ -51,9 +55,10 @@ public class PlayerLifting : MonoBehaviour {
                 RaycastHit hit;
                 if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxLiftDistance, rayTraceLayerMask)) {
                     if (hit.collider) {
-                        DynamicProp liftable = hit.collider.GetComponent<DynamicProp>();
+                        Liftable liftable = hit.collider.GetComponent<Liftable>();
                         if (liftable && liftable.isLiftable) {
-                            gunContainer.SetHolstering(true);
+                            if (gun)
+                                gun.SetHolstering(true);
                             prop = liftable;
                             rigid = prop.GetComponent<Rigidbody>();
                             liftRotation = Quaternion.Euler(prop.transform.rotation.eulerAngles - characterTransform.rotation.eulerAngles);
@@ -65,7 +70,7 @@ public class PlayerLifting : MonoBehaviour {
         }
     }
 
-    void Update() {
+    void FixedUpdate() {
         if (GetComponent<PlayerHealth>().isDead) {
             prop = null;
             rigid = null;
@@ -83,7 +88,7 @@ public class PlayerLifting : MonoBehaviour {
             else {
                 // Prop is too far, drop it
                 Physics.IgnoreCollision(characterTransform.GetComponent<Collider>(), prop.GetComponent<Collider>(), false);
-                gunContainer.SetHolstering(false);
+                gun.SetHolstering(false);
                 prop = null;
                 rigid = null;
             }

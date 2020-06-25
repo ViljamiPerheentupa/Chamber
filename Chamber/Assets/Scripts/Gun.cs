@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using FMODUnity;
 
-public class GunContainer : MonoBehaviour {
+public class Gun : MonoBehaviour {
     // Constants
     private const int numTypes = 3;
     public enum AmmoType { Empty, eShock, Magnet, Time };
@@ -49,6 +49,7 @@ public class GunContainer : MonoBehaviour {
         for (int i = 0; i < 3; ++i) {
             chambers[i] = AmmoType.Empty;
             reticleImage[i].color = emptyColor;
+            ammoTypes[i].SetGun(this);
         }
     }
 
@@ -70,6 +71,8 @@ public class GunContainer : MonoBehaviour {
             chambers[i] = AmmoType.Empty;
             reticleImage[i].color = emptyColor;
         }
+        
+        animator.gameObject.SetActive(true);
     }
 
     void AddAmmoToChamber(AmmoType type) {
@@ -103,6 +106,7 @@ public class GunContainer : MonoBehaviour {
         }
 
         // Do animations
+        animator.gameObject.SetActive(!status);
     }
 
     void ExitReload() {
@@ -152,7 +156,7 @@ public class GunContainer : MonoBehaviour {
     }
 
     bool canDoAction() {
-        return (!GameObject.Find("GameManager").GetComponent<GameManager>().paused && !GetComponent<PlayerHealth>().isDead && (nextFire < Time.time));
+        return (!GameManager.Instance.isPaused && !GetComponent<PlayerHealth>().isDead && (nextFire < Time.time));
     }
 
     bool canDoActionAndNoHolster() {
@@ -207,6 +211,11 @@ public class GunContainer : MonoBehaviour {
         // Handle Tracer
         float a = 1f - (Time.time - startTracerTime) / tracerFadeDuration;
         lineRenderer.material.SetColor("_TintColor", new Color(currentTracerColor.r, currentTracerColor.g, currentTracerColor.b, a));
+    
+        if (chambers[currentChamber] != AmmoType.Empty) {
+            int currentChamberType = (int)chambers[currentChamber] - 1;
+            ammoTypes[currentChamberType].FireHold(transform.position, transform.forward);
+        }
     }
 
     private void SetTargetAngle(uint targetSlot) {

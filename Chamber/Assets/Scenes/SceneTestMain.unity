@@ -305,12 +305,12 @@ PrefabInstance:
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.929
+      value: -9.93
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.424
+      value: 1.013
       objectReference: {fileID: 0}
     - target: {fileID: 3576744802192327400, guid: ad82e878837850141823e80c8a613049,
         type: 3}
@@ -454,8 +454,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialScenes:
-  - TutorialFirst
-  - TutorialElevator
+  - TutorialBase
+  - Tutorial1Elevator
+  - Tutorial2Elevator
 --- !u!4 &1350973045
 Transform:
   m_ObjectHideFlags: 0

@@ -38,8 +38,7 @@ public class AirShotgun : MonoBehaviour {
     }
 
     void Update() {
-        GameManager gm = FindObjectOfType<GameManager>();
-        if ((gm && gm.paused) || GetComponent<PlayerHealth>().isDead || !isActivated) {
+        if ((GameManager.Instance.isPaused) || GetComponent<PlayerHealth>().isDead || !isActivated) {
             return;
         }
 

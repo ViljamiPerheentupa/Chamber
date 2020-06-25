@@ -3,33 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NpcTurret : BaseResetable, IProp {
-    public Vector3 decalSize;
-    public Material decalMaterial;
-    public float bulletForce = 20.0f;
-    public float playerDetectRange = 10.0f;
-    public float playerLoseRange = 12.0f;
-    public float detectConeAngle = 45.0f;
-    // public float playerDetectTime = 1.0f;
-    public float playerForgetTime = 4.0f;
-    public float bulletHitRange = Mathf.Infinity;
-    public float minimumBulletDamage = 10.0f;
-    public float maximumBulletDamage = 50.0f;
-    public float minimumBulletDelay = 1.0f;
-    public float maximumBulletDelay = 0.2f;
-    public float minimumBulletSpread = 30.0f;
-    public float maximumBulletSpread = 5.0f;
-    public float timeToMaximum = 2.0f;
-    public AnimationCurve animationCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 1.0f, 1.0f);
-    public float trackingSpeed = 0.3f;
-    public float minBarrelPitch = -60.0f;
-    public float maxBarrelPitch = 60.0f;
+    public NpcTurretSettings turretSettings;
     public Transform turretBase;
     public Transform barrelPivot;
     public Transform firePoint;
-    public float turningIdleSpeed = 20.0f;
     public bool shouldPingPong = true;
     public float pingPongAngle = 45.0f;
-    public LayerMask layerMask;
     public bool isEnabled = true;
 
     // Private
@@ -124,11 +103,11 @@ public class NpcTurret : BaseResetable, IProp {
                 lineRenderer.SetPosition(0, firePoint.position);
                 
                 RaycastHit hit;
-                if (Physics.Raycast(firePoint.position, firePoint.up, out hit, bulletHitRange, layerMask)) {
+                if (Physics.Raycast(firePoint.position, firePoint.up, out hit, turretSettings.bulletHitRange, turretSettings.layerMask)) {
                     lineRenderer.SetPosition(1, hit.point);
                 }
                 else {
-                    lineRenderer.SetPosition(1, firePoint.position + firePoint.up * bulletHitRange);
+                    lineRenderer.SetPosition(1, firePoint.position + firePoint.up * turretSettings.bulletHitRange);
                 }
             }
 
@@ -167,7 +146,7 @@ public class NpcTurret : BaseResetable, IProp {
                     }
                 }
                 
-                if (distanceToPlayer > playerLoseRange) {
+                if (distanceToPlayer > turretSettings.playerLoseRange) {
                     foundPlayer = false;
                     Vector3 fixAngles = barrelPivot.localEulerAngles;
                     fixAngles.x = 0;
@@ -176,22 +155,22 @@ public class NpcTurret : BaseResetable, IProp {
                 }
 
                 Vector3 newTarget = Vector3.Normalize(target.position - transform.position);
-                targetDirection = Vector3.SmoothDamp(targetDirection, newTarget, ref targetDirectionVelocity, trackingSpeed);
+                targetDirection = Vector3.SmoothDamp(targetDirection, newTarget, ref targetDirectionVelocity, turretSettings.trackingSpeed);
                 Quaternion q = Quaternion.LookRotation(targetDirection, Vector3.up);
                 Vector3 baseAngles = turretBase.localEulerAngles;
                 baseAngles.y = q.eulerAngles.y;
                 turretBase.localEulerAngles = baseAngles;
                 Vector3 barrelAngles = barrelPivot.localEulerAngles;
-                barrelAngles.x = Mathf.Clamp(q.eulerAngles.x, minBarrelPitch, maxBarrelPitch);
+                barrelAngles.x = Mathf.Clamp(q.eulerAngles.x, turretSettings.minBarrelPitch, turretSettings.maxBarrelPitch);
                 barrelPivot.localEulerAngles = barrelAngles;
 
                 if (Time.time > nextShot) {
                     // Detect if player is still wit
-                    float t = (Time.time - timeStartedShooting) / timeToMaximum;
-                    t = animationCurve.Evaluate(t);
+                    float t = (Time.time - timeStartedShooting) / turretSettings.timeToMaximum;
+                    t = turretSettings.animationCurve.Evaluate(t);
 
-                    nextShot = Time.time + Mathf.Lerp(minimumBulletDelay, maximumBulletDelay, t);
-                    float bulletSpread = Mathf.Lerp(minimumBulletSpread, maximumBulletSpread, t);
+                    nextShot = Time.time + Mathf.Lerp(turretSettings.minimumBulletDelay, turretSettings.maximumBulletDelay, t);
+                    float bulletSpread = Mathf.Lerp(turretSettings.minimumBulletSpread, turretSettings.maximumBulletSpread, t);
 
                     // Calculate spread
                     float deviation = Random.Range(0.0f, bulletSpread);
@@ -202,22 +181,22 @@ public class NpcTurret : BaseResetable, IProp {
                     dir = Quaternion.LookRotation(targetDirection) * dir;
 
                     RaycastHit hit;
-                    if(Physics.Raycast(firePoint.position, dir, out hit, bulletHitRange, layerMask)) {
+                    if(Physics.Raycast(firePoint.position, dir, out hit, turretSettings.bulletHitRange, turretSettings.layerMask)) {
                         FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/EShoot", transform.position);
 
                         if (hit.collider.gameObject.layer == 20) {
                             if (hit.rigidbody) {
-                                Vector3 force = Vector3.Normalize(dir) * bulletForce;
+                                Vector3 force = Vector3.Normalize(dir) * turretSettings.bulletForce;
                                 hit.rigidbody.AddForceAtPosition(force, hit.point, ForceMode.Impulse);
                             }
                         }
                         else if (hit.collider.gameObject.layer == 12) {
-                            decalManager.NewDecal(hit.point, Quaternion.LookRotation(hit.normal), decalSize, decalMaterial, hit.collider.transform);
+                            decalManager.NewDecal(hit.point, Quaternion.LookRotation(hit.normal), turretSettings.bulletDecal.decalSize, turretSettings.bulletDecal.decalMaterial, hit.collider.transform);
                         }
 
                         BaseHealth health = hit.collider.GetComponent<BaseHealth>();
                         if (health) {
-                            float bulletDamage = Mathf.Lerp(minimumBulletDamage, maximumBulletDamage, t);
+                            float bulletDamage = Mathf.Lerp(turretSettings.minimumBulletDamage, turretSettings.maximumBulletDamage, t);
                             health.TakeDamage(bulletDamage, transform);
 
                         }
@@ -228,30 +207,30 @@ public class NpcTurret : BaseResetable, IProp {
                 Vector3 angles = turretBase.localEulerAngles;
                 if (shouldPingPong) {
                     if (isSpinningCW) {
-                        angles.y += turningIdleSpeed * Time.deltaTime;
+                        angles.y += turretSettings.turningIdleSpeed * Time.deltaTime;
                         if (angles.y > 180.0f + pingPongAngle) {
                             isSpinningCW = false;
                         }
                     }
                     else {
-                        angles.y -= turningIdleSpeed * Time.deltaTime;
+                        angles.y -= turretSettings.turningIdleSpeed * Time.deltaTime;
                         if (angles.y < 180.0f - pingPongAngle) {
                             isSpinningCW = true;
                         }
                     }
                 }
                 else {
-                    angles.y += turningIdleSpeed * Time.deltaTime;
+                    angles.y += turretSettings.turningIdleSpeed * Time.deltaTime;
                 }
                 turretBase.localEulerAngles = angles;
 
 
-                if (distanceToPlayer < playerDetectRange) {
+                if (distanceToPlayer < turretSettings.playerDetectRange) {
                     Vector3 normdir = Vector3.Normalize(directDirection);
                     // TODO: Move the detect cone angle math to a private variable at start, when we're close to shipping
-                    if (Vector3.Dot(normdir, firePoint.up) > Mathf.Cos(Mathf.Deg2Rad * detectConeAngle)) {
+                    if (Vector3.Dot(normdir, firePoint.up) > Mathf.Cos(Mathf.Deg2Rad * turretSettings.detectConeAngle)) {
                         RaycastHit hit;
-                        if (Physics.Raycast(firePoint.position, normdir, out hit, Mathf.Infinity, layerMask)) {
+                        if (Physics.Raycast(firePoint.position, normdir, out hit, Mathf.Infinity, turretSettings.layerMask)) {
                             if (hit.collider.transform == target) {
                                 foundPlayer = true;
                             }

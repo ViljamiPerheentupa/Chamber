@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GunAmmoBase : MonoBehaviour {
+public class GunAmmoBase : ScriptableObject {
     public Color color;
-    protected GunContainer gunContainer;
+    protected Gun gun;
+    protected Transform transform;
+    protected Rigidbody rigidbody;
 
-    void Start() {
-        gunContainer = GetComponent<GunContainer>();
+    public void SetGun(Gun g) {
+        gun = g;
+        transform = g.transform;
+        rigidbody = g.GetComponent<Rigidbody>();
     }
 
     // To be implemented by the ammo types

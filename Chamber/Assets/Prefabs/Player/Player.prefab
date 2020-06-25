@@ -191,8 +191,8 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
+  m_HDR: 0
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -307,7 +307,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1536
   volumeAnchorOverride: {fileID: 0}
-  antialiasing: 2
+  antialiasing: 1
   SMAAQuality: 2
   dithering: 0
   stopNaNs: 0
@@ -5332,7 +5332,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1536
   volumeAnchorOverride: {fileID: 0}
-  antialiasing: 0
+  antialiasing: 1
   SMAAQuality: 2
   dithering: 0
   stopNaNs: 0
@@ -10197,9 +10197,6 @@ GameObject:
   - component: {fileID: 3576744802192327402}
   - component: {fileID: 3576744802192327414}
   - component: {fileID: 3576744802192327413}
-  - component: {fileID: 3576744802192327403}
-  - component: {fileID: 3576744802192327412}
-  - component: {fileID: 3576744802192327407}
   - component: {fileID: 4758526582298296893}
   - component: {fileID: 1546166414702107130}
   - component: {fileID: 4140775668062611270}
@@ -10314,68 +10311,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fe35b4cecf26cf43b905a7f8348a8e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crouchMoveSpeed: 0.5
-  airSpeed: 0.2
-  runSpeed: 1.5
-  sprintSpeed: 2.5
-  maxSpeed: 5
-  jumpImpulse: 6
-  jumpContinuationForce: 0.8
-  jumpContinuationTime: 0.2
-  fallMultiplier: 1.6
-  maintainAirSpeedCoefficient: 0.98
-  maintainSpeedCoefficient: 0.8
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 54525239
-  cameraHeight: -0.25
-  standCapsuleHeight: 2
-  crouchCapsuleHeight: 1.25
-  startCrouchTime: 0
-  crouchDelay: 0.3
-  crouchCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  config: {fileID: 11400000, guid: 00faabc2a7569f1448ec9ef082a47213, type: 2}
   cameraTransform: {fileID: 3576744800330811291}
-  gunTransform: {fileID: 0}
-  weaponBobStretch: {x: 2, y: 1}
-  weaponSwayAmount: {x: 15, y: 15}
-  weaponSwayRecoverSpeed: 0.2
-  standToCrouchWeaponSway: 80
-  crouchToStandWeaponSway: 80
-  jumpSway: 100
-  landSwayMultiplier: 5
-  couchBobSpeed: 6
-  runBobSpeed: 8
-  sprintBobSpeed: 12
-  couchBobAmount: 2
-  runBobAmount: 1
-  sprintBobAmount: 2
-  weaponBobFactorChangeSpeed: 0.2
-  noclipSpeed: 10
-  noclipSprintSpeed: 30
-  coyoteTimeDuration: 2
+  gunTransform: {fileID: 3576744800625245244}
 --- !u!54 &3576744802192327401
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10449,9 +10387,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   ammoTypes:
-  - {fileID: 3576744802192327403}
-  - {fileID: 3576744802192327412}
-  - {fileID: 3576744802192327407}
+  - {fileID: 11400000, guid: 7593404e41dcad5409f94b6b3daedc1c, type: 2}
+  - {fileID: 11400000, guid: 1fa6818cbd50e664ca235aa5d42e5812, type: 2}
+  - {fileID: 11400000, guid: 502f61f4f14bd5a44aab3f9a27f266af, type: 2}
   enabledAmmoTypes: 000000
   fireCooldownTime: 0.4
   emptyColor: {r: 0.2, g: 0.2, b: 0.2, a: 0.6}
@@ -10463,94 +10401,6 @@ MonoBehaviour:
   - {r: 1, g: 0.69501346, b: 0.5613208, a: 1}
   - {r: 0.8258847, g: 0.6930847, b: 0.8396226, a: 1}
   tracerFadeDuration: 0.4
---- !u!114 &3576744802192327403
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3576744802192327405}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 025fcf02a0e0efc4bb92e2ee2661493f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  color: {r: 0.349, g: 0.725, b: 0.7, a: 0.9}
-  shockParticle: {fileID: 1788033988384031787, guid: 7aeb79d68b5ede34d9e21c338d45e04b,
-    type: 3}
-  decalSize: {x: 0.18, y: 0.18, z: 0.05}
-  decalMaterial: {fileID: 2100000, guid: 920b08d26d02dab47bcb5a06091c8a6b, type: 2}
-  bulletDamage: 40
-  forceAmount: 30
---- !u!114 &3576744802192327412
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3576744802192327405}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4917d559f17b9c4ca565e183abc20b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  color: {r: 0.9921, g: 0.4196, b: 0.1686, a: 0.9}
-  magnetizeEventPath: event:/SFX/EChargeAim
-  grappleEventPath: event:/SFX/EChargeAim
-  moveStrength: 50
-  movePlayerStrength: 20
-  holdColor: {r: 0.7735849, g: 0.14361048, b: 0, a: 1}
-  magnetableLayers:
-    serializedVersion: 2
-    m_Bits: 20967425
-  magnetSurfaceLayers:
-    serializedVersion: 2
-    m_Bits: 17862657
-  isPulling: 0
-  missParticle: {fileID: 5561028442748360280, guid: 8a11ade4554b8b74388f8c9c2892ad37,
-    type: 3}
-  grappleAnimationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0.0011291504
-      value: 0.3015747
-      inSlope: 3.7518432
-      outSlope: 3.7518432
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.01540852
-    - serializedVersion: 3
-      time: 0.99656963
-      value: 0.19583946
-      inSlope: -1.3902968
-      outSlope: -1.3902968
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.017514177
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!114 &3576744802192327407
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3576744802192327405}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a23248e3e82abd14fa0314a937698137, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  color: {r: 0.6901961, g: 0.34901962, b: 0.7254902, a: 0.9019608}
-  missParticle: {fileID: 5561028442748360280, guid: 8a11ade4554b8b74388f8c9c2892ad37,
-    type: 3}
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 4190721
 --- !u!114 &4758526582298296893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10594,7 +10444,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2406920ba45382f4f8328acbb6c38dfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gunContainer: {fileID: 3576744802192327413}
+  gun: {fileID: 0}
   maxLiftDistance: 4
   abandonDistance: 5
   liftForce: 20

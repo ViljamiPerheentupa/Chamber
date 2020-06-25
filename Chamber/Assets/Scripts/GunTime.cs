@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "GunTime", menuName = "Chamber/Player/Gun/Time", order = 0)]
 public class GunTime : GunAmmoBase {
     public Transform missParticle;
     public LayerMask layerMask;
@@ -23,16 +24,16 @@ public class GunTime : GunAmmoBase {
                 Instantiate(missParticle, hit.point, Quaternion.LookRotation(hit.normal));
             };
             
-            gunContainer.FireLineRenderer(hit.point, 2);
+            gun.FireLineRenderer(hit.point, 2);
         }
         else { // Hit nothing
-            gunContainer.FireLineRenderer(startPos + forward * 100.0f, 1);
+            gun.FireLineRenderer(startPos + forward * 100.0f, 1);
         }
         // else print("Missed Timehit");
 
-        gunContainer.PlayFireAnimation();
-        gunContainer.SetCurrentChamber(GunContainer.AmmoType.Empty);
-        gunContainer.SwapToNextChamber();
-        gunContainer.WaitForNextShot();
+        gun.PlayFireAnimation();
+        gun.SetCurrentChamber(Gun.AmmoType.Empty);
+        gun.SwapToNextChamber();
+        gun.WaitForNextShot();
     }
 }
