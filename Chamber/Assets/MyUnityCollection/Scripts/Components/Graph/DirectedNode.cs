@@ -9,6 +9,7 @@ namespace Muc.Components {
 
   using Muc.Types.Extensions;
   using Muc.Geometry;
+  using System;
 
   public class DirectedNode : MonoBehaviour, IDirectedNode<DirectedNode> {
 
@@ -59,6 +60,66 @@ namespace Muc.Components {
     }
 
     void OnDestroy() => ClearLinks();
+
+
+    #region Search
+
+    public enum SearchType {
+      DepthFirst,
+      BreadthFirst,
+    }
+
+
+    public DirectedNode DepthFirstSearch(Predicate<DirectedNode> predicate, HashSet<DirectedNode> visited)
+      => _DepthFirstSearch(predicate, visited, this);
+
+    public DirectedNode DepthFirstSearch(Predicate<DirectedNode> predicate)
+      => _DepthFirstSearch(predicate, new HashSet<DirectedNode>(), this);
+
+    private static DirectedNode _DepthFirstSearch(in Predicate<DirectedNode> predicate, in HashSet<DirectedNode> visited, in DirectedNode node) {
+
+      visited.Add(node);
+      if (predicate(node))
+        return node;
+
+      foreach (var link in node.outLinks) {
+        if (visited.Add(link))
+          return _DepthFirstSearch(predicate, visited, link);
+      }
+
+      return null;
+    }
+
+
+    public DirectedNode BreadthFirstSearch(Predicate<DirectedNode> predicate, HashSet<DirectedNode> visited)
+      => _BreadthFirstSearch(this, predicate, visited);
+
+    public DirectedNode BreadthFirstSearch(Predicate<DirectedNode> predicate)
+      => _BreadthFirstSearch(this, predicate, new HashSet<DirectedNode>());
+
+    private static DirectedNode _BreadthFirstSearch(DirectedNode node, Predicate<DirectedNode> predicate, HashSet<DirectedNode> visited) {
+
+      var queue = new Queue<DirectedNode>();
+
+      queue.Enqueue(node);
+      visited.Add(node);
+
+      while (queue.Count > 0) {
+        var current = queue.Dequeue();
+
+        if (predicate(current))
+          return current;
+
+        foreach (var future in current.outLinks) {
+          if (visited.Add(future))
+            queue.Enqueue(future);
+        }
+      }
+
+      return null;
+    }
+
+    #endregion
   }
 
 }
