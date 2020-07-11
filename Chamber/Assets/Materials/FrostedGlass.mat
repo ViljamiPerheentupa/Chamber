@@ -48,7 +48,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 189979cfa67ad3046ad5fc61512efd4a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5dfd9dd62386315438443f5508e80889, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0.5}
     - _MetallicGlossMap:
@@ -72,7 +72,7 @@ Material:
     - _AlphaSrcBlend: 1
     - _BlendMode: 0
     - _BlurDistPow: 0.25
-    - _BlurStrength: 10
+    - _BlurStrength: 8
     - _BumpAmt: 42
     - _BumpScale: 1
     - _CullMode: 0
@@ -98,7 +98,7 @@ Material:
     - _MaxLod: 7
     - _Metallic: 0
     - _Mode: 0
-    - _NearDepthFadeDist: 1
+    - _NearDepthFadeDist: 5
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _ReceivesSSR: 0
