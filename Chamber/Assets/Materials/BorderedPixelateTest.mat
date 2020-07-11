@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MonitorShaderTest
+  m_Name: BorderedPixelateTest
   m_Shader: {fileID: -6465566751694194690, guid: 25a512597b85a64458790e8e7892547a,
     type: 3}
   m_ShaderKeywords: ENUM_EA878B6F_B UVMODE_TEXTURE
@@ -89,7 +89,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 29ad712bdb438954da46bcf9aacc6ba9, type: 3}
+        m_Texture: {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskMap:
@@ -130,18 +130,21 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - AberrationDivisorThing: 1.5
-    - AberrationRGBShiftMult: 0.75
+    - AberrationRGBShiftMult: 1
+    - BorderAberrationDistance: 1
+    - BorderOpacity: 1
     - ENUM_256767AD: 0
     - ENUM_EA878B6F: 1
-    - GridStrength: 0.878
+    - GridStrength: 0
     - InterlaceDistance: 1
     - LineDensity: 6
     - LineDistance: 18
     - LineThickness: 1
-    - LineWidth: 3
+    - LineWidth: 1
     - MaskBlendRange: 0.1
     - MaskFraction: 0
-    - PixelMaskFraction: 0.991
+    - PixelBorderSize: 3
+    - PixelMaskFraction: 1
     - UVMODE: 0
     - Vector1_5638EA1: 0
     - Vector1_67500ACF: 0.017
