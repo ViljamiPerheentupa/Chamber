@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Texture2DArrayCreator
+  m_EditorClassIdentifier: Assembly-CSharp:Hidden:Texture2DArrayCreator
+  sources:
+  - {fileID: 2800000, guid: b91cfb409245d934596af1608a62246b, type: 3}
+  - {fileID: 2800000, guid: 8412b47613f4f5d48873c4a03fee4692, type: 3}
+  - {fileID: 2800000, guid: 4eeca29e6ad62fc4e8e60befd1c675a5, type: 3}
+  - {fileID: 2800000, guid: e803fd8bf41717b4c9714e5bf0061828, type: 3}
+  assetPath: Assets/Scenes/Samuel/Paintable/
+  assetName: Normals.asset
+  creationFlags: 0
