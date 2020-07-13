@@ -67,6 +67,7 @@ namespace Hidden {
           }
 
           if (textureArray) AssetDatabase.CreateAsset(textureArray, path);
+          EditorGUIUtility.PingObject(textureArray);
         }
 
       }
