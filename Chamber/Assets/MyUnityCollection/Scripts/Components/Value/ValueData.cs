@@ -99,7 +99,7 @@ namespace Muc.Components.Values {
   using UnityEngine;
 
 
-  [CreateAssetMenu(menuName = "ValueData")]
+  [CreateAssetMenu(fileName = "ValueData", menuName = "MUC/ValueData", order = 1)]
   public class ValueData : ScriptableObject {
 
     /// <summary>

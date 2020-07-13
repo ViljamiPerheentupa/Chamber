@@ -9,14 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 04dcc3a935734244a980a79795aeb1ba, type: 3}
   m_Name: Texture2DArrayCreator
-  m_EditorClassIdentifier: Assembly-CSharp:Hidden:Texture2DArrayCreator
-  sources:
-  - {fileID: 2800000, guid: b91cfb409245d934596af1608a62246b, type: 3}
-  - {fileID: 2800000, guid: 8412b47613f4f5d48873c4a03fee4692, type: 3}
-  - {fileID: 2800000, guid: 4eeca29e6ad62fc4e8e60befd1c675a5, type: 3}
-  - {fileID: 2800000, guid: e803fd8bf41717b4c9714e5bf0061828, type: 3}
-  assetPath: Assets/Scenes/Samuel/Paintable/
-  assetName: Normals.asset
+  m_EditorClassIdentifier: 
+  sources: []
+  assetPath: Assets/Textures/Untitled Texture Array.asset
+  assetName: Untitled Texture Array.asset
   creationFlags: 0

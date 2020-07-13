@@ -27,7 +27,7 @@ namespace Hidden {
 
         // Validate
         if (!t || t.sources.Length == 0) {
-          Debug.LogError("Provide atleast one texture.");
+          EditorUtility.DisplayDialog("Texture Array Creation Error", "Provide atleast one texture.", "ok");
           goto skip;
         }
 
@@ -37,7 +37,7 @@ namespace Hidden {
           t.sources.Any(e => e.width != first.width) ||
           t.sources.Any(e => e.height != first.height)
         ) {
-          Debug.LogError("Texture dimensions must match!");
+          EditorUtility.DisplayDialog("Texture Array Creation Error", "Texture dimensions must match!", "ok");
           goto skip;
         }
 
@@ -46,7 +46,7 @@ namespace Hidden {
         }
 
         if (t.sources.Any(e => !e.isReadable)) {
-          Debug.LogError("Textures must be readable (read write enabled)!");
+          EditorUtility.DisplayDialog("Texture Array Creation Error", "Textures must be readable!\nEnable read write in the textures' import screen.", "ok");
           goto skip;
         }
 
@@ -55,15 +55,22 @@ namespace Hidden {
         var width = first.width;
         var height = first.height;
 
-        var textureArray = new Texture2DArray(width, height, t.sources.Length, first.graphicsFormat, (TextureCreationFlags)t.creationFlags);
 
-        for (int i = 0; i < t.sources.Length; i++) {
-          textureArray.SetPixels(t.sources[i].GetPixels(), i);
+        var path = EditorUtility.SaveFilePanelInProject("Save texture array as Unity Asset", "New Texture Array", "asset", "Choose save location");
+
+        if (path.Length > 0) {
+
+          var textureArray = new Texture2DArray(width, height, t.sources.Length, first.graphicsFormat, (TextureCreationFlags)t.creationFlags);
+
+          for (int i = 0; i < t.sources.Length; i++) {
+            textureArray.SetPixels(t.sources[i].GetPixels(), i);
+          }
+
+          if (textureArray) AssetDatabase.CreateAsset(textureArray, path);
         }
 
-
-        AssetDatabase.CreateAsset(textureArray, $"{t.assetPath}/{t.assetName}");
       }
+
     skip:
 
       serializedObject.ApplyModifiedProperties();
@@ -85,13 +92,9 @@ namespace Hidden {
     Crunch = 64
   }
 
-  [CreateAssetMenu(fileName = "Texture2DArrayCreator", menuName = "ScriptableObjects/Texture2DArrayCreator", order = 1)]
   public class Texture2DArrayCreator : ScriptableObject {
 
     public Texture2D[] sources;
-
-    public string assetPath = "Assets/Textures/Untitled Texture Array.asset";
-    public string assetName = "Untitled Texture Array.asset";
 
     public TextureCreationFlagsClone creationFlags = TextureCreationFlagsClone.None;
 
