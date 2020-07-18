@@ -19,7 +19,7 @@ public class DelayTrigger : BaseResetable {
         }
     }
 
-    public void StartReset() {
+    new public void StartReset() {
         OnReset.Invoke();
     }
 
