@@ -195,8 +195,8 @@ Material:
     - BOOLEAN_C9E2E01D: 0
     - BlendRadius: 0.025
     - BlendSamplesPerDir: 12
-    - Blend_Radius: 0.002
-    - Blend_Samples_Per_Dir: 28.04
+    - Blend_Radius: 0.05
+    - Blend_Samples_Per_Dir: 12
     - Coat: 0
     - EMISSION_MULTIPLY_WITH_BASE: 0
     - ENABLE_PAINT: 5.81
