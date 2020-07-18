@@ -54,7 +54,8 @@ namespace global {
     void EnablePaint() {
       if (!paint) {
         paint = true;
-        mat.SetFloat("PAINT", 1);
+        mat.EnableKeyword("PAINT_ON");
+        mat.DisableKeyword("PAINT_OFF");
         if (!tex) {
           Init();
         }
@@ -63,7 +64,9 @@ namespace global {
 
     void DisablePaint(bool destroyTexture = true) {
       if (paint) {
-        mat.SetFloat("PAINT", 0);
+        paint = false;
+        mat.DisableKeyword("PAINT_ON");
+        mat.EnableKeyword("PAINT_OFF");
         if (destroyTexture) {
           tex = null;
           mat.SetTexture("Paint_Index_Map", tex);
@@ -71,10 +74,14 @@ namespace global {
       }
     }
 
-    /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
-    public void Paint(Vector2 uv, PaintType paint) {
-      Paint((int)(uv.x * textureSize), (int)(uv.y * textureSize), paint);
+    public PaintType GetPaint(Vector2 uv) => GetPaint((int)(uv.x * textureSize), (int)(uv.y * textureSize));
+    public PaintType GetPaint(int x, int y) { // (byte)((byte)paint * paintStep)
+      if (!paint) return PaintType.none;
+      return (PaintType)((float)data[CoordToIndex(WrapCoord(x), WrapCoord(y))] / (float)paintStep);
     }
+
+    /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
+    public void Paint(Vector2 uv, PaintType paint) => Paint((int)(uv.x * textureSize), (int)(uv.y * textureSize), paint);
     /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
     public void Paint(int x, int y, PaintType paint) {
       if (paint == PaintType.ignore) return;
@@ -84,9 +91,7 @@ namespace global {
     }
 
     /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
-    public void PaintArea(Vector2 uv, Vector2 dims, PaintType paint) {
-      PaintArea((int)(uv.x * textureSize), (int)(uv.y * textureSize), (int)(dims.x * textureSize), (int)(dims.y * textureSize), paint);
-    }
+    public void PaintArea(Vector2 uv, Vector2 dims, PaintType paint) => PaintArea((int)(uv.x * textureSize), (int)(uv.y * textureSize), (int)(dims.x * textureSize), (int)(dims.y * textureSize), paint);
     /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
     public void PaintArea(int x, int y, int w, int h, PaintType paint) {
 
@@ -107,9 +112,7 @@ namespace global {
     }
 
     /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
-    public void PaintArea(Vector2 uv, Vector2 dims, PaintType[,] paintData) {
-      PaintArea((int)(uv.x * textureSize), (int)(uv.y * textureSize), paintData);
-    }
+    public void PaintArea(Vector2 uv, Vector2 dims, PaintType[,] paintData) => PaintArea((int)(uv.x * textureSize), (int)(uv.y * textureSize), paintData);
     /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
     public void PaintArea(int x, int y, PaintType[,] paintData) {
 
