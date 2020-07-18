@@ -44,10 +44,10 @@ namespace global {
 
     void Init() {
       tex = new Texture2D(textureSize, textureSize, GraphicsFormat.R8_UNorm, TextureCreationFlags.None);
-      Clear();
-      mat.SetTexture("Paint_Index_Map", tex);
       paintStep = (byte)(byte.MaxValue / (byte)mat.GetInt("Paint_Texture_Count"));
       data = tex.GetRawTextureData<byte>();
+      Clear();
+      mat.SetTexture("Paint_Index_Map", tex);
     }
 
 
@@ -129,7 +129,7 @@ namespace global {
 
     public void Clear() {
       for (int i = 0; i < data.Length; i++) {
-        data[0] = byte.MinValue;
+        data[i] = (byte)PaintType.none;
       }
     }
 
