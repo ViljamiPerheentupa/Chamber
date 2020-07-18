@@ -24,7 +24,7 @@ namespace global {
       ignore = 254,
     }
 
-    public static readonly int textureSize = 512;
+    public static readonly int textureSize = 64;
 
     [Tooltip("Create texture at Start")]
     public bool preInitialize = false;
