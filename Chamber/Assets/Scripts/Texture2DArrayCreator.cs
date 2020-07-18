@@ -1,7 +1,7 @@
 ﻿
 
 #if UNITY_EDITOR
-namespace Hidden {
+namespace global.Editor {
 
   using System.Collections;
   using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace Hidden {
 
         // Validate
         if (!t || t.sources.Length == 0) {
-          EditorUtility.DisplayDialog("Texture Array Creation Error", "Provide atleast one texture.", "ok");
+          EditorUtility.DisplayDialog("Texture Array Creation Error", "Provide atleast one texture.", "OK");
           goto skip;
         }
 
@@ -37,7 +37,7 @@ namespace Hidden {
           t.sources.Any(e => e.width != first.width) ||
           t.sources.Any(e => e.height != first.height)
         ) {
-          EditorUtility.DisplayDialog("Texture Array Creation Error", "Texture dimensions must match!", "ok");
+          EditorUtility.DisplayDialog("Texture Array Creation Error", "Texture dimensions must match!", "OK");
           goto skip;
         }
 
@@ -46,7 +46,7 @@ namespace Hidden {
         }
 
         if (t.sources.Any(e => !e.isReadable)) {
-          EditorUtility.DisplayDialog("Texture Array Creation Error", "Textures must be readable!\nEnable read write in the textures' import screen.", "ok");
+          EditorUtility.DisplayDialog("Texture Array Creation Error", "Textures must be readable!\nEnable read write in the textures' import screen.", "OK");
           goto skip;
         }
 
@@ -82,7 +82,7 @@ namespace Hidden {
 #endif
 
 
-namespace Hidden {
+namespace global {
 
   using UnityEngine;
 

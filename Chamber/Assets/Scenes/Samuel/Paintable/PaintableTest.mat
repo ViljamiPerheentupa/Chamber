@@ -31,7 +31,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Emission_Map:
-        m_Texture: {fileID: 2800000, guid: e4715cfab35bd4f428c3aa78f144bf1c, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Mask_Map:
@@ -43,7 +43,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - PaintMask:
-        m_Texture: {fileID: 2800000, guid: 8fe53bf5d74b272418f142a414a5a435, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3b2f5c21b070a5e44a4d5992daf61c6c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Paint_Base_Maps:
@@ -52,6 +52,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - Paint_Emissive_Maps:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Paint_Index_Map:
+        m_Texture: {fileID: 2800000, guid: 3b2f5c21b070a5e44a4d5992daf61c6c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Paint_Normal_Maps:
@@ -127,7 +131,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 85ac55597b97403c82fc6601a93cf241, type: 3}
+        m_Texture: {fileID: 2800000, guid: 283f897e4925411ebbaa758b4cb13fc2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskMap:
@@ -174,6 +178,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_B1B08864_Out_0:
+        m_Texture: {fileID: 2800000, guid: 164d9b49a04e2444fa763996f1cd054c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ThicknessMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -185,6 +193,10 @@ Material:
     m_Floats:
     - Ambient_Occlusion: 1
     - BOOLEAN_C9E2E01D: 0
+    - BlendRadius: 0.025
+    - BlendSamplesPerDir: 12
+    - Blend_Radius: 0.002
+    - Blend_Samples_Per_Dir: 28.04
     - Coat: 0
     - EMISSION_MULTIPLY_WITH_BASE: 0
     - ENABLE_PAINT: 5.81
