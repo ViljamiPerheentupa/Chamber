@@ -7,7 +7,7 @@ public class AmmoPickup : MonoBehaviour {
     public enum Type {
         AirShotgun,
         Shock,
-        Magnet,
+        Switcheroo,
         Time
     };
 
@@ -27,8 +27,8 @@ public class AmmoPickup : MonoBehaviour {
                 case Type.Shock:
                     gc.SetAmmoTypeStatus(Gun.AmmoType.eShock, true);
                     break;
-                case Type.Magnet:
-                    gc.SetAmmoTypeStatus(Gun.AmmoType.Magnet, true);
+                case Type.Switcheroo:
+                    gc.SetAmmoTypeStatus(Gun.AmmoType.Switcheroo, true);
                     break;
                 case Type.Time:
                     gc.SetAmmoTypeStatus(Gun.AmmoType.Time, true);

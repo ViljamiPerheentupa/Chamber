@@ -8,7 +8,7 @@ using FMODUnity;
 public class Gun : MonoBehaviour {
     // Constants
     private const int numTypes = 3;
-    public enum AmmoType { Empty, eShock, Magnet, Time };
+    public enum AmmoType { Empty, eShock, Switcheroo, Time };
 
     // Public
     public DecalManager decalManager;
@@ -191,7 +191,7 @@ public class Gun : MonoBehaviour {
 
     void OnAmmoMagnetise() {
         if (isInReload && enabledAmmoTypes[1] && canDoActionAndNoHolster()) {
-            AddAmmoToChamber(AmmoType.Magnet);
+            AddAmmoToChamber(AmmoType.Switcheroo);
         }
     }
 
