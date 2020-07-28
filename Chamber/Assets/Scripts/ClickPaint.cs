@@ -5,19 +5,19 @@ namespace global {
 
   using UnityEngine;
 
-  [RequireComponent(typeof(PaintController))]
+  [RequireComponent(typeof(Paintable))]
   [RequireComponent(typeof(Collider))]
   public class ClickPaint : MonoBehaviour {
 
-    public PaintController.PaintType paintType = PaintController.PaintType.none;
+    public Paintable.PaintType paintType = Paintable.PaintType.none;
     public Vector2 size = new Vector2(0.01f, 0.01f);
 
     private Collider col;
-    private PaintController paint;
+    private Paintable paint;
 
     void Start() {
       col = GetComponent<Collider>();
-      paint = GetComponent<PaintController>();
+      paint = GetComponent<Paintable>();
     }
 
 

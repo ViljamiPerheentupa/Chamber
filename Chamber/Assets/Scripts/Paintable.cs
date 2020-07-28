@@ -8,7 +8,7 @@ namespace global {
   using UnityEngine.Experimental.Rendering;
 
   [RequireComponent(typeof(Renderer))]
-  public class PaintController : MonoBehaviour {
+  public class Paintable : MonoBehaviour {
 
     public enum PaintType : byte {
       none = 0,
