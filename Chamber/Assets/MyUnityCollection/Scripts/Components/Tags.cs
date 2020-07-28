@@ -4,51 +4,56 @@ namespace Muc.Components {
   using System.Linq;
   using System.Collections;
   using System.Collections.Generic;
+
   using UnityEngine;
 
+  [ExecuteAlways]
   [DisallowMultipleComponent]
   public class Tags : MonoBehaviour, ICollection<string>, IEnumerable<string>, IEnumerable, IReadOnlyCollection<string>, ISerializationCallbackReceiver {
 
-
     #region Global Static Container
 
-    private static Dictionary<string, HashSet<Tags>> tagsDict = new Dictionary<string, HashSet<Tags>>();
+    private static Dictionary<string, HashSet<Tags>> tagged = new Dictionary<string, HashSet<Tags>>();
 
-    public static Tags[] GetComponents(string tag) {
-      if (tagsDict.TryGetValue(tag, out var val)) {
-        return val.ToArray();
+    private static ICollection<string> GetTags() => tagged.Keys;
+
+    /// <summary> Returns an array of GameObjects tagged `tag` </summary>
+    public static GameObject[] GetTagged(string tag) => _GetTagged(tag).ToArray();
+    private static IEnumerable<GameObject> _GetTagged(string tag) {
+      if (tagged.TryGetValue(tag, out var val)) {
+        foreach (var v in val) {
+          yield return v.gameObject;
+        }
       }
-      return new Tags[0];
     }
 
-    public static Tags[] GetComponentsContainingAll(IEnumerable<string> tags) {
+    /// <summary> Returns an array of GameObjects tagged at least `tags` </summary>
+    public static GameObject[] GetTaggedAll(IEnumerable<string> tags) => _GetTaggedAll(tags).ToArray();
+    private static IEnumerable<GameObject> _GetTaggedAll(IEnumerable<string> tags) {
       var emumer = tags.GetEnumerator();
 
-      if (!emumer.MoveNext()) return new Tags[0]; // Empty
+      if (!emumer.MoveNext()) yield break; // Empty
 
       var first = emumer.Current;
-      if (tagsDict.TryGetValue(first, out var val)) {
-        return val.Where(c => c.ContainsAll(tags)).ToArray();
-      }
-
-      return new Tags[0];
-    }
-
-    public static Tags[] GetComponentsContainingAny(IEnumerable<string> tags) {
-      var res = new Tags[0];
-
-      foreach (var tag in tags) {
-        if (tagsDict.TryGetValue(tag, out var val)) {
-          res.Concat(val).ToArray();
+      if (tagged.TryGetValue(first, out var val)) {
+        foreach (var v in val.Where(c => c.ContainsAll(tags))) {
+          yield return v.gameObject;
         }
       }
 
-      return res;
     }
 
-    public static GameObject[] GetObjects(string tag) => GetComponents(tag).Select(v => v.gameObject).ToArray();
-    public static GameObject[] GetObjectsContainingAll(IEnumerable<string> tags) => GetComponentsContainingAll(tags).Select(v => v.gameObject).ToArray();
-    public static GameObject[] GetObjectsContainingAny(IEnumerable<string> tags) => GetComponentsContainingAny(tags).Select(v => v.gameObject).ToArray();
+    /// <summary> Returns an array of GameObjects tagged any of `tags` </summary>
+    public static GameObject[] GetTaggedAny(IEnumerable<string> tags) => _GetTaggedAny(tags).ToArray();
+    private static IEnumerable<GameObject> _GetTaggedAny(IEnumerable<string> tags) {
+      foreach (var tag in tags) {
+        if (tagged.TryGetValue(tag, out var val)) {
+          foreach (var v in val) {
+            yield return v.gameObject;
+          }
+        }
+      }
+    }
 
     #endregion
 
@@ -58,7 +63,7 @@ namespace Muc.Components {
     #region - Functionality
 
     private HashSet<string> tags = new HashSet<string>();
-    private string[] serializationTags;
+    [SerializeField] string[] serializableTags;
 
     public int Count => tags.Count;
     public bool IsReadOnly => false;
@@ -102,12 +107,12 @@ namespace Muc.Components {
     void OnDestroy() => Unregister();
 
     void ISerializationCallbackReceiver.OnBeforeSerialize() {
-      serializationTags = tags.ToArray();
+      serializableTags = tags.ToArray();
     }
 
     void ISerializationCallbackReceiver.OnAfterDeserialize() {
-      if (serializationTags == null) return;
-      tags = new HashSet<string>(serializationTags);
+      if (serializableTags == null) return;
+      tags = new HashSet<string>(serializableTags);
       Register();
     }
 
@@ -117,8 +122,8 @@ namespace Muc.Components {
       }
     }
     private void RegisterTag(string tag) {
-      if (!tagsDict.ContainsKey(tag)) tagsDict[tag] = new HashSet<Tags>();
-      tagsDict[tag].Add(this);
+      if (!tagged.ContainsKey(tag)) tagged[tag] = new HashSet<Tags>();
+      tagged[tag].Add(this);
     }
 
 
@@ -128,8 +133,10 @@ namespace Muc.Components {
       }
     }
     private void UnregisterTag(string tag) {
-      if (tagsDict.TryGetValue(tag, out var val)) {
+      if (tagged.TryGetValue(tag, out var val)) {
         val.Remove(this);
+        if (val.Count == 0)
+          tagged.Remove(tag);
       }
     }
 
@@ -146,10 +153,12 @@ namespace Muc.Components {
 #if UNITY_EDITOR
 namespace Muc.Components.Editor {
 
+  using System.Reflection;
   using System.Linq;
 
   using UnityEngine;
   using UnityEditor;
+  using System.Collections.Generic;
 
   [CustomEditor(typeof(Tags))]
   public class TagsEditor : Editor {
@@ -158,40 +167,72 @@ namespace Muc.Components.Editor {
 
     private Tags t => target as Tags;
 
+    private List<string> tagDisplay = new List<string>();
 
     public override void OnInspectorGUI() {
       serializedObject.Update();
 
-      // Add new tag
+
+      // -- Add new tag --
       using (new EditorGUILayout.HorizontalScope()) {
         newTagName = EditorGUILayout.TextField(newTagName);
+        newTagName = newTagName.Trim();
         if (GUILayout.Button("Add Tag")) {
-          if (!t.Add(newTagName)) {
-
-            var i = 0;
-            while (t.Contains($"{newTagName} ({++i})") && i < 9999) { }
-            t.Add($"{newTagName} ({i})");
+          if (!t.Contains(newTagName) && newTagName != "") {
+            ((ISerializationCallbackReceiver)t).OnBeforeSerialize();
+            Undo.RegisterCompleteObjectUndo(t, "Add Tag");
+            t.Add(newTagName);
+            EditorUtility.SetDirty(target);
           }
         }
       }
 
-      EditorGUILayout.Space();
+      EditorGUILayout.Separator();
 
-      // Display tags and allow removal
-      foreach (var tag in t.ToArray()) {
+      // Display tags, allow removal and editing. ToArray to allow modification during foreach
+      var asList = t.ToList();
+
+      // Sync tag and display collection size
+      while (tagDisplay.Count > asList.Count) tagDisplay.RemoveAt(tagDisplay.Count - 1);
+      while (tagDisplay.Count < asList.Count) tagDisplay.Add(asList[tagDisplay.Count]);
+
+      for (int i = 0; i < asList.Count; i++) {
+        var tag = asList[i];
 
         using (new EditorGUILayout.HorizontalScope()) {
-          GUILayout.Label(tag);
-          if (GUILayout.Button("Remove Tag")) {
-            t.Remove(tag);
-          }
-        }
 
+          // -- Tag edit --
+          // Reset to actual tag string when not editing
+          if (!EditorGUIUtility.editingTextField) tagDisplay[i] = tag;
+
+          EditorGUI.BeginChangeCheck();
+
+          var tagString = EditorGUILayout.TextField(tagDisplay[i]);
+          tagString = tagString.Trim();
+
+          if (EditorGUI.EndChangeCheck() && tagString != "" && !t.Contains(tagString)) {
+            tagDisplay[i] = tagString;
+            t.Remove(tag);
+            t.Add(tagString);
+            Undo.RegisterCompleteObjectUndo(t, "Rename Tag");
+            ((ISerializationCallbackReceiver)t).OnBeforeSerialize();
+            EditorUtility.SetDirty(target);
+          }
+
+          // -- Remove button --
+          if (GUILayout.Button("Remove Tag")) {
+            if (t.Contains(tag)) {
+              Undo.RegisterCompleteObjectUndo(t, "Remove Tag");
+              t.Remove(tag);
+              ((ISerializationCallbackReceiver)t).OnBeforeSerialize();
+              EditorUtility.SetDirty(target);
+            }
+          }
+
+        }
       }
 
-
-
-      serializedObject.ApplyModifiedProperties();
+      serializedObject.ApplyModifiedPropertiesWithoutUndo();
     }
   }
 }
