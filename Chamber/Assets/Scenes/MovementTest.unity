@@ -13391,7 +13391,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-1394
+  m_Name: pb_Mesh-18920
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -19116,6 +19116,12 @@ PrefabInstance:
       propertyPath: reticleImage.Array.data[2]
       value: 
       objectReference: {fileID: 6751343941315912724}
+    - target: {fileID: 3576744802192327413, guid: ad82e878837850141823e80c8a613049,
+        type: 3}
+      propertyPath: ammoTypes.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: fd94b276cdeb03640a292a78ff953012,
+        type: 2}
     - target: {fileID: 3576744802192327414, guid: ad82e878837850141823e80c8a613049,
         type: 3}
       propertyPath: downwardAngle.y

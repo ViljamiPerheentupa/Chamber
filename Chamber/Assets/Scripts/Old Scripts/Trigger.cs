@@ -45,7 +45,7 @@ public class Trigger : MonoBehaviour
             turnedOn = false;
             return;
         }
-        if (type == Gun.AmmoType.Magnet && triggerType == TriggerType.Normal && !turnedOn) {
+        if (type == Gun.AmmoType.Switcheroo && triggerType == TriggerType.Normal && !turnedOn) {
             onTriggerOn.Invoke();
             turnedOn = true;
             FMODUnity.RuntimeManager.PlayOneShot("event:/SFX/Switch");
