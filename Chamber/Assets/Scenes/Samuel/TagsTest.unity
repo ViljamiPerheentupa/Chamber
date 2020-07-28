@@ -568,7 +568,7 @@ GameObject:
   - component: {fileID: 955140934}
   - component: {fileID: 955140933}
   m_Layer: 0
-  m_Name: MyCoolGameObject 3
+  m_Name: 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -727,8 +727,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca74a73b87ddba64ea138dd2a1833592, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  guiStyleName: ExposablePopupItem
-  pad: 0
 --- !u!1 &2037479651
 GameObject:
   m_ObjectHideFlags: 1
