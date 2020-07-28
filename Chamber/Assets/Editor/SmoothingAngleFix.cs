@@ -50,10 +50,12 @@ using System.Collections;
 
 public class SmoothingAngleFix : AssetPostprocessor {
 
-	private bool useMikk = true;
+#if UNITY_5_3
+  private bool useMikk = true;
+#endif
 
-	void OnPreprocessModel () {
-		ModelImporter modelImporter = assetImporter as ModelImporter;
+  void OnPreprocessModel() {
+    ModelImporter modelImporter = assetImporter as ModelImporter;
 
 #if UNITY_5_3
 		// Set Normals to Import.
@@ -66,18 +68,20 @@ public class SmoothingAngleFix : AssetPostprocessor {
 			modelImporter.importTangents = ModelImporterTangents.CalculateLegacyWithSplitTangents;
 		}
 #else
-		// Set Smoothing Angle to 180.
-		modelImporter.normalImportMode = ModelImporterTangentSpaceMode.Calculate;
-		modelImporter.normalSmoothingAngle = 180.0f;
+#pragma warning disable CS0618
+    // Set Smoothing Angle to 180.
+    modelImporter.normalImportMode = ModelImporterTangentSpaceMode.Calculate;
+    modelImporter.normalSmoothingAngle = 180.0f;
 
-		// Set Normals to Import.
-		modelImporter.normalImportMode = ModelImporterTangentSpaceMode.Import;
+    // Set Normals to Import.
+    modelImporter.normalImportMode = ModelImporterTangentSpaceMode.Import;
 
-		// Set Tangents to Calculate.
-		modelImporter.tangentImportMode = ModelImporterTangentSpaceMode.Calculate;
+    // Set Tangents to Calculate.
+    modelImporter.tangentImportMode = ModelImporterTangentSpaceMode.Calculate;
 
-		// Set Split Tangents to True.
-		modelImporter.splitTangentsAcrossSeams = true;
+    // Set Split Tangents to True.
+    modelImporter.splitTangentsAcrossSeams = true;
+#pragma warning restore CS0618
 #endif
-	}
+  }
 }

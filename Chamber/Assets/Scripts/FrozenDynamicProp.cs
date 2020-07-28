@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿
+#pragma warning disable CS0414
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DynamicProp : MonoBehaviour, IProp
 {
-    bool hasAnimator;
+    bool hasAnimator = false;
 
     public bool timeLocked = false;
     [Tooltip("If the GameObject has a unique TimeLock duration, check this.")]
@@ -19,16 +19,16 @@ public class DynamicProp : MonoBehaviour, IProp
     float tlTimer = 0;
     Vector3 lockedDirection;
     Vector3 lockedRotation;
-    float lockedAnimSpeed;
+    float lockedAnimSpeed = 0;
     bool hadGravity;
     bool wasStopped;
 
     Vector3 origPos;
     Quaternion origRot;
 
-    Rigidbody rig;
-    Animator anim;
-    GameObject tlGraphic;
+    Rigidbody rig = null;
+    Animator anim = null;
+    GameObject tlGraphic = null;
 
     void Start()
     {
