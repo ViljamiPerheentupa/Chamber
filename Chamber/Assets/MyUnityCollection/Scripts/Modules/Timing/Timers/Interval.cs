@@ -11,6 +11,7 @@ namespace Muc.Timing {
     /// <summary>
     /// A repeating timer which can be used once after each time a duration passes.
     /// </summary>
+    [Serializable]
     public class Interval {
 
       /// <summary>
@@ -21,7 +22,15 @@ namespace Muc.Timing {
       /// <summary>
       /// Duration after start there is one remaining use.
       /// </summary>
-      public float delay { get; private set; }
+      public float delay {
+        get => _delay;
+        set {
+          if (delay <= 0) throw new ArgumentOutOfRangeException(nameof(delay), $"Value of {nameof(delay)} must be positive.");
+          _delay = value;
+        }
+      }
+      [SerializeField]
+      private float _delay = 1;
 
       /// <summary>
       /// Amount of times this Interval has been used.
@@ -34,12 +43,17 @@ namespace Muc.Timing {
       public int uses => Mathf.FloorToInt((Time.time - start) / delay);
 
 
+      Interval() { }
+
       /// <summary>
       /// Creates a repeating timer which can be used after `delay` has passed.
       /// </summary>
-      /// <param name="delay">Duration after which Use can be used once in milliseconds.</param>
+      /// <param name="delay">Duration after which Use can be used once in seconds.</param>
       public Interval(float delay) {
-        this.start = Time.time;
+        try {
+          this.start = Time.time;
+        } catch (UnityException) { }
+
         this.delay = delay;
       }
 
@@ -86,3 +100,36 @@ namespace Muc.Timing {
   }
 
 }
+
+#if UNITY_EDITOR
+namespace Muc.Timing.Editor {
+
+  using UnityEngine;
+  using UnityEditor;
+  using static Muc.Timing.Timers;
+
+  public static partial class Timers {
+
+    [CustomPropertyDrawer(typeof(Interval))]
+    public class IntervalDrawer : PropertyDrawer {
+
+      public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
+        return EditorGUIUtility.singleLineHeight;
+      }
+
+      public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
+        EditorGUI.BeginProperty(position, label, property);
+
+        var delay = property.FindPropertyRelative("_delay");
+        var input = EditorGUI.FloatField(position, property.displayName, delay.floatValue);
+        if (input > 0) delay.floatValue = input;
+
+        EditorGUI.EndProperty();
+      }
+
+    }
+
+  }
+
+}
+#endif
