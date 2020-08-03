@@ -14,23 +14,33 @@ namespace Muc.Timing {
     [Serializable]
     public class Interval {
 
-      /// <summary>
-      /// Represents the ideal time of last trigger or when this Interval was created.
-      /// </summary>
-      public float start { get; private set; }
+      [SerializeField]
+      internal float start;
+      private float pauseAdjustedStart => (paused ? start + Time.time - pauseTime : start);
 
       /// <summary>
-      /// Duration after start there is one remaining use.
+      /// Repeating duration after which a new use becomes available.
       /// </summary>
       public float delay {
         get => _delay;
         set {
           if (delay <= 0) throw new ArgumentOutOfRangeException(nameof(delay), $"Value of {nameof(delay)} must be positive.");
+
+          if (paused) {
+            paused = false;
+            paused = true;
+          }
+
+          // Calculates start as such that the remaining uses are carried over and leftover time gives up to 1 use
+          var startAfterUse = start + uses * _delay;
+          var leftovers = Mathf.Min(Time.time - startAfterUse, value);
+          start = Time.time - (uses * value + leftovers);
+
           _delay = value;
         }
       }
       [SerializeField]
-      private float _delay = 1;
+      internal float _delay = 1;
 
       /// <summary>
       /// Amount of times this Interval has been used.
@@ -40,7 +50,27 @@ namespace Muc.Timing {
       /// <summary>
       /// Amount of remaining uses.
       /// </summary>
-      public int uses => Mathf.FloorToInt((Time.time - start) / delay);
+      public int uses => paused ? 0 : Mathf.FloorToInt((Time.time - pauseAdjustedStart) / delay);
+
+      /// <summary>
+      /// Whether this Interval is paused.
+      /// </summary>
+      public bool paused {
+        get => _paused;
+        set {
+          if (_paused == value) return;
+          if (value) {
+            pauseTime = Time.time;
+          } else {
+            start = pauseAdjustedStart;
+          }
+          _paused = value;
+        }
+      }
+      [SerializeField]
+      internal bool _paused;
+      [SerializeField]
+      internal float pauseTime;
 
 
       Interval() { }
@@ -49,12 +79,17 @@ namespace Muc.Timing {
       /// Creates a repeating timer which can be used after `delay` has passed.
       /// </summary>
       /// <param name="delay">Duration after which Use can be used once in seconds.</param>
-      public Interval(float delay) {
+      /// <param name="paused">Whether this Interval will be created in a paused state.</param>
+      public Interval(float delay, bool paused = false) {
         try {
+          // Throws if scripting API is unavailable
           this.start = Time.time;
-        } catch (UnityException) { }
+          this.paused = paused;
+        } catch (UnityException) {
+          this._paused = paused;
+        }
 
-        this.delay = delay;
+        _delay = delay;
       }
 
 
@@ -63,8 +98,8 @@ namespace Muc.Timing {
       /// </summary>
       /// <returns>Whether the Use was succesful.</returns>
       public bool UseOne() {
-        if (Time.time >= start + delay) {
-          start = start + delay;
+        if (Time.time >= pauseAdjustedStart + delay) {
+          start += delay;
           return true;
         }
         return false;
@@ -76,10 +111,10 @@ namespace Muc.Timing {
       /// <returns>Amount of consumed uses.</returns>
       public int Use() {
         int uses = 0;
-        while (Time.time >= start + delay) {
+        while (Time.time >= pauseAdjustedStart + delay) {
           used++;
           uses++;
-          start = start + delay;
+          start += delay;
         }
         return uses;
       }
@@ -89,10 +124,10 @@ namespace Muc.Timing {
       /// </summary>
       /// <param name="action">Function called for each remaining use.</param>
       public void Use(Action action) {
-        while (Time.time >= start + delay) {
+        while (Time.time >= pauseAdjustedStart + delay) {
           used++;
           action();
-          start = start + delay;
+          start += delay;
         }
       }
     }
@@ -106,25 +141,58 @@ namespace Muc.Timing.Editor {
 
   using UnityEngine;
   using UnityEditor;
+
   using static Muc.Timing.Timers;
 
   public static partial class Timers {
 
     [CustomPropertyDrawer(typeof(Interval))]
-    public class IntervalDrawer : PropertyDrawer {
+    internal class IntervalDrawer : PropertyDrawer {
 
       public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
         return EditorGUIUtility.singleLineHeight;
       }
 
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
-        EditorGUI.BeginProperty(position, label, property);
+        using (new EditorGUI.PropertyScope(position, label, property)) {
 
-        var delay = property.FindPropertyRelative("_delay");
-        var input = EditorGUI.FloatField(position, property.displayName, delay.floatValue);
-        if (input > 0) delay.floatValue = input;
+          var delay = property.FindPropertyRelative(nameof(Interval._delay));
+          var paused = property.FindPropertyRelative(nameof(Interval._paused));
+          var pauseTime = property.FindPropertyRelative(nameof(Interval.pauseTime));
+          var start = property.FindPropertyRelative(nameof(Interval.start));
 
-        EditorGUI.EndProperty();
+          var noLabel = label.text is "" && label.image is null;
+
+          // Pause bool (Click handling)
+          var pausedRect = new Rect(position);
+          if (!noLabel) pausedRect.xMin = pausedRect.xMin + EditorGUIUtility.labelWidth - 15 * (EditorGUI.indentLevel + 1);
+          pausedRect.width = 15;
+          var inActive = EditorGUI.Toggle(pausedRect, !paused.boolValue);
+          var inPaused = !inActive;
+          // Handle playmode fingering of pause
+          if (inPaused != paused.boolValue && Application.isPlaying) {
+            if (inPaused) {
+              pauseTime.floatValue = Time.time;
+            } else {
+              start.floatValue += Time.time - pauseTime.floatValue;
+            }
+          }
+          paused.boolValue = inPaused;
+
+          // Delay value
+          var delayRect = new Rect(position);
+          if (noLabel) delayRect.xMin = pausedRect.xMax + 2;
+          var inDelay = EditorGUI.FloatField(delayRect, label, delay.floatValue);
+          if (inDelay != delay.floatValue && inDelay > 0 && Application.isPlaying) {
+            var field = fieldInfo.GetValue(property.serializedObject.targetObject);
+            if (field is Interval target) target.delay = inDelay;
+          }
+          if (inDelay > 0) delay.floatValue = inDelay;
+
+          // Pause bool (Press down visuals)
+          EditorGUI.Toggle(pausedRect, inActive);
+
+        }
       }
 
     }

@@ -55,9 +55,7 @@ namespace Muc.Inspector.Internal {
 
     private static readonly ReorderableAttribute defaultAttribute = new ReorderableAttribute();
 
-    public new ReorderableAttribute attribute {
-      get => (ReorderableAttribute)base.attribute ?? defaultAttribute;
-    }
+    internal new ReorderableAttribute attribute => (ReorderableAttribute)base.attribute ?? defaultAttribute;
 
     public override bool CanCacheInspectorGUI(SerializedProperty property) {
       return true;
@@ -182,8 +180,8 @@ namespace Muc.Inspector.Internal {
 
           var subassetTypes =
             types.Where(
-              t => t.IsAbstract == false
-                && t.IsGenericTypeDefinition == false
+              t => !t.IsAbstract
+                && !t.IsGenericTypeDefinition
                 && elementType.IsAssignableFrom(t)
             ).ToArray();
 
@@ -197,8 +195,8 @@ namespace Muc.Inspector.Internal {
       if (elementPropertyDrawerType == null) {
         var elementIsStruct =
             elementType.IsValueType &&
-            elementType.IsEnum == false &&
-            elementType.IsPrimitive == false;
+            !elementType.IsEnum &&
+            !elementType.IsPrimitive;
 
         var elementIsClass = elementType.IsClass;
 

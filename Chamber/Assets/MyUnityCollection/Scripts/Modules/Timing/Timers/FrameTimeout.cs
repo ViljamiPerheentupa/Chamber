@@ -14,10 +14,9 @@ namespace Muc.Timing {
     [Serializable]
     public class FrameTimeout {
 
-      /// <summary>
-      /// Frame when this FrameTimeout was created.
-      /// </summary>
-      public int start { get; private set; }
+      [SerializeField]
+      internal int start;
+      private int pauseAdjustedStart => (paused ? start + Time.frameCount - pauseTime : start);
 
       /// <summary>
       /// Frame after start when there is one remaining use.
@@ -25,12 +24,16 @@ namespace Muc.Timing {
       public int delay {
         get => _delay;
         set {
-          if (delay <= 0) throw new ArgumentOutOfRangeException(nameof(delay), $"Value of {nameof(delay)} must be positive.");
+          if (paused) {
+            start = pauseAdjustedStart;
+            pauseTime = Time.frameCount;
+          }
+          if (usable) start -= value - _delay;
           _delay = value;
         }
       }
       [SerializeField]
-      private int _delay = 1;
+      internal int _delay = 0;
 
       /// <summary>
       /// Whether this FrameTimeout has been used.
@@ -40,7 +43,27 @@ namespace Muc.Timing {
       /// <summary>
       /// Whether this FrameTimeout can currently be used.
       /// </summary>
-      public bool usable => !used && Time.frameCount >= start + delay;
+      public bool usable => !paused && !used && Time.frameCount >= pauseAdjustedStart + delay;
+
+      /// <summary>
+      /// Whether this Timeout is paused.
+      /// </summary>
+      public bool paused {
+        get => _paused;
+        set {
+          if (_paused == value) return;
+          if (value) {
+            pauseTime = Time.frameCount;
+          } else {
+            start = pauseAdjustedStart;
+          }
+          _paused = value;
+        }
+      }
+      [SerializeField]
+      internal bool _paused;
+      [SerializeField]
+      internal int pauseTime;
 
 
       FrameTimeout() { }
@@ -49,12 +72,17 @@ namespace Muc.Timing {
       /// Creates a single-use frame based timer which can be used after `delay` passes.
       /// </summary>
       /// <param name="delay">Frames until this FrameTimeout can be used in milliseconds.</param>
-      public FrameTimeout(int delay) {
+      /// <param name="paused">Whether this FrameTimeout will be created in a paused state.</param>
+      public FrameTimeout(int delay, bool paused = false) {
         try {
+          // Throws if scripting API is unavailable
           this.start = Time.frameCount;
-        } catch (UnityException) { }
+          this.paused = paused;
+        } catch (UnityException) {
+          this._paused = paused;
+        }
 
-        this.delay = delay;
+        _delay = delay;
       }
 
 
@@ -80,25 +108,58 @@ namespace Muc.Timing.Editor {
 
   using UnityEngine;
   using UnityEditor;
+
   using static Muc.Timing.Timers;
 
   public static partial class Timers {
 
     [CustomPropertyDrawer(typeof(FrameTimeout))]
-    public class FrameTimeoutDrawer : PropertyDrawer {
+    internal class FrameTimeoutDrawer : PropertyDrawer {
 
       public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
         return EditorGUIUtility.singleLineHeight;
       }
 
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
-        EditorGUI.BeginProperty(position, label, property);
+        using (new EditorGUI.PropertyScope(position, label, property)) {
 
-        var delay = property.FindPropertyRelative("_delay");
-        var input = EditorGUI.IntField(position, property.displayName, delay.intValue);
-        if (input > 0) delay.intValue = input;
+          var delay = property.FindPropertyRelative(nameof(FrameTimeout._delay));
+          var paused = property.FindPropertyRelative(nameof(FrameTimeout._paused));
+          var pauseTime = property.FindPropertyRelative(nameof(FrameTimeout.pauseTime));
+          var start = property.FindPropertyRelative(nameof(FrameTimeout.start));
 
-        EditorGUI.EndProperty();
+          var noLabel = label.text is "" && label.image is null;
+
+          // Pause bool (Click handling)
+          var pausedRect = new Rect(position);
+          if (!noLabel) pausedRect.xMin = pausedRect.xMin + EditorGUIUtility.labelWidth - 15 * (EditorGUI.indentLevel + 1);
+          pausedRect.width = 15;
+          var inActive = EditorGUI.Toggle(pausedRect, !paused.boolValue);
+          var inPaused = !inActive;
+          // Handle playmode fingering of pause
+          if (inPaused != paused.boolValue && Application.isPlaying) {
+            if (inPaused) {
+              pauseTime.intValue = Time.frameCount;
+            } else {
+              start.intValue += Time.frameCount - pauseTime.intValue;
+            }
+          }
+          paused.boolValue = inPaused;
+
+          // Delay value
+          var delayRect = new Rect(position);
+          if (noLabel) delayRect.xMin = pausedRect.xMax + 2;
+          var inDelay = EditorGUI.IntField(delayRect, label, delay.intValue);
+          if (inDelay != delay.intValue && inDelay > 0 && Application.isPlaying) {
+            var field = fieldInfo.GetValue(property.serializedObject.targetObject);
+            if (field is FrameTimeout target) target.delay = inDelay;
+          }
+          delay.intValue = inDelay;
+
+          // Pause bool (Press down visuals)
+          EditorGUI.Toggle(pausedRect, inActive);
+
+        }
       }
 
     }

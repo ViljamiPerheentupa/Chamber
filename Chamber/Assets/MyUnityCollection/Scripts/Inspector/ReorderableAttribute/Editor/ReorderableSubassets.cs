@@ -19,19 +19,11 @@ namespace Muc.Inspector.Internal {
 
     private readonly Type[] subassetTypes;
 
-    public bool hasSingleSubassetType {
-      get => subassetTypes.Length == 1;
-    }
-
-    public bool hasMultipleSubassetTypes {
-      get => subassetTypes.Length > 1;
-    }
+    public bool hasSingleSubassetType => subassetTypes.Length == 1;
+    public bool hasMultipleSubassetTypes => subassetTypes.Length > 1;
+    public override bool showElementHeader => base.showElementHeader || hasMultipleSubassetTypes;
 
     private readonly bool useFullSubassetTypeNames;
-
-    public override bool showElementHeader {
-      get => base.showElementHeader || hasMultipleSubassetTypes;
-    }
 
     //----------------------------------------------------------------------
 
@@ -71,11 +63,7 @@ namespace Muc.Inspector.Internal {
 
     //----------------------------------------------------------------------
 
-    protected override void DrawElement(
-        Rect position,
-        SerializedProperty element,
-        int elementIndex,
-        bool isActive) {
+    protected override void DrawElement(Rect position, SerializedProperty element, int elementIndex, bool isActive) {
       var subasset = element.objectReferenceValue;
       if (subasset == null)
         return;
@@ -83,7 +71,7 @@ namespace Muc.Inspector.Internal {
       var serializedObject = GetSerializedObjectFromCache(subasset);
       serializedObject.Update();
       var properties = serializedObject.EnumerateChildProperties();
-      base.DrawElement(position, properties, elementIndex, isActive);
+      base.DrawElements(position, properties, elementIndex, isActive);
       serializedObject.ApplyModifiedProperties();
     }
 
@@ -128,9 +116,9 @@ namespace Muc.Inspector.Internal {
       scriptRect.width = titleWidth + 16;
 
       using (ColorAlphaScope(0)) {
-        EditorGUI.BeginDisabledGroup(disabled: true);
-        EditorGUI.ObjectField(scriptRect, subasset, subassetType, allowSceneObjects: false);
-        EditorGUI.EndDisabledGroup();
+        using (new EditorGUI.DisabledScope(true)) {
+          EditorGUI.ObjectField(scriptRect, subasset, subassetType, allowSceneObjects: false);
+        }
       }
 
       if (IsRepaint()) {

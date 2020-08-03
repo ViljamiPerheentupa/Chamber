@@ -36,6 +36,8 @@ public class BuiltInResourcesWindow : EditorWindow {
   private const int PADDING_X = 5;
   private const int PADDING_Y = 5;
 
+  private const int SCROLL_W = 16;
+
   private string[] FILTER_TEXTURE_NAMES { get; } = new string[] { "", "CurveTexture", "Font Texture", "Clear Texture", "MagentaTexture" };
 
   void OnGUI() {
@@ -106,7 +108,7 @@ public class BuiltInResourcesWindow : EditorWindow {
 
             var height = nameSize.y + size.y + PADDING_X * 2;
 
-            if (x + width > position.width - PADDING_X && x > PADDING_X) {
+            if (x + width > position.width - SCROLL_W - PADDING_X && x > PADDING_X) {
               x = PADDING_X;
               y += maxHeight + PADDING_Y * 2;
               maxHeight = height;
@@ -160,7 +162,7 @@ public class BuiltInResourcesWindow : EditorWindow {
             var height = buttonSize.y + texture.height + 4;
 
 
-            if (x + width > position.width - PADDING_X && x > PADDING_X) {
+            if (x + width > position.width - SCROLL_W - PADDING_X && x > PADDING_X) {
               x = PADDING_X;
               y += maxHeight + PADDING_Y * 2;
               maxHeight = height;
@@ -199,12 +201,12 @@ public class BuiltInResourcesWindow : EditorWindow {
       maxY = y;
     }
 
-    float top = 4 + EditorGUIUtility.singleLineHeight * 2;
+    float top = EditorGUIUtility.singleLineHeight * 2 - 1;
 
     var scrollRect = new Rect(
-      x: position.width - 16,
+      x: position.width - SCROLL_W,
       y: top,
-      width: 16,
+      width: SCROLL_W,
       height: position.height - top
     );
 

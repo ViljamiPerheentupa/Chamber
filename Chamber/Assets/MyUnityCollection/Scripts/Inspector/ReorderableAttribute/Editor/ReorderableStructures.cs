@@ -53,22 +53,21 @@ namespace Muc.Inspector.Internal {
 
     //----------------------------------------------------------------------
 
-    protected override float drawElementIndent { get { return 12; } }
+    protected override float drawElementIndent => 12;
 
     protected override void DrawElement(Rect position, SerializedProperty element, int elementIndex, bool isActive) {
       var properties = element.EnumerateChildProperties();
-      DrawElement(position, properties, elementIndex, isActive);
+      DrawElements(position, properties, elementIndex, isActive);
     }
 
-    protected void DrawElement(Rect position, IEnumerable<SerializedProperty> properties, int elementIndex, bool isActive) {
+    protected void DrawElements(Rect position, IEnumerable<SerializedProperty> properties, int elementIndex, bool isActive) {
       var spacing = EditorGUIUtility.standardVerticalSpacing;
       if (showElementHeader) {
         DrawElementHeader(position, elementIndex, isActive);
         position.y += headerHeight + spacing;
       }
 
-      var labelWidth = Mathf.Min(idealLabelWidth, position.width * 0.4f);
-      using (LabelWidthScope(labelWidth)) {
+      using (LabelWidthScope(EditorGUIUtility.labelWidth - position.xMin)) {
         var propertyCount = 0;
         foreach (var property in properties) {
           if (propertyCount++ > 0)
@@ -83,7 +82,7 @@ namespace Muc.Inspector.Internal {
 
     //----------------------------------------------------------------------
 
-    protected static readonly GUIStyle HeaderBackgroundStyle = "Toolbar";
+    protected static readonly GUIStyle HeaderBackgroundStyle = "RL Header";
 
     private void DrawElementHeader(Rect position, int elementIndex, bool isActive) {
       position.xMin -= drawElementIndent;
@@ -115,9 +114,9 @@ namespace Muc.Inspector.Internal {
         var embossStyle = EditorStyles.whiteBoldLabel;
         var embossRect = position;
         embossRect.yMin -= 0;
-        EditorGUI.BeginDisabledGroup(true);
-        embossStyle.Draw(embossRect, titleContent, false, false, false, false);
-        EditorGUI.EndDisabledGroup();
+        using (new EditorGUI.DisabledScope(true)) {
+          embossStyle.Draw(embossRect, titleContent, false, false, false, false);
+        }
 
         var titleRect = position;
         titleRect.yMin -= 1;

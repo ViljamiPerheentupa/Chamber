@@ -32,7 +32,7 @@ namespace Muc.Components.Values.Editor {
 
       var target = this.target as ValueData;
 
-      showOrders = EditorGUILayout.Foldout(showOrders, "Orders");
+      showOrders = EditorGUILayout.Foldout(showOrders, "Orders", true);
       if (showOrders) {
         using (var cHorizontalScope = new GUILayout.HorizontalScope()) {
           GUILayout.Space(EditorGUI.indentLevel * 15 + 4);
@@ -47,9 +47,9 @@ namespace Muc.Components.Values.Editor {
                 cache = new CacheData(target.GetByFullName(orderData.valueName).modifiers);
                 this.cache.Add(orderData, cache);
 
-                cache.drawer.displayAdd = false;
-                cache.drawer.displayRemove = false;
-                cache.drawer.headerHeight = 1;
+                // cache.drawer.displayAdd = false;
+                // cache.drawer.displayRemove = false;
+                // cache.drawer.headerHeight = 1;
 
                 cache.drawer.onReorderCallbackWithDetails = (ReorderableList list, int oldIndex, int newIndex) => {
 

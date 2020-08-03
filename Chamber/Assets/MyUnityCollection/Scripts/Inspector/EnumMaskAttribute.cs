@@ -49,7 +49,7 @@ namespace Muc.Inspector.Internal {
 
       EditorGUI.BeginProperty(position, label, property);
 
-      foldoutOpen = EditorGUI.Foldout(new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight), foldoutOpen, label);
+      foldoutOpen = EditorGUI.Foldout(new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight), foldoutOpen, label, true);
 
       if (foldoutOpen) {
         //Draw the All button

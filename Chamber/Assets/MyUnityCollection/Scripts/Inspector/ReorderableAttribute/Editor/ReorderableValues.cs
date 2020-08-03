@@ -15,7 +15,7 @@ namespace Muc.Inspector.Internal {
   using ParallelListLayout = ReorderableAttribute.ParallelListLayout;
   using BackgroundColorDelegate = ReorderableDrawer.BackgroundColorDelegate;
   using System.Collections;
-
+  using System.Text.RegularExpressions;
 
   internal class ReorderableValues : ReorderableList {
 
@@ -185,7 +185,9 @@ namespace Muc.Inspector.Internal {
 
       using (IndentLevelScope(-EditorGUI.indentLevel)) {
         if (serializedProperty.isExpanded) {
-          DoList(position);
+          var listRect = new Rect(position);
+          listRect.yMin++;
+          DoList(listRect);
         } else {
           index = -1;
           DoCollapsedListBackground(position);
@@ -343,6 +345,95 @@ namespace Muc.Inspector.Internal {
 
     //----------------------------------------------------------------------
 
+    object GetMemberValue(object container, string name) {
+      if (container == null)
+        return null;
+      var type = container.GetType();
+      var members = type.GetMember(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+      for (int i = 0; i < members.Length; ++i) {
+        if (members[i] is FieldInfo field)
+          return field.GetValue(container);
+        else if (members[i] is PropertyInfo property)
+          return property.GetValue(container);
+      }
+      return null;
+    }
+
+    void SetMemberValue(object container, string name, object value) {
+      var type = container.GetType();
+      var members = type.GetMember(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+      for (int i = 0; i < members.Length; ++i) {
+        if (members[i] is FieldInfo field) {
+          field.SetValue(container, value);
+          return;
+        } else if (members[i] is PropertyInfo property) {
+          property.SetValue(container, value);
+          return;
+        }
+      }
+      Debug.Assert(false, $"Failed to set member {container}.{name} via reflection");
+    }
+
+    object GetPathComponentValue(object container, PropertyPathComponent component) {
+      if (component.propertyName == null)
+        return ((IList)container)[component.elementIndex];
+      else
+        return GetMemberValue(container, component.propertyName);
+    }
+
+    void SetPathComponentValue(object container, PropertyPathComponent component, object value) {
+      if (component.propertyName == null)
+        ((IList)container)[component.elementIndex] = value;
+      else
+        SetMemberValue(container, component.propertyName, value);
+    }
+
+    Regex arrayElementRegex = new Regex(@"\GArray\.data\[(\d+)\]", RegexOptions.Compiled);
+
+    struct PropertyPathComponent {
+      public string propertyName;
+      public int elementIndex;
+    }
+
+    bool NextPathComponent(string propertyPath, ref int index, out PropertyPathComponent component) {
+      component = new PropertyPathComponent();
+
+      if (index >= propertyPath.Length)
+        return false;
+
+      var arrayElementMatch = arrayElementRegex.Match(propertyPath, index);
+      if (arrayElementMatch.Success) {
+        index += arrayElementMatch.Length + 1; // Skip past next '.'
+        component.elementIndex = int.Parse(arrayElementMatch.Groups[1].Value);
+        return true;
+      }
+
+      int dot = propertyPath.IndexOf('.', index);
+      if (dot == -1) {
+        component.propertyName = propertyPath.Substring(index);
+        index = propertyPath.Length;
+      } else {
+        component.propertyName = propertyPath.Substring(index, dot - index);
+        index = dot + 1; // Skip past next '.'
+      }
+
+      return true;
+    }
+
+    public void SetValueNoRecord(SerializedProperty property, object value) {
+      string propertyPath = property.propertyPath;
+      object container = property.serializedObject.targetObject;
+
+      int i = 0;
+      NextPathComponent(propertyPath, ref i, out var deferredToken);
+      while (NextPathComponent(propertyPath, ref i, out var token)) {
+        container = GetPathComponentValue(container, deferredToken);
+        deferredToken = token;
+      }
+      Debug.Assert(!container.GetType().IsValueType, $"Cannot use SerializedObject.SetValue on a struct object, as the result will be set on a temporary. Either change {container.GetType().Name} to a class, or use SetValue with a parent member.");
+      SetPathComponentValue(container, deferredToken, value);
+    }
+
     protected virtual void InsertElement(int elementIndex) {
       if (elementIndex < 0)
         return;
@@ -351,11 +442,78 @@ namespace Muc.Inspector.Internal {
       var serializedObject = serializedProperty.serializedObject;
       foreach (var array in serializedProperties) {
         array.InsertArrayElementAtIndex(elementIndex);
+
+        var type = array.arrayElementType;
+        // Create first instance with correct property values
+        if (array.arraySize == 1) {
+          var element = array.GetArrayElementAtIndex(elementIndex);
+          var elPropType = element.propertyType;
+
+          switch (elPropType) {
+
+            default:
+              break;
+
+            case SerializedPropertyType.Generic:
+
+              var elementType = GetSerializedPropertyType(element);
+
+              if (elementType != null) {
+                object instance = null;
+                try {
+                  instance = Activator.CreateInstance(elementType, true);
+                } catch (Exception) {
+                  instance = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(elementType);
+                } finally {
+                  if (instance != null) {
+                    serializedObject.ApplyModifiedProperties();
+                    SetValueNoRecord(element, instance);
+                  }
+                }
+
+              }
+              break;
+          }
+        }
+
       }
       serializedObject.ApplyModifiedProperties();
       index = elementIndex;
       GUI.changed = true;
     }
+
+    public static Type GetSerializedPropertyType(SerializedProperty property) {
+      var parentType = property.serializedObject.targetObject.GetType();
+      return GetTypeByPath(parentType, property.propertyPath);
+    }
+
+    public static Type GetTypeByPath(Type type, string path) {
+      path = path.Replace(".Array.data[", "[");
+      var currentType = type;
+      FieldInfo field = null;
+      foreach (var token in path.Split('.')) {
+        if (token.Contains("[")) {
+          var elementName = token.Substring(0, token.IndexOf("["));
+          var index = System.Convert.ToInt32(token.Substring(token.IndexOf("[")).Replace("[", "").Replace("]", ""));
+
+          field = currentType.GetMember(elementName, MemberTypes.Field, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault() as FieldInfo;
+
+          if (field is null) return null;
+          var listType = field.FieldType;
+          currentType = listType.GenericTypeArguments[0];
+
+        } else {
+          field = currentType.GetField(token);
+
+          if (field is null) return null;
+          currentType = field.FieldType;
+        }
+      }
+      if (field is null) return null;
+      return currentType;
+    }
+
+    //----------------------------------------------------------------------
 
     protected virtual void DeleteElement(int elementIndex) {
       if (elementIndex < 0)
@@ -367,7 +525,10 @@ namespace Muc.Inspector.Internal {
         foreach (var array in serializedProperties) {
           var element = array.GetArrayElementAtIndex(elementIndex);
           var oldSubassets = element.FindReferencedSubassets();
+          var preDelSize = array.arraySize;
           array.DeleteArrayElementAtIndex(elementIndex);
+          if (preDelSize == array.arraySize)
+            array.DeleteArrayElementAtIndex(elementIndex);
           if (oldSubassets.Any()) {
             serializedObject.ApplyModifiedPropertiesWithoutUndo();
             serializedObject.DestroyUnreferencedSubassets(oldSubassets);
@@ -395,7 +556,7 @@ namespace Muc.Inspector.Internal {
 
     //----------------------------------------------------------------------
 
-    protected static readonly GUIStyle ElementBackgroundStyle = "CN EntryBackEven";
+    protected static readonly GUIStyle ElementBackgroundStyle = "RL Background";
 
     private void DrawElementBackground(Rect position, SerializedProperty element, int elementIndex, bool isActive, bool isFocused) {
       if (isActive) {
@@ -414,17 +575,18 @@ namespace Muc.Inspector.Internal {
         fillRect.yMin += 1;
         fillRect.yMax -= 1;
 
-        var backgroundColor =
-          (this.backgroundColor == Color.black)
-          ? GUI.backgroundColor
-          : this.backgroundColor;
+        var backgroundColor = GUI.color
+          * ((this.backgroundColor == Color.black)
+            ? GUI.backgroundColor
+            : this.backgroundColor);
 
         if (onBackgroundColor != null)
           onBackgroundColor.Invoke(serializedProperty, elementIndex, ref this.backgroundColor);
 
-        using (BackgroundColorScope(backgroundColor))
-        using (ColorAlphaScope(isActive ? 0.5f : 1)) {
-          fillStyle.Draw(fillRect, false, false, false, false);
+        using (BackgroundColorScope(backgroundColor)) {
+          using (ColorAlphaScope(0)) {
+            fillStyle.Draw(fillRect, false, false, false, false);
+          }
         }
       }
     }
@@ -442,32 +604,27 @@ namespace Muc.Inspector.Internal {
     public static readonly GUIContent CutLabel = new GUIContent("Cut");
     public static readonly GUIContent CopyLabel = new GUIContent("Copy");
     public static readonly GUIContent PasteLabel = new GUIContent("Paste");
+    public static readonly GUIContent DeleteLabel = new GUIContent("Delete");
 
     protected virtual void PopulateElementContextMenu(GenericMenu menu, int elementIndex) {
       var serializedProperty = this.serializedProperty;
       var serializedObject = serializedProperty.serializedObject;
 
-      menu.AddItem(CutLabel, false, () =>
-            OnNextGUIFrame(() => CutElement(elementIndex)));
-      menu.AddItem(CopyLabel, false, () =>
-            CopyElement(elementIndex));
+      menu.AddItem(CutLabel, false, () => OnNextGUIFrame(() => CutElement(elementIndex)));
+      menu.AddItem(CopyLabel, false, () => CopyElement(elementIndex));
       var content = ClipboardContent.Deserialize(EditorGUIUtility.systemCopyBuffer);
       var canPaste = CanPaste(content);
-      if (canPaste) menu.AddItem(PasteLabel, false, () =>
-            OnNextGUIFrame(() => PasteElement(elementIndex, content)));
+      if (canPaste) menu.AddItem(PasteLabel, false, () => OnNextGUIFrame(() => PasteElement(elementIndex, content)));
       else menu.AddDisabledItem(PasteLabel);
+
+      if (displayRemove) {
+        menu.AddItem(DeleteLabel, false, () => OnNextGUIFrame(() => DeleteElement(elementIndex)));
+      }
 
       if (displayAdd) {
         menu.AddSeparator("");
         menu.AddItem(new GUIContent("Insert Above"), false, () => OnNextGUIFrame(() => InsertElement(elementIndex)));
         menu.AddItem(new GUIContent("Insert Below"), false, () => OnNextGUIFrame(() => InsertElement(elementIndex + 1)));
-
-      }
-      if (displayAdd && displayRemove) {
-        menu.AddSeparator("");
-      }
-      if (displayRemove) {
-        menu.AddItem(new GUIContent("Remove"), false, () => OnNextGUIFrame(() => DeleteElement(elementIndex)));
       }
     }
 
@@ -493,36 +650,7 @@ namespace Muc.Inspector.Internal {
 
     //----------------------------------------------------------------------
 
-    private static readonly GUIStyle EyeDropperHorizontalLine = "EyeDropperHorizontalLine";
-
     protected static readonly GUIStyle ContextMenuButtonStyle = "Button";
-
-    protected GUIContent IconToolbarPlus {
-      get => defaultBehaviours.iconToolbarPlus;
-    }
-
-    protected GUIContent IconToolbarPlusMore {
-      get => defaultBehaviours.iconToolbarPlusMore;
-    }
-
-    protected GUIContent IconToolbarMinus {
-      get => defaultBehaviours.iconToolbarMinus;
-    }
-
-    protected GUIStyle PreButton {
-      get => defaultBehaviours.preButton;
-    }
-
-    protected static void DrawHorizontalLine(Rect position) {
-      if (IsRepaint()) {
-        var style = EyeDropperHorizontalLine;
-        position.height = 1;
-        var color = GUI.color;
-        GUI.color = new Color(1, 1, 1, 0.75f);
-        style.Draw(position, false, false, false, false);
-        GUI.color = color;
-      }
-    }
 
     protected static bool IsRepaint() {
       var current = Event.current;
@@ -534,73 +662,15 @@ namespace Muc.Inspector.Internal {
     private void DrawHeader(Rect position) {
       defaultBehaviours.DrawHeaderBackground(position);
       position.xMin += 16;
-      position.y += 1;
+      position.y++;
       position.height = EditorGUIUtility.singleLineHeight;
 
       var foldoutRect = position;
-      foldoutRect.width -= 50;
       var property = serializedProperty;
       var wasExpanded = property.isExpanded;
-      var isExpanded = EditorGUI.Foldout(foldoutRect, wasExpanded, label);
+      var isExpanded = EditorGUI.Foldout(foldoutRect, wasExpanded, label, true);
       if (isExpanded != wasExpanded) {
         property.isExpanded = isExpanded;
-      }
-
-      DrawHeaderButtons(position);
-    }
-
-    private void DrawHeaderButtons(Rect position) {
-      position.yMin += 3;
-      float rightEdge = position.xMax;
-      float leftEdge = rightEdge - 8f;
-      if (displayAdd)
-        leftEdge -= 25;
-      if (displayRemove)
-        leftEdge -= 25;
-      position = new Rect(leftEdge, position.y, rightEdge - leftEdge, position.height);
-      Rect addRect = new Rect(leftEdge + 4, position.y - 3, 25, 13);
-      Rect removeRect = new Rect(rightEdge - 29, position.y - 3, 25, 13);
-      if (displayAdd)
-        DrawAddButton(addRect);
-      if (displayRemove)
-        DrawRemoveButton(removeRect);
-    }
-
-    private void DrawAddButton(Rect position) {
-      var canAdd = onCanAddCallback == null || onCanAddCallback(this);
-      var disabled = !canAdd;
-      using (new EditorGUI.DisabledScope(disabled)) {
-        var style = PreButton;
-        var content =
-          onAddDropdownCallback != null
-          ? IconToolbarPlusMore
-          : IconToolbarPlus;
-        if (GUI.Button(position, content, style)) {
-          if (onAddDropdownCallback != null)
-            onAddDropdownCallback(position, this);
-          else if (onAddCallback != null)
-            onAddCallback(this);
-          if (onChangedCallback != null)
-            onChangedCallback.Invoke(this);
-        }
-      }
-    }
-
-    private void DrawRemoveButton(Rect position) {
-      var disabled = index < 0 || index > count;
-      if (disabled == false) {
-        var canRemove = onCanRemoveCallback == null || onCanRemoveCallback(this);
-        disabled |= !canRemove;
-      }
-      using (new EditorGUI.DisabledScope(disabled)) {
-        var style = PreButton;
-        var content = IconToolbarMinus;
-        if (GUI.Button(position, content, style)) {
-          if (onRemoveCallback != null)
-            onRemoveCallback.Invoke(this);
-          if (onChangedCallback != null)
-            onChangedCallback.Invoke(this);
-        }
       }
     }
 
@@ -639,7 +709,7 @@ namespace Muc.Inspector.Internal {
       elementHeights.Clear();
       elementHeights.Capacity = elementCount;
       for (int i = 0; i < elementCount; ++i)
-        elementHeights.Add(0f);
+        elementHeights.Add(0);
 
       if (primaryProperty.isExpanded) {
         var spacing = EditorGUIUtility.standardVerticalSpacing;
@@ -683,7 +753,6 @@ namespace Muc.Inspector.Internal {
       position.xMin += 2;
       position.xMax -= 2;
       position.y -= 6;
-      DrawHorizontalLine(position);
     }
 
     private float ElementHeightCallback(int elementIndex) {
@@ -780,21 +849,19 @@ namespace Muc.Inspector.Internal {
       upperEdge.xMin += 2;
       upperEdge.xMax -= 2;
       upperEdge.y -= 1;
-      DrawHorizontalLine(upperEdge);
 
       var lowerEdge = position;
       lowerEdge.xMin += 2;
       lowerEdge.xMax -= 2;
       lowerEdge.y += lowerEdge.height;
       lowerEdge.y -= 1;
-      DrawHorizontalLine(lowerEdge);
     }
 
     private void DrawEmptyElementCallback(Rect position) {
       position.y += 2;
-      EditorGUI.BeginDisabledGroup(disabled: true);
-      EditorGUI.LabelField(position, "List is Empty");
-      EditorGUI.EndDisabledGroup();
+      using (new EditorGUI.DisabledScope(true)) {
+        EditorGUI.LabelField(position, "List is Empty");
+      }
     }
 
     //----------------------------------------------------------------------
@@ -868,8 +935,7 @@ namespace Muc.Inspector.Internal {
 
     private static float AddElementPadding(float elementHeight) {
       var verticalSpacing = EditorGUIUtility.standardVerticalSpacing;
-      return
-        borderHeight
+      return borderHeight
         + verticalSpacing
         + elementHeight
         + verticalSpacing

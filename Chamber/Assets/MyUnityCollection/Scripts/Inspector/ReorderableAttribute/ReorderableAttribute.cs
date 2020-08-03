@@ -4,9 +4,9 @@ using UnityEngine;
 namespace Muc.Inspector {
 
   [AttributeUsage(AttributeTargets.Field)]
-  public class ReorderableAttribute : PropertyAttribute {
+  internal class ReorderableAttribute : PropertyAttribute {
 
-    public float r, g, b;
+    public float r = 0, g = 0, b = 0;
 
     public bool disableAdding;
 
@@ -17,21 +17,21 @@ namespace Muc.Inspector {
       set => disableAdding = disableRemoving = value;
     }
 
-    public bool disableDragging;
+    public bool disableDragging = false;
 
-    public bool elementsAreSubassets;
+    public bool elementsAreSubassets = false;
 
-    public string elementHeaderFormat;
+    public string elementHeaderFormat = null;
 
-    public string listHeaderFormat;
+    public string listHeaderFormat = null;
 
-    public bool hideFooterButtons;
+    public bool hideFooterButtons = false;
 
     public string[] parallelListNames;
 
     public enum ParallelListLayout { Rows, Columns };
 
-    public ParallelListLayout parallelListLayout;
+    public ParallelListLayout parallelListLayout = 0;
 
     public ReorderableAttribute() { }
 
