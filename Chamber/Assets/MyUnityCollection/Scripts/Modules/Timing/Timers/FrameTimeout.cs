@@ -125,8 +125,6 @@ namespace Muc.Timing.Editor {
 
           var delay = property.FindPropertyRelative(nameof(FrameTimeout._delay));
           var paused = property.FindPropertyRelative(nameof(FrameTimeout._paused));
-          var pauseTime = property.FindPropertyRelative(nameof(FrameTimeout.pauseTime));
-          var start = property.FindPropertyRelative(nameof(FrameTimeout.start));
 
           var noLabel = label.text is "" && label.image is null;
 
@@ -137,24 +135,30 @@ namespace Muc.Timing.Editor {
           var inActive = EditorGUI.Toggle(pausedRect, !paused.boolValue);
           var inPaused = !inActive;
           // Handle playmode fingering of pause
-          if (inPaused != paused.boolValue && Application.isPlaying) {
-            if (inPaused) {
-              pauseTime.intValue = Time.frameCount;
-            } else {
-              start.intValue += Time.frameCount - pauseTime.intValue;
+          if (inPaused != paused.boolValue) {
+            if (Application.isPlaying) {
+              var pauseTime = property.FindPropertyRelative(nameof(FrameTimeout.pauseTime));
+              var start = property.FindPropertyRelative(nameof(FrameTimeout.start));
+              if (inPaused) {
+                pauseTime.intValue = Time.frameCount;
+              } else {
+                start.intValue += Time.frameCount - pauseTime.intValue;
+              }
             }
+            paused.boolValue = inPaused;
           }
-          paused.boolValue = inPaused;
 
           // Delay value
           var delayRect = new Rect(position);
           if (noLabel) delayRect.xMin = pausedRect.xMax + 2;
           var inDelay = EditorGUI.IntField(delayRect, label, delay.intValue);
-          if (inDelay != delay.intValue && inDelay > 0 && Application.isPlaying) {
-            var field = fieldInfo.GetValue(property.serializedObject.targetObject);
-            if (field is FrameTimeout target) target.delay = inDelay;
+          if (inDelay != delay.intValue && inDelay > 0) {
+            if (Application.isPlaying) {
+              var field = fieldInfo.GetValue(property.serializedObject.targetObject);
+              if (field is FrameTimeout target) target.delay = inDelay;
+            }
+            delay.intValue = inDelay;
           }
-          delay.intValue = inDelay;
 
           // Pause bool (Press down visuals)
           EditorGUI.Toggle(pausedRect, inActive);

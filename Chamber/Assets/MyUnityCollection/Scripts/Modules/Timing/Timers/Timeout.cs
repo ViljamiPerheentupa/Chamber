@@ -116,16 +116,11 @@ namespace Muc.Timing.Editor {
     [CustomPropertyDrawer(typeof(Timeout))]
     internal class TimeoutDrawer : PropertyDrawer {
 
-      public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-        return EditorGUIUtility.singleLineHeight;
-      }
-
       public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
         using (new EditorGUI.PropertyScope(position, label, property)) {
 
           var delay = property.FindPropertyRelative(nameof(Timeout._delay));
           var paused = property.FindPropertyRelative(nameof(Timeout._paused));
-          var pauseTime = property.FindPropertyRelative(nameof(Timeout.pauseTime));
 
           var noLabel = label.text is "" && label.image is null;
 
@@ -136,25 +131,30 @@ namespace Muc.Timing.Editor {
           var inActive = EditorGUI.Toggle(pausedRect, !paused.boolValue);
           var inPaused = !inActive;
           // Handle playmode fingering of pause
-          if (inPaused != paused.boolValue && Application.isPlaying) {
-            if (inPaused) {
-              pauseTime.floatValue = Time.time;
-            } else {
+          if (inPaused != paused.boolValue) {
+            if (Application.isPlaying) {
+              var pauseTime = property.FindPropertyRelative(nameof(Timeout.pauseTime));
               var start = property.FindPropertyRelative(nameof(Timeout.start));
-              start.floatValue += Time.time - pauseTime.floatValue;
+              if (inPaused) {
+                pauseTime.floatValue = Time.time;
+              } else {
+                start.floatValue += Time.time - pauseTime.floatValue;
+              }
             }
+            paused.boolValue = inPaused;
           }
-          paused.boolValue = inPaused;
 
           // Delay value
           var delayRect = new Rect(position);
           if (noLabel) delayRect.xMin = pausedRect.xMax + 2;
           var inDelay = EditorGUI.FloatField(delayRect, label, delay.floatValue);
-          if (inDelay != delay.floatValue && inDelay > 0 && Application.isPlaying) {
-            var field = fieldInfo.GetValue(property.serializedObject.targetObject);
-            if (field is Timeout target) target.delay = inDelay;
+          if (inDelay != delay.floatValue && inDelay > 0) {
+            if (Application.isPlaying) {
+              var field = fieldInfo.GetValue(property.serializedObject.targetObject);
+              if (field is Timeout target) target.delay = inDelay;
+            }
+            delay.floatValue = inDelay;
           }
-          delay.floatValue = inDelay;
 
           // Pause bool (Press down visuals)
           EditorGUI.Toggle(pausedRect, inActive);
