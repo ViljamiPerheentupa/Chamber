@@ -2,7 +2,7 @@
 
 
 using System.Collections.Generic;
-using Muc.Inspector;
+using Muc.Editor;
 using UnityEngine;
 using UnityEngine.Events;
 

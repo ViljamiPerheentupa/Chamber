@@ -2,7 +2,7 @@
 
 // Original: https://github.com/Deadcows/MyBox
 
-namespace Muc.Inspector {
+namespace Muc.Editor.Attribute {
 
   using System;
 
@@ -10,7 +10,7 @@ namespace Muc.Inspector {
   /// Conditionally Show/Hide field in inspector, based on some other field value 
   /// </summary>
   [AttributeUsage(AttributeTargets.Field)]
-  public class DrawIfAttribute : Internal.DrawIfBaseAttribute {
+  public class DrawIfAttribute : DrawIfBaseAttribute {
     /// <param name="fieldToCheck">String name of the field</param>
     /// <param name="compareValues">On which values field will be shown in inspector</param>
     public DrawIfAttribute(string fieldToCheck, params object[] compareValues) : base(fieldToCheck, false, compareValues) { }
@@ -20,7 +20,7 @@ namespace Muc.Inspector {
   /// Conditionally Show/Hide field in inspector, based on some other field value 
   /// </summary>
   [AttributeUsage(AttributeTargets.Field)]
-  public class DrawIfNotAttribute : Internal.DrawIfBaseAttribute {
+  public class DrawIfNotAttribute : DrawIfBaseAttribute {
     /// <param name="fieldToCheck">String name of the field</param>
     /// <param name="compareValues">On which values field will NOT be shown in inspector</param>
     public DrawIfNotAttribute(string fieldToCheck, params object[] compareValues) : base(fieldToCheck, true, compareValues) { }
@@ -29,7 +29,7 @@ namespace Muc.Inspector {
 }
 
 
-namespace Muc.Inspector.Internal {
+namespace Muc.Editor.Attribute {
 
   using System;
   using System.Linq;
@@ -51,7 +51,7 @@ namespace Muc.Inspector.Internal {
 
 
 #if UNITY_EDITOR
-namespace Muc.Inspector.Internal {
+namespace Muc.Editor.Attribute {
 
   using System;
   using System.Linq;
@@ -63,7 +63,7 @@ namespace Muc.Inspector.Internal {
 
 
   [CustomPropertyDrawer(typeof(DrawIfAttribute))]
-  public class DrawIfAttributeDrawer : PropertyDrawer {
+  internal class DrawIfDrawer : PropertyDrawer {
     private DrawIfBaseAttribute instance;
 
     private bool customDrawersCached;

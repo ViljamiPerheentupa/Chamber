@@ -1,4 +1,5 @@
 
+
 namespace Muc.Types.Extensions {
 
   using System;

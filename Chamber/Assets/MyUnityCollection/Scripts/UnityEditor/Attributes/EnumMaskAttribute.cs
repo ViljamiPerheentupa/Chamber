@@ -6,7 +6,7 @@
  The only thing that you cannot do with this script is sell it by itself without substantially modifying it.
  */
 
-namespace Muc.Inspector {
+namespace Muc.Editor.Attribute {
 
   using UnityEngine;
 
@@ -16,19 +16,19 @@ namespace Muc.Inspector {
 
 
 #if UNITY_EDITOR
-namespace Muc.Inspector.Internal {
+namespace Muc.Editor.Attribute {
 
   using System;
   using UnityEngine;
   using UnityEditor;
 
   [CustomPropertyDrawer(typeof(EnumMaskAttribute))]
-  public class EnumMaskDrawer : PropertyDrawer {
+  internal class EnumMaskDrawer : PropertyDrawer {
     bool foldoutOpen = false;
 
-    object targetEnum;
-    Array enumValues;
-    Type enumUnderlyingType;
+    private object targetEnum;
+    private Array enumValues;
+    private Type enumUnderlyingType;
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
       if (foldoutOpen)

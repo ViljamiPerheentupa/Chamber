@@ -21,8 +21,6 @@ namespace Muc.Inspector.Internal {
 
     public DateTime lastRendered { get; private set; } = DateTime.MaxValue;
 
-    private const float INDENT_PER_LEVEL = 15;
-
     public readonly Type listType;
 
     public readonly Type elementType;
@@ -181,19 +179,17 @@ namespace Muc.Inspector.Internal {
         index = -1;
       }
 
-      position.xMin += EditorGUI.indentLevel * INDENT_PER_LEVEL;
+      position = EditorGUI.IndentedRect(position);
 
-      using (IndentLevelScope(-EditorGUI.indentLevel)) {
-        if (serializedProperty.isExpanded) {
-          var listRect = new Rect(position);
-          listRect.yMin++;
-          DoList(listRect);
-        } else {
-          index = -1;
-          DoCollapsedListBackground(position);
-        }
-        DrawHeader(position);
+      if (serializedProperty.isExpanded) {
+        var listRect = new Rect(position);
+        listRect.yMin++;
+        DoList(listRect);
+      } else {
+        index = -1;
+        DoCollapsedListBackground(position);
       }
+      DrawHeader(position);
     }
 
     //----------------------------------------------------------------------

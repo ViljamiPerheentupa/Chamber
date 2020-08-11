@@ -4,7 +4,7 @@ namespace Muc.Components {
 
   using UnityEngine;
   using UnityEngine.Events;
-  using Muc.Inspector;
+  using Muc.Editor;
 
   public class OnCollision : MonoBehaviour {
 

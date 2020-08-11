@@ -2,7 +2,7 @@
 
 // Original: http://answers.unity.com/answers/1513032/view.html
 
-namespace Muc.Inspector {
+namespace Muc.Editor.Attribute {
 
   using UnityEngine;
 
@@ -18,7 +18,7 @@ namespace Muc.Inspector {
 
 
 #if UNITY_EDITOR
-namespace Muc.Inspector.Internal {
+namespace Muc.Editor.Attribute {
 
   using System.Reflection;
   using UnityEngine;

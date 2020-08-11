@@ -2,7 +2,7 @@
 
 // Original: https://github.com/Deadcows/MyBox
 
-namespace Muc.Inspector {
+namespace Muc.Editor.Attribute {
 
   using UnityEngine;
 
@@ -22,13 +22,13 @@ namespace Muc.Inspector {
 
 
 #if UNITY_EDITOR
-namespace Muc.Inspector.Internal {
+namespace Muc.Editor.Attribute {
 
   using UnityEngine;
   using UnityEditor;
 
   [CustomPropertyDrawer(typeof(NestedInspectorAttribute))]
-  public class NestedInspectorAttributeDrawer : PropertyDrawer {
+  internal class NestedInspectorDrawer : PropertyDrawer {
 
     private NestedInspectorAttribute instance { get { return _instance ?? (_instance = attribute as NestedInspectorAttribute); } }
     private NestedInspectorAttribute _instance;
@@ -66,7 +66,7 @@ namespace Muc.Inspector.Internal {
         bgRect.x = startX - 10;
         bgRect.height = position.y - startY;
         bgRect.width = 10;
-        DrawColouredRect(bgRect, new Color(.6f, .6f, .8f, .5f));
+        DrawColouredRect(bgRect, new Color(0.6f, 0.6f, 0.8f, 0.5f));
 
         if (GUI.changed) propertyObject.serializedObject.ApplyModifiedProperties();
       }

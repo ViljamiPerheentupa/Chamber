@@ -50,7 +50,7 @@ namespace Muc.Camera {
 
   using System.Collections;
   using System.Collections.Generic;
-  using Muc.Inspector;
+  using Muc.Editor;
   using Muc.Types.Extensions;
   using UnityEngine;
 #if UNITY_EDITOR
