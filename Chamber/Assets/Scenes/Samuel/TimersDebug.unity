@@ -152,33 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23779fd351189424c9581673a21d7f04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interval:
-    start: 0
-    _delay: 1
-    _paused: 0
-    pauseTime: 0
-  structy:
-    integer: 0
-    interval:
-      start: 0
-      _delay: 1
-      _paused: 0
-      pauseTime: 0
-  classy:
-    stringy: 
-    frameInterval:
-      start: 0
-      _delay: 1
-      _paused: 0
-      pauseTime: 0
-    nestedStructy:
-      integer: 0
-      interval:
-        start: 0
-        _delay: 1
-        _paused: 0
-        pauseTime: 0
-  intervalList: []
+  integer1: 0
+  integer2: 0
+  integer3: 0
   timeoutList:
   - start: 0
     _delay: 1
@@ -188,31 +164,75 @@ MonoBehaviour:
     _delay: 3
     _paused: 0
     pauseTime: 0
-  - start: 0
-    _delay: 3
-    _paused: 0
-    pauseTime: 0
-  intList: 
-  gameObjectList:
-  - {fileID: 879892154}
-  - {fileID: 683288752}
-  - {fileID: 1926622967}
+  gameObjectList: []
   structies:
   - integer: 0
-    interval:
-      start: 0
+    intervalArray: []
+  - integer: 0
+    intervalArray:
+    - start: 0
+      _delay: 1
+      _paused: 0
+      pauseTime: 0
+    - start: 0
+      _delay: 1
+      _paused: 0
+      pauseTime: 0
+    - start: 0
+      _delay: 1
+      _paused: 0
+      pauseTime: 0
+  classies:
+  - integer: 0
+    nestedStructy:
+      integer: 0
+      intervalArray:
+      - start: 0
+        _delay: 1
+        _paused: 0
+        pauseTime: 0
+      - start: 0
+        _delay: 1
+        _paused: 0
+        pauseTime: 0
+      - start: 0
+        _delay: 1
+        _paused: 0
+        pauseTime: 0
+    intervalArray:
+    - start: 0
+      _delay: 1
+      _paused: 0
+      pauseTime: 0
+    - start: 0
       _delay: 1
       _paused: 0
       pauseTime: 0
   - integer: 0
-    interval:
-      start: 0
-      _delay: 0
+    nestedStructy:
+      integer: 0
+      intervalArray:
+      - start: 0
+        _delay: 1
+        _paused: 0
+        pauseTime: 0
+      - start: 0
+        _delay: 1
+        _paused: 0
+        pauseTime: 0
+      - start: 0
+        _delay: 1
+        _paused: 0
+        pauseTime: 0
+    intervalArray:
+    - start: 0
+      _delay: 1
       _paused: 0
       pauseTime: 0
-  classies: []
-  valueDatas:
-  - {fileID: 0}
+    - start: 0
+      _delay: 1
+      _paused: 0
+      pauseTime: 0
 --- !u!4 &683288754
 Transform:
   m_ObjectHideFlags: 0

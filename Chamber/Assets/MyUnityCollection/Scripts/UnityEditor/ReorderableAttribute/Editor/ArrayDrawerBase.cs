@@ -50,26 +50,26 @@ namespace Muc.Inspector.Internal {
 
     //======================================================================
 
-    private static readonly PropertyInfo s_PropertyHandlerCache =
+    private static readonly PropertyInfo propertyHandlerCache =
       typeof(DecoratorDrawer)
         .Assembly
         .GetType("UnityEditor.ScriptAttributeUtility")
         .GetProperty("propertyHandlerCache", BindingFlags.NonPublic | BindingFlags.Static);
 
-    private static readonly FieldInfo s_PropertyHandlers =
+    private static readonly FieldInfo propertyHandlers =
       typeof(DecoratorDrawer)
         .Assembly
         .GetType("UnityEditor.PropertyHandlerCache")
         .GetField("m_PropertyHandlers", BindingFlags.NonPublic | BindingFlags.Instance);
 
     internal object GetPropertyHandler() {
-      var propertyHandlerCache = s_PropertyHandlerCache.GetValue(null, null);
+      var handlerCache = propertyHandlerCache.GetValue(null, null);
 
-      var propertyHandlerDictionary = (IDictionary)s_PropertyHandlers.GetValue(propertyHandlerCache);
+      var handlerDictionary = (IDictionary)propertyHandlers.GetValue(handlerCache);
 
-      var propertyHandlers = propertyHandlerDictionary.Values;
+      var handlers = handlerDictionary.Values;
 
-      foreach (var propertyHandler in propertyHandlers) {
+      foreach (var propertyHandler in handlers) {
         var decoratorDrawers = (List<DecoratorDrawer>)propertyHandler_DecoratorDrawers.GetValue(propertyHandler);
 
         if (decoratorDrawers == null)

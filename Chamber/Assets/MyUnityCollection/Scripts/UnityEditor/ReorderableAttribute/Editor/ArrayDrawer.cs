@@ -42,7 +42,7 @@ namespace Muc.Inspector.Internal {
       if (property.isExpanded && HasVisibleChildFields(property)) {
         var spacing = EditorGUIUtility.standardVerticalSpacing;
 
-        using (IndentLevelScope()) {
+        using (new EditorGUI.IndentLevelScope()) {
           foreach (var child in EnumerateChildProperties(property)) {
             position.y += spacing;
             position.y += position.height;
@@ -118,11 +118,6 @@ namespace Muc.Inspector.Internal {
         if (onDispose != null)
           onDispose();
       }
-    }
-
-    protected IDisposable IndentLevelScope(int indent = 1) {
-      EditorGUI.indentLevel += indent;
-      return new Deferred(() => EditorGUI.indentLevel -= indent);
     }
 
   }

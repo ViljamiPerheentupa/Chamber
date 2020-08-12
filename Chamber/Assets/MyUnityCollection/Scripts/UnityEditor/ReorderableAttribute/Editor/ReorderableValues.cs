@@ -181,15 +181,17 @@ namespace Muc.Inspector.Internal {
 
       position = EditorGUI.IndentedRect(position);
 
-      if (serializedProperty.isExpanded) {
-        var listRect = new Rect(position);
-        listRect.yMin++;
-        DoList(listRect);
-      } else {
-        index = -1;
-        DoCollapsedListBackground(position);
+      using (new EditorGUI.IndentLevelScope(-EditorGUI.indentLevel)) {
+        if (serializedProperty.isExpanded) {
+          var listRect = new Rect(position);
+          listRect.yMin++;
+          DoList(listRect);
+        } else {
+          index = -1;
+          DoCollapsedListBackground(position);
+        }
+        DrawHeader(position);
       }
-      DrawHeader(position);
     }
 
     //----------------------------------------------------------------------
@@ -200,7 +202,7 @@ namespace Muc.Inspector.Internal {
 
       var listRect = position;
       listRect.y += headerHeight;
-      listRect.height = 7;
+      listRect.height = 9;
 
       var footerRect = position;
       footerRect.y += headerHeight + listRect.height;
@@ -467,6 +469,8 @@ namespace Muc.Inspector.Internal {
                   }
                 }
 
+              } else {
+                Debug.LogWarning("ElementType was null. Can't insert element");
               }
               break;
           }
@@ -490,13 +494,18 @@ namespace Muc.Inspector.Internal {
       foreach (var token in path.Split('.')) {
         if (token.Contains("[")) {
           var elementName = token.Substring(0, token.IndexOf("["));
-          var index = System.Convert.ToInt32(token.Substring(token.IndexOf("[")).Replace("[", "").Replace("]", ""));
+          var bracketPos = token.IndexOf("[");
+          var index = System.Convert.ToInt32(token.Substring(bracketPos + 1, token.Length - (bracketPos + 2)));
 
           field = currentType.GetMember(elementName, MemberTypes.Field, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault() as FieldInfo;
 
           if (field is null) return null;
           var listType = field.FieldType;
-          currentType = listType.GenericTypeArguments[0];
+          if (listType.IsArray) {
+            currentType = listType.GetElementType();
+          } else {
+            currentType = listType.GenericTypeArguments[0];
+          }
 
         } else {
           field = currentType.GetField(token);
@@ -854,7 +863,6 @@ namespace Muc.Inspector.Internal {
     }
 
     private void DrawEmptyElementCallback(Rect position) {
-      position.y += 2;
       using (new EditorGUI.DisabledScope(true)) {
         EditorGUI.LabelField(position, "List is Empty");
       }
@@ -927,23 +935,20 @@ namespace Muc.Inspector.Internal {
 
     //----------------------------------------------------------------------
 
-    private const float borderHeight = 0;
+    protected virtual float borderHeight => 0;
 
-    private static float AddElementPadding(float elementHeight) {
+    private float AddElementPadding(float elementHeight) {
       var verticalSpacing = EditorGUIUtility.standardVerticalSpacing;
       return borderHeight
         + verticalSpacing
-        + elementHeight
-        + verticalSpacing
-        + 1;
+        + elementHeight;
     }
 
-    private static void RemoveElementPadding(ref Rect position) {
+    private void RemoveElementPadding(ref Rect position) {
       var verticalSpacing = EditorGUIUtility.standardVerticalSpacing;
       position.yMin += borderHeight;
-      position.yMin += verticalSpacing;
-      position.yMax -= verticalSpacing;
-      position.yMax -= 1;
+      position.yMin += verticalSpacing / 2;
+      position.yMax -= verticalSpacing / 2;
     }
 
     //======================================================================
@@ -988,11 +993,6 @@ namespace Muc.Inspector.Internal {
       var oldColor = GUI.color;
       GUI.color = new Color(1, 1, 1, a);
       return new Deferred(() => GUI.color = oldColor);
-    }
-
-    protected static Deferred IndentLevelScope(int indent = 1) {
-      EditorGUI.indentLevel += indent;
-      return new Deferred(() => EditorGUI.indentLevel -= indent);
     }
 
     protected IDisposable LabelWidthScope(float newLabelWidth) {

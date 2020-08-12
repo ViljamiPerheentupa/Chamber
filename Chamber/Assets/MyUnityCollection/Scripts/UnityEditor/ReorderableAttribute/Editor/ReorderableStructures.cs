@@ -53,12 +53,30 @@ namespace Muc.Inspector.Internal {
 
     //----------------------------------------------------------------------
 
-    protected override float drawElementIndent => 12;
+    // original = 12; 15 is real indent width. Shifts elements so that expand arrows cannot overlap with the drag handle
+    protected override float drawElementIndent => 0;
 
     protected override void DrawElement(Rect position, SerializedProperty element, int elementIndex, bool isActive) {
       var properties = element.EnumerateChildProperties();
       DrawElements(position, properties, elementIndex, isActive);
+      if (elementIndex > 0)
+        DrawHorizontalLine(position);
     }
+
+    private static readonly GUIStyle eyeDropperHorizontalLine = "EyeDropperHorizontalLine";
+
+    protected static void DrawHorizontalLine(Rect position) {
+      if (IsRepaint()) {
+        var style = eyeDropperHorizontalLine;
+        position.yMin -= 3;
+        position.height = 1;
+        using (ColorScope(new Color(1, 1, 1, 0.75f))) {
+          style.Draw(position, false, false, false, false);
+        }
+      }
+    }
+
+    protected override float borderHeight => 3;
 
     protected void DrawElements(Rect position, IEnumerable<SerializedProperty> properties, int elementIndex, bool isActive) {
       var spacing = EditorGUIUtility.standardVerticalSpacing;
@@ -67,7 +85,7 @@ namespace Muc.Inspector.Internal {
         position.y += headerHeight + spacing;
       }
 
-      using (LabelWidthScope(EditorGUIUtility.labelWidth - position.xMin)) {
+      using (LabelWidthScope(EditorGUIUtility.labelWidth - position.xMin + 19)) {
         var propertyCount = 0;
         foreach (var property in properties) {
           if (propertyCount++ > 0)
