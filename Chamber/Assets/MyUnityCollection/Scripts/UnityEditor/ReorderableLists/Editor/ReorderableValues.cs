@@ -94,12 +94,10 @@ namespace Muc.Inspector.Internal {
 
     private void OnReorderCallback(ReorderableList list) {
       var dragIndex = this.dragIndex;
-      if (dragIndex < 0)
-        return;
+      if (dragIndex < 0) return;
 
       var dropIndex = list.index;
-      if (dropIndex < 0)
-        return;
+      if (dropIndex < 0) return;
 
       try {
         for (int i = 1; i < serializedProperties.Length; ++i) {
@@ -259,9 +257,8 @@ namespace Muc.Inspector.Internal {
       public string json;
     }
 
-    private void CopyElement(int elementIndex) {
-      if (elementIndex < 0)
-        return;
+    private ClipboardContent CopyElementContent(int elementIndex) {
+      if (elementIndex < 0) throw new IndexOutOfRangeException("Index must be non-negative.");
 
       var arrayIndex = 0;
       var arrayCount = serializedProperties.Length;
@@ -279,20 +276,23 @@ namespace Muc.Inspector.Internal {
         clipboardContent.elements[arrayIndex] = clipboardElement;
         arrayIndex += 1;
       }
-      EditorGUIUtility.systemCopyBuffer = clipboardContent.Serialize();
+      return clipboardContent;
+    }
+
+    private void CopyElementToClipboard(int elementIndex) {
+      if (elementIndex < 0) return;
+      EditorGUIUtility.systemCopyBuffer = CopyElementContent(elementIndex).Serialize();
     }
 
     private void CutElement(int elementIndex) {
-      if (elementIndex < 0)
-        return;
+      if (elementIndex < 0) return;
 
-      CopyElement(elementIndex);
+      CopyElementToClipboard(elementIndex);
       DeleteElement(elementIndex);
     }
 
     private bool CanPaste(ClipboardContent clipboardContent) {
-      if (clipboardContent == null)
-        return false;
+      if (clipboardContent == null) return false;
 
       var arrayIndex = 0;
       var arrayCount = serializedProperties.Length;
@@ -314,12 +314,10 @@ namespace Muc.Inspector.Internal {
     }
 
     private void PasteElement(int elementIndex, ClipboardContent clipboardContent) {
-      if (elementIndex < 0)
-        return;
+      if (elementIndex < 0) return;
 
       var clipboardElements = clipboardContent.elements;
-      if (clipboardElements.Length == 0)
-        return;
+      if (clipboardElements.Length == 0) return;
 
       var arrayIndex = 0;
       var arrayCount = serializedProperties.Length;
@@ -344,8 +342,7 @@ namespace Muc.Inspector.Internal {
     //----------------------------------------------------------------------
 
     object GetMemberValue(object container, string name) {
-      if (container == null)
-        return null;
+      if (container == null) return null;
       var type = container.GetType();
       var members = type.GetMember(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
       for (int i = 0; i < members.Length; ++i) {
@@ -396,8 +393,7 @@ namespace Muc.Inspector.Internal {
     bool NextPathComponent(string propertyPath, ref int index, out PropertyPathComponent component) {
       component = new PropertyPathComponent();
 
-      if (index >= propertyPath.Length)
-        return false;
+      if (index >= propertyPath.Length) return false;
 
       var arrayElementMatch = arrayElementRegex.Match(propertyPath, index);
       if (arrayElementMatch.Success) {
@@ -433,16 +429,17 @@ namespace Muc.Inspector.Internal {
     }
 
     protected virtual void InsertElement(int elementIndex) {
-      if (elementIndex < 0)
-        return;
+      if (elementIndex < 0) return;
 
       var serializedProperty = this.serializedProperty;
       var serializedObject = serializedProperty.serializedObject;
       foreach (var array in serializedProperties) {
         array.InsertArrayElementAtIndex(elementIndex);
 
+        var isManagedReference = array.arrayElementType == "managedReference<>";
         var type = array.arrayElementType;
-        // Create first instance with correct property values
+
+        // Create first element with default values and 
         if (array.arraySize == 1) {
           var element = array.GetArrayElementAtIndex(elementIndex);
           var elPropType = element.propertyType;
@@ -468,11 +465,21 @@ namespace Muc.Inspector.Internal {
                     SetValueNoRecord(element, instance);
                   }
                 }
-
               } else {
-                Debug.LogWarning("ElementType was null. Can't insert element");
+                Debug.LogWarning("ElementType was null. Can't create element");
               }
               break;
+          }
+        } else {
+          if (isManagedReference) {
+            var prevIndex = elementIndex == 0 ? 1 : elementIndex - 1;
+            var element = array.GetArrayElementAtIndex(elementIndex);
+            var prevElement = array.GetArrayElementAtIndex(prevIndex);
+
+            serializedObject.ApplyModifiedProperties();
+            var content = CopyElementContent(prevIndex);
+            PasteElement(elementIndex, content);
+
           }
         }
 
@@ -521,8 +528,7 @@ namespace Muc.Inspector.Internal {
     //----------------------------------------------------------------------
 
     protected virtual void DeleteElement(int elementIndex) {
-      if (elementIndex < 0)
-        return;
+      if (elementIndex < 0) return;
 
       var serializedProperty = this.serializedProperty;
       var serializedObject = serializedProperty.serializedObject;
@@ -616,7 +622,7 @@ namespace Muc.Inspector.Internal {
       var serializedObject = serializedProperty.serializedObject;
 
       menu.AddItem(CutLabel, false, () => OnNextGUIFrame(() => CutElement(elementIndex)));
-      menu.AddItem(CopyLabel, false, () => CopyElement(elementIndex));
+      menu.AddItem(CopyLabel, false, () => CopyElementToClipboard(elementIndex));
       var content = ClipboardContent.Deserialize(EditorGUIUtility.systemCopyBuffer);
       var canPaste = CanPaste(content);
       if (canPaste) menu.AddItem(PasteLabel, false, () => OnNextGUIFrame(() => PasteElement(elementIndex, content)));
@@ -872,8 +878,7 @@ namespace Muc.Inspector.Internal {
 
     private void HandleElementEvents(Rect position, int elementIndex) {
       var current = Event.current;
-      if (current == null)
-        return;
+      if (current == null) return;
 
       var handleRect = position;
       var menuRect = Rect.zero;

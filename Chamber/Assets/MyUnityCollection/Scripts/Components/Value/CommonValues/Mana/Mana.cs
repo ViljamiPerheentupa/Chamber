@@ -1,12 +1,9 @@
 
 
-
-using System.Collections.Generic;
-using Muc.Editor;
-using UnityEngine;
-using UnityEngine.Events;
-
 namespace Muc.Components.Values {
+
+  using UnityEngine.Events;
+
 
   public class Mana : Value<float, Mana> {
 
@@ -15,16 +12,10 @@ namespace Muc.Components.Values {
     protected override float defaultValue => DEFAULT_VALUE;
     public float max = DEFAULT_VALUE;
 
-    public UnityEvent<Mana> onDeath;
-
     protected override float AddRawToValue(float addition) => value += addition;
 
     public override void AddToValue(float value) {
-      var prevVal = this.value;
       base.AddToValue(value);
-      if (this.value <= 0 && prevVal > 0) {
-        onDeath.Invoke(this);
-      }
     }
   }
 

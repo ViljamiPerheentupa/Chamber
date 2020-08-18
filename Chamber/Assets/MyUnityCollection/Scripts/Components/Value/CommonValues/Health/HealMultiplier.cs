@@ -5,14 +5,13 @@ namespace Muc.Components.Values {
   using UnityEngine;
 
 
-  public class HealMultiplier : HealthModifier {
+  public class HealMultiplier : HealModifier {
 
     [field: SerializeField]
     float multiplier { get; set; }
 
-    public override float Modify(float current, Health value) {
-      if (current > 0) return current * multiplier;
-      return current;
+    public override float ModifyHeal(float current, Health value) {
+      return current * multiplier;
     }
   }
 }

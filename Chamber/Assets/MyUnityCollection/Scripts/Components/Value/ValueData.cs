@@ -1,7 +1,7 @@
 
 
 #if UNITY_EDITOR
-namespace Muc.Components.Values.Editor {
+namespace Muc.Components.Values {
 
   using System.Reflection;
   using System.Collections;
@@ -13,7 +13,7 @@ namespace Muc.Components.Values.Editor {
 
 
   [CustomEditor(typeof(ValueData))]
-  public class ValuePrefsEditor : Editor {
+  internal class ValueDataEditor : Editor {
 
     private Dictionary<ValueData.OrderData, CacheData> cache = new Dictionary<ValueData.OrderData, CacheData>();
 
