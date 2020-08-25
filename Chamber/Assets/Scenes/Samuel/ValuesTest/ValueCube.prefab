@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3697747304954376542}
   - component: {fileID: 3697747304954376541}
   - component: {fileID: 3697747304954376537}
-  - component: {fileID: 6784554181921573771}
+  - component: {fileID: 4508142580352121530}
   m_Layer: 0
   m_Name: ValueCube
   m_TagString: Untagged
@@ -109,27 +109,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b210ea2dc6b03a64a87c9b2a77ffc415, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valueData: {fileID: 0}
-  _value: 100
+  valueData: {fileID: 11400000, guid: 48c2c565841d20c4aa01ac93b243d2a6, type: 2}
+  _value: 105
   modifiers:
   - id: 0
   - id: 1
+  - id: 2
   max: 100
+  _dead: 0
   onDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  onRevive:
     m_PersistentCalls:
       m_Calls: []
   references:
     version: 1
     00000000:
-      type: {class: Crit, ns: Muc.Components.Values, asm: MUC}
+      type: {class: Lock, ns: , asm: MUC}
       data:
-        <crits>k__BackingField: []
-        <critStacking>k__BackingField: 1
+        _enabled: 1
+        target: {fileID: 3697747304954376537}
     00000001:
-      type: {class: DamageMultiplier, ns: Muc.Components.Values, asm: MUC}
+      type: {class: Crits, ns: Muc.Components.Values, asm: MUC}
       data:
-        <multiplier>k__BackingField: 0
---- !u!114 &6784554181921573771
+        _enabled: 1
+        target: {fileID: 3697747304954376537}
+        <critStacking>k__BackingField: 1
+        <crits>k__BackingField: []
+    00000002:
+      type: {class: DebuggerModifier, ns: Muc.Components.Values, asm: MUC}
+      data:
+        _enabled: 1
+        target: {fileID: 3697747304954376537}
+--- !u!114 &4508142580352121530
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,20 +151,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3697747304954376540}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe2d74c3cd0b6847b01cd8f85081a08, type: 3}
+  m_Script: {fileID: 11500000, guid: c61ebe8f2673cb44f9eb0c580aa2d897, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modifiers:
-  - id: 0
-  - id: 1
-  references:
-    version: 1
-    00000000:
-      type: {class: Crit, ns: Muc.Components.Values, asm: MUC}
-      data:
-        <crits>k__BackingField: []
-        <critStacking>k__BackingField: 1
-    00000001:
-      type: {class: DamageMultiplier, ns: Muc.Components.Values, asm: MUC}
-      data:
-        <multiplier>k__BackingField: 0
+  health: {fileID: 3697747304954376537}
+  addVal: 5
+  subVal: 100
+  setVal: 100
+  getVal: 100

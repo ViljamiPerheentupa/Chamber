@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Muc.Inspector {
 
   [AttributeUsage(AttributeTargets.Field)]
-  internal class ReorderableAttribute : PropertyAttribute {
+  public class ReorderableAttribute : PropertyAttribute {
 
     public float r = 0, g = 0, b = 0;
 

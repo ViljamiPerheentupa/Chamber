@@ -41,6 +41,8 @@ namespace Muc.Inspector.Internal {
 
     public readonly bool showFooterButtons;
 
+    public readonly bool isReferenceList;
+
     public Color backgroundColor;
 
     internal BackgroundColorDelegate onBackgroundColor;
@@ -67,6 +69,7 @@ namespace Muc.Inspector.Internal {
       this.backgroundColor = new Color(attribute.r, attribute.g, attribute.b);
       this.serializedProperties = AcquireSerializedProperties(this.serializedProperty, attribute.parallelListNames);
       this.parallelListLayout = attribute.parallelListLayout;
+      this.isReferenceList = primaryProperty.arrayElementType == "managedReference<>";
 
       headerHeight -= 2;
       drawHeaderCallback = DrawHeaderCallback;
@@ -172,6 +175,8 @@ namespace Muc.Inspector.Internal {
     public virtual void DoGUI(Rect position) {
       if (onNextGUIFrame != null) onNextGUIFrame.Invoke();
       onNextGUIFrame = null;
+
+      if (isReferenceList) displayAdd = this.count > 0;
 
       if (!displayAdd && !displayRemove && !draggable) {
         index = -1;
@@ -341,10 +346,28 @@ namespace Muc.Inspector.Internal {
 
     //----------------------------------------------------------------------
 
+    protected static MemberInfo[] GetFirstMemberInHierarchy(Type type, string name, BindingFlags bindingAttr) {
+      MemberInfo[] res;
+      do {
+        res = type.GetMember(name, bindingAttr);
+        if (res.Length != 0) return res;
+      } while ((type = type.BaseType) != null);
+      return res;
+    }
+
+    private static MemberInfo[] GetFirstMemberInHierarchy(Type type, string name, MemberTypes memberTypes, BindingFlags bindingAttr) {
+      MemberInfo[] res;
+      do {
+        res = type.GetMember(name, memberTypes, bindingAttr);
+        if (res.Length != 0) return res;
+      } while ((type = type.BaseType) != null);
+      return res;
+    }
+
     object GetMemberValue(object container, string name) {
       if (container == null) return null;
       var type = container.GetType();
-      var members = type.GetMember(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+      var members = GetFirstMemberInHierarchy(type, name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
       for (int i = 0; i < members.Length; ++i) {
         if (members[i] is FieldInfo field)
           return field.GetValue(container);
@@ -356,7 +379,7 @@ namespace Muc.Inspector.Internal {
 
     void SetMemberValue(object container, string name, object value) {
       var type = container.GetType();
-      var members = type.GetMember(name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+      var members = GetFirstMemberInHierarchy(type, name, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
       for (int i = 0; i < members.Length; ++i) {
         if (members[i] is FieldInfo field) {
           field.SetValue(container, value);
@@ -366,7 +389,6 @@ namespace Muc.Inspector.Internal {
           return;
         }
       }
-      Debug.Assert(false, $"Failed to set member {container}.{name} via reflection");
     }
 
     object GetPathComponentValue(object container, PropertyPathComponent component) {
@@ -428,6 +450,15 @@ namespace Muc.Inspector.Internal {
       SetPathComponentValue(container, deferredToken, value);
     }
 
+    protected static Type GetManagedReferenceType(SerializedProperty property) {
+      var typeStrings = property.managedReferenceFullTypename.Split(' ');
+      var fullTypeName = typeStrings[1];
+      var assemblyName = typeStrings[0];
+      var assembly = Assembly.Load(assemblyName);
+      var type = assembly.GetType(fullTypeName, true);
+      return type;
+    }
+
     protected virtual void InsertElement(int elementIndex) {
       if (elementIndex < 0) return;
 
@@ -436,50 +467,63 @@ namespace Muc.Inspector.Internal {
       foreach (var array in serializedProperties) {
         array.InsertArrayElementAtIndex(elementIndex);
 
-        var isManagedReference = array.arrayElementType == "managedReference<>";
         var type = array.arrayElementType;
 
         // Create first element with default values and 
         if (array.arraySize == 1) {
           var element = array.GetArrayElementAtIndex(elementIndex);
           var elPropType = element.propertyType;
+          if (isReferenceList) {
+            if (element.managedReferenceFieldTypename != "mscorlib System.Object") {
 
-          switch (elPropType) {
+            }
+          } else {
 
-            default:
-              break;
+            switch (elPropType) {
 
-            case SerializedPropertyType.Generic:
+              default:
+                break;
 
-              var elementType = GetSerializedPropertyType(element);
+              case SerializedPropertyType.Generic:
 
-              if (elementType != null) {
-                object instance = null;
-                try {
-                  instance = Activator.CreateInstance(elementType, true);
-                } catch (Exception) {
-                  instance = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(elementType);
-                } finally {
-                  if (instance != null) {
-                    serializedObject.ApplyModifiedProperties();
-                    SetValueNoRecord(element, instance);
+                var elementType = GetSerializedPropertyType(element);
+
+                if (elementType != null) {
+                  object instance = null;
+                  try {
+                    instance = Activator.CreateInstance(elementType, true);
+                  } catch (Exception) {
+                    instance = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(elementType);
+                  } finally {
+                    if (instance != null) {
+                      serializedObject.ApplyModifiedProperties();
+                      SetValueNoRecord(element, instance);
+                    }
                   }
                 }
-              } else {
-                Debug.LogWarning("ElementType was null. Can't create element");
-              }
-              break;
+                break;
+            }
           }
         } else {
-          if (isManagedReference) {
-            var prevIndex = elementIndex == 0 ? 1 : elementIndex - 1;
+          if (isReferenceList) {
             var element = array.GetArrayElementAtIndex(elementIndex);
-            var prevElement = array.GetArrayElementAtIndex(prevIndex);
 
-            serializedObject.ApplyModifiedProperties();
-            var content = CopyElementContent(prevIndex);
-            PasteElement(elementIndex, content);
+            var copyIndex = elementIndex == 0 ? 1 : elementIndex - 1;
+            var copyElement = array.GetArrayElementAtIndex(copyIndex);
+            var copyElementType = GetManagedReferenceType(copyElement);
 
+            object instance = null;
+            try {
+              instance = Activator.CreateInstance(copyElementType, true);
+            } catch (Exception) {
+              instance = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(copyElementType);
+            } finally {
+              if (instance != null) {
+                serializedObject.ApplyModifiedProperties();
+                element.managedReferenceValue = instance;
+                //SetValueNoRecord(element, instance);
+              }
+            }
           }
         }
 
@@ -504,7 +548,7 @@ namespace Muc.Inspector.Internal {
           var bracketPos = token.IndexOf("[");
           var index = System.Convert.ToInt32(token.Substring(bracketPos + 1, token.Length - (bracketPos + 2)));
 
-          field = currentType.GetMember(elementName, MemberTypes.Field, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault() as FieldInfo;
+          field = GetFirstMemberInHierarchy(currentType, elementName, MemberTypes.Field, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault() as FieldInfo;
 
           if (field is null) return null;
           var listType = field.FieldType;
@@ -767,6 +811,7 @@ namespace Muc.Inspector.Internal {
     }
 
     private float ElementHeightCallback(int elementIndex) {
+      if (elementIndex >= elementHeights.Count) return EditorGUIUtility.singleLineHeight;
       return elementHeights[elementIndex];
     }
 

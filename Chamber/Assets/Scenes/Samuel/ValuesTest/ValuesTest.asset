@@ -15,6 +15,7 @@ MonoBehaviour:
   orders:
   - valueName: Muc.Components.Values.Health
     modifiers:
-    - Muc.Components.Values.HealMultiplier
+    - Muc.Components.Values.HealMult
+    - Muc.Components.Values.Crits
     - Muc.Components.Values.DamageMultiplier
-    - Muc.Components.Values.Crit
+    - Lock

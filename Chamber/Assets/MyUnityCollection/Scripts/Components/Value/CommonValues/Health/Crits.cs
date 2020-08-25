@@ -6,11 +6,12 @@ namespace Muc.Components.Values {
   using System.Collections.Generic;
 
   using UnityEngine;
+  using UnityEngine.Events;
   using Random = UnityEngine.Random;
 
   using Muc.Types.Extensions;
 
-  public class Crit : DamageModifier {
+  public class Crits : HealthModifier {
 
     enum CritStacking {
       [Tooltip("The highest multiplier of the triggered crits is used")]
@@ -22,57 +23,64 @@ namespace Muc.Components.Values {
     }
 
     [field: SerializeField]
-    List<CritValue> crits { get; set; } = new List<CritValue>();
-
-    [field: SerializeField]
     CritStacking critStacking { get; set; } = CritStacking.Additive;
 
+    [field: SerializeField]
+    List<Crit> crits { get; set; } = new List<Crit>();
+
+
     [Serializable]
-    public struct CritValue {
+    public class Crit {
       [field: SerializeField, Range(0, 1)]
       public float chance { get; set; }
       [field: SerializeField, Min(0)]
       public float multiplier { get; private set; }
     }
 
-    public override float ModifyDamage(float current, Health value) {
+    public override Handler onSub => OnSub;
+    protected float OnSub(float current) {
       if (crits.Count == 0) return current;
 
-      var mult = 1f;
+      float mult = 1;
       var rand = Random.value;
+
       switch (critStacking) {
 
         case CritStacking.Highest:
-          var first = true;
           foreach (var crit in crits) {
-            if (first || mult < crit.multiplier) {
-              if (rand >= crit.chance) {
-                if (first) {
-                  mult = crit.multiplier;
-                  first = false;
-                } else {
-                  mult = Mathf.Max(mult, crit.multiplier);
-                }
+            if (mult < crit.multiplier) {
+              if (rand <= crit.chance) {
+                mult = Mathf.Max(mult, crit.multiplier);
               }
             }
           }
           break;
 
         case CritStacking.Additive:
+          bool critted = false;
           foreach (var crit in crits) {
-            if (rand >= crit.chance) mult += crit.multiplier;
+            if (rand <= crit.chance) {
+              if (critted) {
+                mult += crit.multiplier;
+              } else {
+                critted = true;
+                mult = crit.multiplier;
+              }
+            }
           }
+          if (!critted) mult = current * (mult - 1);
           break;
 
         case CritStacking.Multiplicative:
           foreach (var crit in crits) {
-            if (rand >= crit.chance) mult *= crit.multiplier;
+            if (rand <= crit.chance) {
+              mult *= crit.multiplier;
+            }
           }
           break;
 
       }
 
-      mult = Mathf.Clamp(mult, 0, float.MaxValue);
       return current * mult;
     }
   }

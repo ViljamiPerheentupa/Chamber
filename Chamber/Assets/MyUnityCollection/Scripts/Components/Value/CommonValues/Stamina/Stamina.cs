@@ -5,18 +5,13 @@ namespace Muc.Components.Values {
   using UnityEngine.Events;
 
 
-  public class Stamina : Value<float, Stamina> {
+  public class Stamina : ArithmeticValue<float, Stamina> {
 
-    private const int DEFAULT_VALUE = 100;
+    public float max = 100;
+    protected override float defaultValue => max;
 
-    protected override float defaultValue => DEFAULT_VALUE;
-    public float max = DEFAULT_VALUE;
-
-    protected override float AddRawToValue(float addition) => value += addition;
-
-    public override void AddToValue(float value) {
-      base.AddToValue(value);
-    }
+    protected override float AddValues(float a, float b) => a + b;
+    protected override float SubtractValues(float a, float b) => a - b;
   }
 
   public abstract class StaminaModifier : Modifier<float, Stamina> { }
