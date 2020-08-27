@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: ValuesTest
   m_EditorClassIdentifier: 
   orders:
-  - valueName: Muc.Components.Values.Health
+  - generic: System.Single
     modifiers:
-    - Muc.Components.Values.HealMult
-    - Muc.Components.Values.Crits
-    - Muc.Components.Values.DamageMultiplier
+    - Muc.Components.Values.AddMult
     - Lock
+    - Muc.Components.Values.SubMult
+    - Muc.Components.Values.Crits
+    - Muc.Components.Values.DebuggerModifier
+  <orderGuid>k__BackingField: 332a543ce4844919827a03c724e587c4
