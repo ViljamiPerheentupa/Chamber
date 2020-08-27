@@ -15,9 +15,9 @@ MonoBehaviour:
   orders:
   - generic: System.Single
     modifiers:
-    - Muc.Components.Values.AddMult
-    - Lock
-    - Muc.Components.Values.SubMult
-    - Muc.Components.Values.Crits
     - Muc.Components.Values.DebuggerModifier
-  <orderGuid>k__BackingField: 332a543ce4844919827a03c724e587c4
+    - Lock
+    - Muc.Components.Values.AddMult
+    - Muc.Components.Values.Crits
+    - Muc.Components.Values.SubMult
+  <orderGuid>k__BackingField: fc5e1f2a0402412abb078fbd4ac9a9f0

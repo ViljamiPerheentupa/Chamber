@@ -580,18 +580,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
-      propertyPath: modifiers.Array.data[2].<crits>k__BackingField.Array.size
+      propertyPath: modifiers.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[3].<crits>k__BackingField.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
       propertyPath: modifiers.Array.data[0]._enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
       propertyPath: _value
-      value: -140
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
@@ -601,12 +606,62 @@ PrefabInstance:
     - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
       propertyPath: <orderGuid>k__BackingField
-      value: 51852039e6f949108a90fd19841d5612
+      value: fc5e1f2a0402412abb078fbd4ac9a9f0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[0]
+      value: MUC Muc.Components.Values.DebuggerModifier
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[0].target
+      value: 
+      objectReference: {fileID: 4508142580352121528}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[3]
+      value: MUC Muc.Components.Values.SubMult
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[3]._enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[3].target
+      value: 
+      objectReference: {fileID: 4508142580352121528}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[4]
+      value: MUC Muc.Components.Values.SubMult
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[4]._enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[4].target
+      value: 
+      objectReference: {fileID: 4508142580352121528}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[3].<critStacking>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
+        type: 3}
+      propertyPath: modifiers.Array.data[4].<multiplier>k__BackingField
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
       propertyPath: modifiers.Array.data[1]
-      value: MUC Muc.Components.Values.DebuggerModifier
+      value: MUC Muc.Components.Values.AddMult
       objectReference: {fileID: 0}
     - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
@@ -620,28 +675,13 @@ PrefabInstance:
       objectReference: {fileID: 4508142580352121528}
     - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
-      propertyPath: modifiers.Array.data[2]
-      value: MUC Lock
+      propertyPath: modifiers.Array.data[1].<multiplier>k__BackingField
+      value: 420
       objectReference: {fileID: 0}
     - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
-      propertyPath: modifiers.Array.data[2]._enabled
+      propertyPath: modifiers.Array.data[3].<multiplier>k__BackingField
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
-        type: 3}
-      propertyPath: modifiers.Array.data[2].target
-      value: 
-      objectReference: {fileID: 4508142580352121528}
-    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
-        type: 3}
-      propertyPath: modifiers.Array.data[2].<critStacking>k__BackingField
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3697747304954376537, guid: 4a72ec49e201252458533977ddff970a,
-        type: 3}
-      propertyPath: modifiers.Array.data[0]
-      value: MUC Muc.Components.Values.DebuggerModifier
       objectReference: {fileID: 0}
     - target: {fileID: 3697747304954376540, guid: 4a72ec49e201252458533977ddff970a,
         type: 3}
