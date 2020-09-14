@@ -10,7 +10,7 @@ Material:
   m_Name: PaintableTest
   m_Shader: {fileID: -6465566751694194690, guid: 60acdd26d0a83fb4d90d8bb8553fb9b6,
     type: 3}
-  m_ShaderKeywords: PAINT_ON
+  m_ShaderKeywords: PAINT_OFF
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -58,7 +58,7 @@ Material:
     - Blend_Radius: 0.025
     - Blend_Samples_Per_Dir: 12
     - Metallic: 0
-    - PAINT: 1
+    - PAINT: 0
     - Paint_Texture_Count: 4
     - Smoothness: 0.5
     - _AlphaCutoffEnable: 0
