@@ -17,7 +17,7 @@ namespace Muc.Data.Trees {
 
     public bool Split() {
       if (!isLeaf) return false;
-      children = new QuadtreeCell[4] {
+      children = new QuadtreeCell[splitCount] {
         new QuadtreeCell(),
         new QuadtreeCell(),
         new QuadtreeCell(),
@@ -44,7 +44,7 @@ namespace Muc.Data.Trees {
 
     public bool Split() {
       if (!isLeaf) return false;
-      children = new QuadtreeCell<T>[4] {
+      children = new QuadtreeCell<T>[splitCount] {
         new QuadtreeCell<T>(),
         new QuadtreeCell<T>(),
         new QuadtreeCell<T>(),

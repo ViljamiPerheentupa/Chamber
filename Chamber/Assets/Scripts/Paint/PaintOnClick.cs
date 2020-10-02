@@ -37,7 +37,8 @@ namespace Game.Paint {
           }
 
           // Paint...
-          paint.PaintArea(hit.lightmapCoord - size / 2, size, paintType);
+          var area = new Rect(hit.textureCoord - size / 2, size);
+          paint.PaintArea(area, paintType);
           paint.Apply();
         }
       }

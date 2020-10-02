@@ -34,8 +34,8 @@ namespace Muc.Data.Trees {
       }
 
 
-      public Enumerator(OctreeCell<T> cell) {
-        stack = new Stack<Tracker>();
+      public Enumerator(OctreeCell<T> cell, int initialStackSize = 32) {
+        stack = new Stack<Tracker>(initialStackSize);
         stack.Push(new Tracker(cell));
       }
 
@@ -154,8 +154,8 @@ namespace Muc.Data.Trees {
       }
 
 
-      public DetailedEnumerator(OctreeCell<T> cell) {
-        stack = new Stack<Tracker>();
+      public DetailedEnumerator(OctreeCell<T> cell, int initialStackSize = 32) {
+        stack = new Stack<Tracker>(initialStackSize);
         stack.Push(new Tracker(cell, Vector3.zero, 1));
       }
 

@@ -9,11 +9,11 @@ namespace Muc.Data.Trees {
   public partial class VoxelTree<T> {
 
     public Enumerator GetEnumerator() {
-      return new Enumerator(this);
+      return new Enumerator(this, debth + 1);
     }
 
     public DetailedEnumerator GetDetailedEnumerator() {
-      return new DetailedEnumerator(this);
+      return new DetailedEnumerator(this, debth + 1);
     }
 
 
@@ -34,8 +34,8 @@ namespace Muc.Data.Trees {
       }
 
 
-      public Enumerator(VoxCell<T> cell) {
-        stack = new Stack<Tracker>();
+      public Enumerator(VoxCell<T> cell, int initialStackSize = 32) {
+        stack = new Stack<Tracker>(initialStackSize);
         stack.Push(new Tracker(cell));
       }
 
@@ -154,8 +154,8 @@ namespace Muc.Data.Trees {
       }
 
 
-      public DetailedEnumerator(VoxCell<T> cell) {
-        stack = new Stack<Tracker>();
+      public DetailedEnumerator(VoxCell<T> cell, int initialStackSize = 32) {
+        stack = new Stack<Tracker>(initialStackSize);
         stack.Push(new Tracker(cell, Vector3.zero, 1));
       }
 

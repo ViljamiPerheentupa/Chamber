@@ -17,7 +17,7 @@ namespace Muc.Data.Trees {
 
     public bool Split() {
       if (!isLeaf) return false;
-      children = new VoxCell[8] {
+      children = new VoxCell[splitCount] {
         new VoxCell(),
         new VoxCell(),
         new VoxCell(),
@@ -47,7 +47,7 @@ namespace Muc.Data.Trees {
 
     public bool Split() {
       if (!isLeaf) return false;
-      children = new VoxCell<T>[8] {
+      children = new VoxCell<T>[splitCount] {
         new VoxCell<T>(),
         new VoxCell<T>(),
         new VoxCell<T>(),

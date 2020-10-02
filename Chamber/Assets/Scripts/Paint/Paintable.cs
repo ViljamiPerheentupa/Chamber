@@ -8,27 +8,15 @@ namespace Game.Paint {
   using UnityEngine;
   using UnityEngine.Experimental.Rendering;
 
-  public enum PaintType : byte {
-    none = 0,
-    paint1 = 1,
-    paint2 = 2,
-    paint3 = 3,
-    paint4 = 4,
-    paint5 = 5,
-    paint6 = 6,
-    paint7 = 7,
-    paint8 = 8,
-
-    ignore = 254,
-  }
-
   [RequireComponent(typeof(MeshFilter))]
   [RequireComponent(typeof(MeshRenderer))]
   public class Paintable : MonoBehaviour {
 
     public int textureSize = 64;
+    [Tooltip("Is paint wrapped or clamped to the texture uvs?")]
+    public bool wrap = true;
 
-    [Tooltip("Create texture at Start")]
+    [Tooltip("Create texture at Start?")]
     public bool preInitialize = false;
 
     private Mesh mesh;
@@ -36,9 +24,9 @@ namespace Game.Paint {
     private Texture2D tex;
     private NativeArray<byte> data;
 
-    private byte paintStep;
+    public byte paintStep { get; private set; }
 
-    private bool paint;
+    private bool paintEnabled;
 
     void Start() {
       mesh = GetComponent<MeshFilter>().mesh;
@@ -59,10 +47,13 @@ namespace Game.Paint {
       }
     }
 
+    void Update() {
+      Apply();
+    }
 
     void EnablePaint() {
-      if (!paint) {
-        paint = true;
+      if (!paintEnabled) {
+        paintEnabled = true;
         mat.EnableKeyword("PAINT_ON");
         mat.DisableKeyword("PAINT_OFF");
         if (!tex) {
@@ -72,8 +63,8 @@ namespace Game.Paint {
     }
 
     void DisablePaint(bool destroyTexture = true) {
-      if (paint) {
-        paint = false;
+      if (paintEnabled) {
+        paintEnabled = false;
         mat.DisableKeyword("PAINT_ON");
         mat.EnableKeyword("PAINT_OFF");
         if (destroyTexture) {
@@ -85,7 +76,7 @@ namespace Game.Paint {
 
     public PaintType GetPaint(Vector2 uv) => GetPaint((int)(uv.x * textureSize), (int)(uv.y * textureSize));
     public PaintType GetPaint(int x, int y) { // (byte)((byte)paint * paintStep)
-      if (!paint) return PaintType.none;
+      if (!paintEnabled) return PaintType.none;
       return (PaintType)((float)data[CoordToIndex(WrapCoord(x), WrapCoord(y))] / (float)paintStep);
     }
 
@@ -100,45 +91,63 @@ namespace Game.Paint {
     }
 
     /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
-    public void PaintArea(Vector2 uv, Vector2 dims, PaintType paint) => PaintArea((int)(uv.x * textureSize), (int)(uv.y * textureSize), (int)(dims.x * textureSize), (int)(dims.y * textureSize), paint);
-    /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
-    public void PaintArea(int x, int y, int w, int h, PaintType paint) {
+    public void PaintArea(Rect area, PaintType paint) {
 
       if (paint == PaintType.ignore) return;
       EnablePaint();
 
-      // Positivize width and height
-      if (w < 0) x -= w *= -1;
-      if (h < 0) y -= h *= -1;
+      int xMin = (int)(area.xMin * textureSize);
+      int yMin = (int)(area.yMin * textureSize);
+
+      int xMax = (int)(area.xMax * textureSize);
+      int yMax = (int)(area.yMax * textureSize);
 
       var v = (byte)((byte)paint * paintStep);
 
-      for (int hLoop = 0; hLoop < h; hLoop++) {
-        for (int wLoop = 0; wLoop < w; wLoop++) {
-          data[CoordToIndex(WrapCoord(wLoop + x), WrapCoord(hLoop + y))] = v;
+      if (wrap) {
+        for (int x = xMin; x < xMax; x++) {
+          for (int y = yMin; y < yMax; y++) {
+            data[CoordToIndex(WrapCoord(x), WrapCoord(y))] = v;
+          }
+        }
+      } else {
+        for (int x = xMin; x < xMax; x++) {
+          for (int y = yMin; y < yMax; y++) {
+            data[CoordToIndex(ClampCoord(x), ClampCoord(y))] = v;
+          }
         }
       }
     }
 
     /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
-    public void PaintArea(Vector2 uv, Vector2 dims, PaintType[,] paintData) => PaintArea((int)(uv.x * textureSize), (int)(uv.y * textureSize), paintData);
-    /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
-    public void PaintArea(int x, int y, PaintType[,] paintData) {
+    public void PaintArea(Vector2 origin, PaintType[,] paintData) {
 
       EnablePaint();
+
+      int x = (int)(origin.x * textureSize);
+      int y = (int)(origin.y * textureSize);
 
       int w = paintData.GetLength(0);
       int h = paintData.GetLength(1);
 
-      for (int hLoop = 0; hLoop < h; hLoop++) {
-        for (int wLoop = 0; wLoop < w; wLoop++) {
-          var paint = paintData[wLoop, hLoop];
-          if (paint != PaintType.ignore)
-            data[CoordToIndex(WrapCoord(wLoop + x), WrapCoord(hLoop + y))] = (byte)((byte)paint * paintStep);
+      if (wrap) {
+        for (int hIndex = 0; hIndex < h; hIndex++) {
+          for (int wIndex = 0; wIndex < w; wIndex++) {
+            var paint = paintData[wIndex, hIndex];
+            if (paint != PaintType.ignore) data[CoordToIndex(WrapCoord(wIndex + x), WrapCoord(hIndex + y))] = (byte)((byte)paint * paintStep);
+          }
+        }
+      } else {
+        for (int hIndex = 0; hIndex < h; hIndex++) {
+          for (int wIndex = 0; wIndex < w; wIndex++) {
+            var paint = paintData[wIndex, hIndex];
+            if (paint != PaintType.ignore) data[CoordToIndex(ClampCoord(wIndex + x), ClampCoord(hIndex + y))] = (byte)((byte)paint * paintStep);
+          }
         }
       }
     }
 
+    /// <summary> Call Apply after doing paint operations so the changes are applied </summary>
     public void Clear() {
       for (int i = 0; i < data.Length; i++) {
         data[i] = (byte)PaintType.none;
@@ -146,16 +155,21 @@ namespace Game.Paint {
     }
 
     public void Apply() {
-      if (tex) tex.Apply();
-      PaintController.instance.ApplyPaintToVoxels(mesh, data, textureSize);
+      if (!tex) return;
+      tex.Apply();
+      ElectricityController.instance.ApplyConductivity(this, data, mesh, textureSize);
     }
 
 
-    int WrapCoord(int a) {
+    public int WrapCoord(int a) {
       return (a % textureSize + textureSize) % textureSize;
     }
 
-    public Vector2Int IndexToCoord(int i) {
+    public int ClampCoord(int a) {
+      return Mathf.Clamp(a, 0, paintStep);
+    }
+
+    Vector2Int IndexToCoord(int i) {
       var res = Vector2Int.zero;
       res.y = Mathf.FloorToInt(i / textureSize);
       res.x = i % textureSize;
